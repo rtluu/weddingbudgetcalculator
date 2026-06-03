@@ -1,26 +1,340 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Palette */
+  --alabaster:   #F6F1E9;
+  --bone:        #FBF8F3;
+  --ink:         #2B2622;
+  --clay:        #B07A57;
+  --terracotta:  #9C5A3C;
+  --olive:       #6E7253;
+  --sand:        #E4DAC9;
+  --muted:       #8C8275;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body:    'Hanken Grotesk', system-ui, sans-serif;
+
+  /* Easing */
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Spacing scale */
+  --rail-width: 320px;
 }
 
+/* ─── Tailwind v4 theme mapping ─────────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-alabaster:  var(--alabaster);
+  --color-bone:       var(--bone);
+  --color-ink:        var(--ink);
+  --color-clay:       var(--clay);
+  --color-terracotta: var(--terracotta);
+  --color-olive:      var(--olive);
+  --color-sand:       var(--sand);
+  --color-muted:      var(--muted);
+
+  --font-display: var(--font-display);
+  --font-body:    var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Reset & Base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--alabaster);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
+
+/* ─── Warm Paper Grain Overlay ──────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 300px 300px;
+}
+
+/* Subtle radial vignette */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, transparent 60%, rgba(43, 38, 34, 0.04) 100%);
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+/* Display/optical size */
+.display-xl {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+}
+
+.italic-serif {
+  font-style: italic;
+  font-variation-settings: 'opsz' 72;
+}
+
+/* ─── Ghosted Section Numerals ───────────────────────────────────────────────── */
+.section-numeral {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 18vw, 14rem);
+  font-weight: 700;
+  color: var(--ink);
+  opacity: 0.06;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  position: absolute;
+  top: -0.25em;
+  left: -0.08em;
+  z-index: 0;
+}
+
+/* ─── Custom Slider ──────────────────────────────────────────────────────────── */
+.slider-custom {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+.slider-custom::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--sand);
+}
+
+.slider-custom::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--clay);
+  cursor: pointer;
+  margin-top: -9px;
+  transition: transform 0.15s var(--ease-out-quart), background 0.15s ease;
+  box-shadow: 0 2px 8px rgba(176, 122, 87, 0.35);
+}
+
+.slider-custom::-webkit-slider-thumb:hover {
+  background: var(--terracotta);
+  transform: scale(1.15);
+}
+
+.slider-custom::-moz-range-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--sand);
+}
+
+.slider-custom::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--clay);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(176, 122, 87, 0.35);
+}
+
+/* ─── Letterpress Invoice ────────────────────────────────────────────────────── */
+.invoice-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--sand);
+  gap: 1rem;
+}
+
+.invoice-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  flex: 1;
+}
+
+.invoice-value {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ─── Card Variants ──────────────────────────────────────────────────────────── */
+.card-bone {
+  background: var(--bone);
+  border: 1px solid var(--sand);
+  border-radius: 8px;
+}
+
+.card-bone-elevated {
+  background: var(--bone);
+  border: 1px solid var(--sand);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(43, 38, 34, 0.06), 0 1px 3px rgba(43, 38, 34, 0.04);
+}
+
+/* ─── Tier Cards ─────────────────────────────────────────────────────────────── */
+.tier-card {
+  cursor: pointer;
+  border: 1px solid var(--sand);
+  border-radius: 10px;
+  background: var(--alabaster);
+  transition: transform 0.4s var(--ease-out-quart),
+              box-shadow 0.4s var(--ease-out-quart),
+              border-color 0.3s ease,
+              background 0.3s ease;
+}
+
+.tier-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(43, 38, 34, 0.08);
+}
+
+.tier-card.selected {
+  transform: translateY(-4px);
+  border-color: var(--clay);
+  border-width: 1px;
+  background: var(--bone);
+  box-shadow: 0 0 0 1px var(--clay), 0 12px 36px rgba(176, 122, 87, 0.15);
+}
+
+/* ─── CTA Buttons ────────────────────────────────────────────────────────────── */
+.btn-clay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--clay);
+  color: var(--bone);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.25s ease, transform 0.25s var(--ease-out-quart);
+}
+
+.btn-clay:hover {
+  background: var(--terracotta);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: transparent;
+  color: var(--clay);
+  border: 1px solid var(--clay);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.btn-outline:hover {
+  background: var(--clay);
+  color: var(--bone);
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Focus styles (WCAG AA) ─────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--alabaster);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sand);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ─── Utility classes ────────────────────────────────────────────────────────── */
+.text-clay    { color: var(--clay); }
+.text-olive   { color: var(--olive); }
+.text-muted   { color: var(--muted); }
+.text-ink     { color: var(--ink); }
+.text-sand    { color: var(--sand); }
+.bg-alabaster { background-color: var(--alabaster); }
+.bg-bone      { background-color: var(--bone); }
+.border-sand  { border-color: var(--sand); }
+
+.font-display { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
