@@ -8,6 +8,7 @@ import TierPicker from "@/components/TierPicker";
 import ResultsBreakdown from "@/components/ResultsBreakdown";
 import FloatingRail from "@/components/FloatingRail";
 import { calculateWeddingBudget, BudgetResult, Tier, Location } from "@/config/costModel";
+import WeddingDatePicker from "@/components/WeddingDatePicker";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -34,6 +35,7 @@ export default function HomePage() {
   const [location, setLocation] = useState<Location>("los-angeles");
   const [tier, setTier] = useState<Tier>("moderate");
   const [dateStatus, setDateStatus] = useState<DateStatus>("season");
+  const [weddingDate, setWeddingDate] = useState<Date | null>(null);
   const [venueStatus, setVenueStatus] = useState<"touring" | "booked" | "none">("none");
   const [result, setResult] = useState<BudgetResult | null>(null);
   const [showStickyFooter, setShowStickyFooter] = useState(false);
@@ -304,7 +306,6 @@ export default function HomePage() {
                       >
                         {/* Section header */}
                         <div className="relative">
-                          <span className="section-numeral">{stepConfig.num}</span>
                           <div className="relative z-10 pt-2">
                             <p
                               className="font-body text-xs uppercase tracking-widest mb-3"
@@ -334,6 +335,8 @@ export default function HomePage() {
                             <DateStatusPicker
                               dateStatus={dateStatus}
                               onDateChange={setDateStatus}
+                              weddingDate={weddingDate}
+                              onWeddingDateChange={setWeddingDate}
                               venueStatus={venueStatus}
                               onVenueChange={setVenueStatus}
                             />
@@ -452,9 +455,6 @@ export default function HomePage() {
             <div className="min-w-0">
               {/* Section heading */}
               <div className="relative mb-8">
-                <span className="section-numeral" style={{ opacity: 0.04 }}>
-                  est.
-                </span>
                 <div className="relative z-10">
                   <p
                     className="font-body text-xs uppercase tracking-widest mb-2"
@@ -539,11 +539,15 @@ export default function HomePage() {
 function DateStatusPicker({
   dateStatus,
   onDateChange,
+  weddingDate,
+  onWeddingDateChange,
   venueStatus,
   onVenueChange,
 }: {
   dateStatus: DateStatus;
   onDateChange: (v: DateStatus) => void;
+  weddingDate: Date | null;
+  onWeddingDateChange: (d: Date) => void;
   venueStatus: "touring" | "booked" | "none";
   onVenueChange: (v: "touring" | "booked" | "none") => void;
 }) {
@@ -576,54 +580,118 @@ function DateStatusPicker({
   return (
     <div className="space-y-8">
       <div className="space-y-3" role="radiogroup" aria-label="Date status">
-        {dateOptions.map((opt) => (
-          <button
-            key={opt.id}
-            role="radio"
-            aria-checked={dateStatus === opt.id}
-            onClick={() => onDateChange(opt.id)}
-            className="w-full text-left p-4 rounded-lg transition-all duration-300 card-bone"
-            style={{
-              border: `1px solid ${dateStatus === opt.id ? "var(--clay)" : "var(--sand)"}`,
-              background:
-                dateStatus === opt.id ? "var(--bone)" : "var(--alabaster)",
-              cursor: "pointer",
-            }}
-          >
-            <div className="flex items-center gap-3">
+        {dateOptions.map((opt) => {
+          const isYes = opt.id === "yes";
+          const selected = dateStatus === opt.id;
+
+          // "Yes" card is an expandable div; others remain simple buttons
+          if (isYes) {
+            return (
               <div
-                className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                key={opt.id}
+                role="radio"
+                aria-checked={selected}
+                className="rounded-lg transition-all duration-300"
                 style={{
-                  borderColor:
-                    dateStatus === opt.id ? "var(--clay)" : "var(--sand)",
+                  border: `1px solid ${selected ? "var(--clay)" : "var(--sand)"}`,
+                  background: selected ? "var(--bone)" : "var(--alabaster)",
+                  overflow: "hidden",
                 }}
               >
-                {dateStatus === opt.id && (
-                  <motion.div
-                    layoutId="date-radio"
-                    className="w-2 h-2 rounded-full"
-                    style={{ background: "var(--clay)" }}
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  />
-                )}
-              </div>
-              <div>
-                <p
-                  className="font-body text-sm font-medium"
-                  style={{ color: "var(--ink)" }}
+                {/* clickable header row */}
+                <div
+                  className="flex items-center gap-3 p-4 cursor-pointer"
+                  onClick={() => onDateChange("yes")}
                 >
-                  {opt.label}
-                </p>
-                <p
-                  className="font-body text-xs mt-0.5"
-                  style={{ color: "var(--muted)" }}
-                >
-                  {opt.sub}
-                </p>
+                  <div
+                    className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                    style={{ borderColor: selected ? "var(--clay)" : "var(--sand)" }}
+                  >
+                    {selected && (
+                      <motion.div
+                        layoutId="date-radio"
+                        className="w-2 h-2 rounded-full"
+                        style={{ background: "var(--clay)" }}
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-body text-sm font-medium" style={{ color: "var(--ink)" }}>
+                      {opt.label}
+                    </p>
+                    <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)" }}>
+                      {weddingDate && selected
+                        ? weddingDate.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" })
+                        : opt.sub}
+                    </p>
+                  </div>
+                </div>
+
+                {/* calendar expands inside the card */}
+                <AnimatePresence>
+                  {selected && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.32, ease: EASE_REF }}
+                      style={{ overflow: "hidden" }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div style={{ borderTop: "1px solid var(--sand)" }}>
+                        <WeddingDatePicker
+                          value={weddingDate}
+                          onChange={onWeddingDateChange}
+                          compact
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
-          </button>
-        ))}
+            );
+          }
+
+          return (
+            <button
+              key={opt.id}
+              role="radio"
+              aria-checked={selected}
+              onClick={() => onDateChange(opt.id)}
+              className="w-full text-left p-4 rounded-lg transition-all duration-300 card-bone"
+              style={{
+                border: `1px solid ${selected ? "var(--clay)" : "var(--sand)"}`,
+                background: selected ? "var(--bone)" : "var(--alabaster)",
+                cursor: "pointer",
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                  style={{ borderColor: selected ? "var(--clay)" : "var(--sand)" }}
+                >
+                  {selected && (
+                    <motion.div
+                      layoutId="date-radio"
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: "var(--clay)" }}
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    />
+                  )}
+                </div>
+                <div>
+                  <p className="font-body text-sm font-medium" style={{ color: "var(--ink)" }}>
+                    {opt.label}
+                  </p>
+                  <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)" }}>
+                    {opt.sub}
+                  </p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* Venue status */}
