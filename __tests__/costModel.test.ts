@@ -2,22 +2,23 @@ import { calculateWeddingBudget } from "@/config/costModel";
 
 describe("calculateWeddingBudget", () => {
   describe("Validation targets (total before range)", () => {
-    test("100 guests / moderate / los-angeles total ≈ $44,000–$47,000", () => {
+    // Venue fixedBase recalibrated 2026-06-04 per Kristina (By Mosaic):
+    // real LA venue spend for 100-guest moderate weddings is $9–10K, not $5–6K.
+    test("100 guests / moderate / los-angeles total ≈ $47,000–$51,000", () => {
       const result = calculateWeddingBudget(100, "los-angeles", "moderate");
-      expect(result.total).toBeGreaterThanOrEqual(44000);
-      expect(result.total).toBeLessThanOrEqual(47000);
+      expect(result.total).toBeGreaterThanOrEqual(47000);
+      expect(result.total).toBeLessThanOrEqual(51000);
     });
 
-    test("150 guests / luxury / santa-barbara total range ≈ $90,000–$115,000", () => {
+    test("150 guests / luxury / santa-barbara total range ≈ $112,000–$122,000", () => {
       const result = calculateWeddingBudget(150, "santa-barbara", "luxury");
-      // The total (pre-range) should be within the target band
-      expect(result.total).toBeGreaterThanOrEqual(90000);
-      expect(result.total).toBeLessThanOrEqual(115000);
+      expect(result.total).toBeGreaterThanOrEqual(112000);
+      expect(result.total).toBeLessThanOrEqual(122000);
     });
 
-    test("75 guests / budget / socal-suburbs total ≈ $22,000–$27,000", () => {
+    test("75 guests / budget / socal-suburbs total ≈ $23,000–$27,000", () => {
       const result = calculateWeddingBudget(75, "socal-suburbs", "budget");
-      expect(result.total).toBeGreaterThanOrEqual(22000);
+      expect(result.total).toBeGreaterThanOrEqual(23000);
       expect(result.total).toBeLessThanOrEqual(27000);
     });
   });

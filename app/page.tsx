@@ -7,8 +7,9 @@ import LocationPicker from "@/components/LocationPicker";
 import TierPicker from "@/components/TierPicker";
 import ResultsBreakdown from "@/components/ResultsBreakdown";
 import FloatingRail from "@/components/FloatingRail";
-import { calculateWeddingBudget, BudgetResult, Tier, Location } from "@/config/costModel";
+import { calculateWeddingBudget, BudgetResult, Tier, Location, DayOfWeek, dowDayLabels } from "@/config/costModel";
 import WeddingDatePicker from "@/components/WeddingDatePicker";
+import MobileEstimateBar from "@/components/MobileEstimateBar";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -36,17 +37,36 @@ export default function HomePage() {
   const [tier, setTier] = useState<Tier>("moderate");
   const [dateStatus, setDateStatus] = useState<DateStatus>("season");
   const [weddingDate, setWeddingDate] = useState<Date | null>(null);
+  const [weddingSeason, setWeddingSeason] = useState<"spring" | "summer" | "fall" | "winter" | null>(null);
+  const [weddingDayOfWeek, setWeddingDayOfWeek] = useState<DayOfWeek | null>(null);
   const [venueStatus, setVenueStatus] = useState<"touring" | "booked" | "none">("none");
   const [result, setResult] = useState<BudgetResult | null>(null);
   const [showStickyFooter, setShowStickyFooter] = useState(false);
   const [stickyDismissed, setStickyDismissed] = useState(false);
 
+  // Derive timing inputs for the cost model from all date-related state
+  const timingMonth: number | undefined = (() => {
+    if (weddingDate) return weddingDate.getMonth();
+    // Representative month for each season
+    if (weddingSeason === "spring") return 3;  // April
+    if (weddingSeason === "summer") return 6;  // July
+    if (weddingSeason === "fall")   return 9;  // October
+    if (weddingSeason === "winter") return 0;  // January
+    return undefined;
+  })();
+
+  const timingDow: DayOfWeek | undefined = (() => {
+    if (weddingDate) return weddingDate.getDay() as DayOfWeek;
+    if (weddingDayOfWeek !== null) return weddingDayOfWeek;
+    return undefined;
+  })();
+
   // Recalculate on any input change (for live rail)
   useEffect(() => {
     if (step >= 2) {
-      setResult(calculateWeddingBudget(guests, location, tier));
+      setResult(calculateWeddingBudget(guests, location, tier, timingMonth, timingDow));
     }
-  }, [guests, location, tier, step]);
+  }, [guests, location, tier, timingMonth, timingDow, step]);
 
   // Sticky footer after scroll
   useEffect(() => {
@@ -82,7 +102,7 @@ export default function HomePage() {
     if (step < 4) {
       setStep(step + 1);
     } else {
-      const finalResult = calculateWeddingBudget(guests, location, tier);
+      const finalResult = calculateWeddingBudget(guests, location, tier, timingMonth, timingDow);
       setResult(finalResult);
       setStep(5);
     }
@@ -259,7 +279,7 @@ export default function HomePage() {
 
       {/* ─── Calculator Steps ─────────────────────────────────────────────────── */}
       {step >= 1 && step <= 4 && (
-        <div className="min-h-screen" style={{ background: "var(--alabaster)" }}>
+        <><div className="min-h-screen" style={{ background: "var(--alabaster)" }}>
           {/* Header */}
           <header className="px-6 py-5 flex items-center justify-between max-w-7xl mx-auto w-full border-b" style={{ borderColor: "var(--sand)" }}>
             <button
@@ -289,8 +309,8 @@ export default function HomePage() {
 
           {/* Main content with asymmetric grid */}
           <div className="max-w-7xl mx-auto px-6 py-8 lg:grid lg:gap-12" style={{ gridTemplateColumns: "7fr 4fr" }}>
-            {/* Left: Steps */}
-            <div className="min-w-0">
+            {/* Left: Steps — pb-24 gives clearance for the mobile sticky bar */}
+            <div className="min-w-0 pb-24 lg:pb-0">
               <AnimatePresence mode="wait">
                 {steps.map(
                   (stepConfig, idx) =>
@@ -337,6 +357,10 @@ export default function HomePage() {
                               onDateChange={setDateStatus}
                               weddingDate={weddingDate}
                               onWeddingDateChange={setWeddingDate}
+                              weddingSeason={weddingSeason}
+                              onSeasonChange={setWeddingSeason}
+                              weddingDayOfWeek={weddingDayOfWeek}
+                              onDayOfWeekChange={setWeddingDayOfWeek}
                               venueStatus={venueStatus}
                               onVenueChange={setVenueStatus}
                             />
@@ -394,7 +418,7 @@ export default function HomePage() {
               </AnimatePresence>
             </div>
 
-            {/* Right: Floating rail */}
+            {/* Right: Floating rail (desktop only) */}
             <FloatingRail
               result={step >= 2 ? result : null}
               currentStep={step}
@@ -402,6 +426,10 @@ export default function HomePage() {
             />
           </div>
         </div>
+
+        {/* Mobile sticky estimate bar (steps 2–4 only) */}
+        <MobileEstimateBar result={result} step={step} />
+        </>
       )}
 
       {/* ─── Results Page ──────────────────────────────────────────────────────── */}
@@ -537,21 +565,39 @@ export default function HomePage() {
 
 // ─── Date Status Picker ────────────────────────────────────────────────────────
 function DateStatusPicker({
-  dateStatus,
-  onDateChange,
-  weddingDate,
-  onWeddingDateChange,
-  venueStatus,
-  onVenueChange,
+  dateStatus, onDateChange,
+  weddingDate, onWeddingDateChange,
+  weddingSeason, onSeasonChange,
+  weddingDayOfWeek, onDayOfWeekChange,
+  venueStatus, onVenueChange,
 }: {
   dateStatus: DateStatus;
   onDateChange: (v: DateStatus) => void;
   weddingDate: Date | null;
   onWeddingDateChange: (d: Date) => void;
+  weddingSeason: "spring" | "summer" | "fall" | "winter" | null;
+  onSeasonChange: (s: "spring" | "summer" | "fall" | "winter") => void;
+  weddingDayOfWeek: DayOfWeek | null;
+  onDayOfWeekChange: (d: DayOfWeek) => void;
   venueStatus: "touring" | "booked" | "none";
   onVenueChange: (v: "touring" | "booked" | "none") => void;
 }) {
   const EASE_REF = [0.22, 1, 0.36, 1] as const;
+
+  const seasonOptions: { id: "spring" | "summer" | "fall" | "winter"; label: string; months: string }[] = [
+    { id: "spring", label: "Spring", months: "Mar – May" },
+    { id: "summer", label: "Summer", months: "Jun – Aug" },
+    { id: "fall",   label: "Fall",   months: "Sep – Nov" },
+    { id: "winter", label: "Winter", months: "Dec – Feb" },
+  ];
+
+  // Saturday=6 first since it's the most common; Sunday=0; Friday=5; weekday represented by Wed=3
+  const dowOptions: { dow: DayOfWeek; label: string; note: string }[] = [
+    { dow: 6, label: "Saturday",  note: "Peak pricing" },
+    { dow: 5, label: "Friday",    note: "~15% savings" },
+    { dow: 0, label: "Sunday",    note: "~22% savings" },
+    { dow: 3, label: "Weekday",   note: "~38% savings" },
+  ];
 
   const dateOptions: { id: DateStatus; label: string; sub: string }[] = [
     {
@@ -645,6 +691,125 @@ function DateStatusPicker({
                           onChange={onWeddingDateChange}
                           compact
                         />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          }
+
+          // "Just a season" card also expands when selected
+          if (opt.id === "season") {
+            const seasonLabel = weddingSeason
+              ? seasonOptions.find((s) => s.id === weddingSeason)?.label
+              : null;
+            const dowLabel = weddingDayOfWeek !== null
+              ? dowOptions.find((d) => d.dow === weddingDayOfWeek)?.label
+              : null;
+            const subText = selected && (seasonLabel || dowLabel)
+              ? [seasonLabel, dowLabel].filter(Boolean).join(" · ")
+              : opt.sub;
+
+            return (
+              <div
+                key={opt.id}
+                role="radio"
+                aria-checked={selected}
+                className="rounded-lg transition-all duration-300"
+                style={{
+                  border: `1px solid ${selected ? "var(--clay)" : "var(--sand)"}`,
+                  background: selected ? "var(--bone)" : "var(--alabaster)",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  className="flex items-center gap-3 p-4 cursor-pointer"
+                  onClick={() => onDateChange("season")}
+                >
+                  <div
+                    className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                    style={{ borderColor: selected ? "var(--clay)" : "var(--sand)" }}
+                  >
+                    {selected && (
+                      <motion.div
+                        layoutId="date-radio"
+                        className="w-2 h-2 rounded-full"
+                        style={{ background: "var(--clay)" }}
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-body text-sm font-medium" style={{ color: "var(--ink)" }}>{opt.label}</p>
+                    <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)" }}>{subText}</p>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {selected && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.32, ease: EASE_REF }}
+                      style={{ overflow: "hidden" }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div style={{ borderTop: "1px solid var(--sand)", padding: "16px" }} className="space-y-5">
+                        {/* Season chips */}
+                        <div>
+                          <p className="font-body text-xs uppercase tracking-widest mb-3" style={{ color: "var(--muted)" }}>
+                            Which season?
+                          </p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {seasonOptions.map((s) => (
+                              <button
+                                key={s.id}
+                                onClick={() => onSeasonChange(s.id)}
+                                className="text-left px-4 py-3 rounded-lg transition-all duration-200"
+                                style={{
+                                  background: weddingSeason === s.id ? "var(--clay)" : "var(--alabaster)",
+                                  color: weddingSeason === s.id ? "var(--bone)" : "var(--ink)",
+                                  border: `1px solid ${weddingSeason === s.id ? "var(--clay)" : "var(--sand)"}`,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <p className="font-body text-sm font-medium">{s.label}</p>
+                                <p className="font-body text-xs mt-0.5" style={{ color: weddingSeason === s.id ? "rgba(251,248,243,0.75)" : "var(--muted)" }}>
+                                  {s.months}
+                                </p>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Day-of-week chips */}
+                        <div>
+                          <p className="font-body text-xs uppercase tracking-widest mb-3" style={{ color: "var(--muted)" }}>
+                            Day of week?
+                          </p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {dowOptions.map((d) => (
+                              <button
+                                key={d.dow}
+                                onClick={() => onDayOfWeekChange(d.dow)}
+                                className="text-left px-4 py-3 rounded-lg transition-all duration-200"
+                                style={{
+                                  background: weddingDayOfWeek === d.dow ? "var(--clay)" : "var(--alabaster)",
+                                  color: weddingDayOfWeek === d.dow ? "var(--bone)" : "var(--ink)",
+                                  border: `1px solid ${weddingDayOfWeek === d.dow ? "var(--clay)" : "var(--sand)"}`,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <p className="font-body text-sm font-medium">{d.label}</p>
+                                <p className="font-body text-xs mt-0.5" style={{ color: weddingDayOfWeek === d.dow ? "rgba(251,248,243,0.75)" : "var(--muted)" }}>
+                                  {d.note}
+                                </p>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                   )}

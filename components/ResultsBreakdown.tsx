@@ -255,6 +255,42 @@ export default function ResultsBreakdown({
             <span className="invoice-value">{fmt(result.contingencyAmount)}</span>
           </motion.div>
 
+          {/* Seasonal adjustment line */}
+          {result.month !== null && result.seasonalMult !== 1.0 && (
+            <motion.div variants={itemVariants} className="invoice-line">
+              <div>
+                <span className="invoice-label" style={{ color: result.seasonalMult > 1 ? "var(--terracotta)" : "var(--olive)" }}>
+                  Seasonal demand ({["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][result.month]})
+                </span>
+                <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)", opacity: 0.8 }}>
+                  {result.seasonalMult > 1
+                    ? `+${Math.round((result.seasonalMult - 1) * 100)}% peak season premium`
+                    : `${Math.round((result.seasonalMult - 1) * 100)}% off-peak discount`}
+                </p>
+              </div>
+              <span className="invoice-value" style={{ color: result.seasonalMult > 1 ? "var(--terracotta)" : "var(--olive)", fontSize: "0.9rem" }}>
+                {result.seasonalMult > 1 ? "+" : ""}{fmt((result.seasonalMult - 1) * (result.subtotalBeforeContingency + result.contingencyAmount) / result.seasonalMult)}
+              </span>
+            </motion.div>
+          )}
+
+          {/* Day-of-week adjustment line */}
+          {result.dayOfWeek !== null && result.dowAdjustmentAmount !== 0 && (
+            <motion.div variants={itemVariants} className="invoice-line">
+              <div>
+                <span className="invoice-label" style={{ color: "var(--olive)" }}>
+                  {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][result.dayOfWeek]} wedding savings
+                </span>
+                <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)", opacity: 0.8 }}>
+                  Venue, entertainment & rentals discount vs. Saturday
+                </p>
+              </div>
+              <span className="invoice-value" style={{ color: "var(--olive)", fontSize: "0.9rem" }}>
+                {fmt(result.dowAdjustmentAmount)}
+              </span>
+            </motion.div>
+          )}
+
           {/* Grand total */}
           <motion.div
             variants={itemVariants}
@@ -293,6 +329,24 @@ export default function ResultsBreakdown({
               {fmt(result.rangeLow)} – {fmt(result.rangeHigh)}
             </p>
           </motion.div>
+
+          {/* Timing insight notes */}
+          {(result.seasonNote || result.dowNote) && (
+            <motion.div variants={itemVariants} className="space-y-2">
+              {result.seasonNote && (
+                <div className="flex gap-2 items-start p-3 rounded-lg" style={{ background: "rgba(176,122,87,0.07)", border: "1px solid var(--sand)" }}>
+                  <span style={{ color: "var(--clay)", fontSize: 14, flexShrink: 0 }}>◈</span>
+                  <p className="font-body text-xs leading-relaxed" style={{ color: "var(--ink)" }}>{result.seasonNote}</p>
+                </div>
+              )}
+              {result.dowNote && (
+                <div className="flex gap-2 items-start p-3 rounded-lg" style={{ background: "rgba(110,114,83,0.07)", border: "1px solid var(--sand)" }}>
+                  <span style={{ color: "var(--olive)", fontSize: 14, flexShrink: 0 }}>◈</span>
+                  <p className="font-body text-xs leading-relaxed" style={{ color: "var(--ink)" }}>{result.dowNote}</p>
+                </div>
+              )}
+            </motion.div>
+          )}
         </motion.div>
       </div>
 

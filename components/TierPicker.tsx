@@ -18,7 +18,7 @@ const tiers: TierCard[] = [
   {
     id: "budget",
     label: "Budget",
-    subtitle: "Intimate",
+    subtitle: "Conservative",
     description: "Beautiful without excess. Smart vendor choices, intentional simplicity, full heart.",
     examples: ["DJ over live band", "Seasonal florals", "Micro-menu catering", "Rented tablescapes"],
     color: "var(--olive)",
