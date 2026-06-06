@@ -11,6 +11,7 @@ import { calculateWeddingBudget, BudgetResult, Tier, Location, DayOfWeek, dowDay
 import WeddingDatePicker from "@/components/WeddingDatePicker";
 import MobileEstimateBar from "@/components/MobileEstimateBar";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -152,19 +153,6 @@ export default function HomePage() {
           {/* Hero */}
           <main className="flex-1 flex items-center">
             <div className="max-w-4xl mx-auto px-6 py-20">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.7 }}
-              >
-                <p
-                  className="font-body text-xs uppercase tracking-widest mb-6"
-                  style={{ color: "var(--clay)" }}
-                >
-                  By Mosaic Events · Est. 2022 · LA-based
-                </p>
-              </motion.div>
-
               <motion.h1
                 className="display-xl mb-6"
                 initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 24 }}
@@ -249,6 +237,7 @@ export default function HomePage() {
               </motion.div>
             </div>
           </main>
+          <SiteFooter />
         </motion.div>
       )}
 
@@ -462,6 +451,7 @@ export default function HomePage() {
               totalSteps={4}
             />
           </div>
+          <SiteFooter />
         </motion.div>
       )}
 

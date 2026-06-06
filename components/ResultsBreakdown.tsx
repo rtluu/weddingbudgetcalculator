@@ -573,15 +573,7 @@ export default function ResultsBreakdown({
         </motion.div>
       )}
 
-      {/* Attribution */}
-      <div className="pt-4 border-t" style={{ borderColor: "var(--sand)" }}>
-        <p className="font-body text-xs text-center" style={{ color: "var(--muted)" }}>
-          By Mosaic Events · Est. 2022 · LA-based · bymosaic.com
-        </p>
-        <p className="font-body text-xs text-center mt-1" style={{ color: "var(--muted)", opacity: 0.6 }}>
-          Estimates are based on real LA market data. Individual vendor quotes will vary.
-        </p>
-      </div>
+      {/* Footer attribution — rendered by parent page via SiteFooter */}
     </div>
   );
 }

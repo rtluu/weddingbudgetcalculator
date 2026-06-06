@@ -2,7 +2,6 @@
 
 interface Props {
   onLogoClick?: () => void;
-  /** Show a back arrow icon (results page). Default: false */
   showBack?: boolean;
   onBack?: () => void;
   bookingUrl?: string;
@@ -36,43 +35,42 @@ export default function SiteHeader({
           gap: 12,
         }}
       >
-        {/* ── Left: logo mark + wordmark ── */}
+        {/* ── Left: product name ── */}
         <button
           onClick={onLogoClick}
-          aria-label="By Mosaic Events — home"
+          aria-label="Wedding Budget Calculator — home"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
             background: "none",
             border: "none",
             cursor: onLogoClick ? "pointer" : "default",
             padding: 0,
-            flexShrink: 0,
+            flexShrink: 1,
+            minWidth: 0,
+            textAlign: "left",
           }}
         >
-          {/* Circle mark — real brand SVG */}
-          <img
-            src="/logos/bymosaic-mark.svg"
-            alt=""
-            aria-hidden="true"
-            style={{ width: 34, height: 34, flexShrink: 0 }}
-          />
-          {/* Wordmark */}
-          <img
-            src="/logos/bymosaic-wordmark.svg"
-            alt="By Mosaic"
-            style={{ height: 16, width: "auto", flexShrink: 0 }}
-          />
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 17,
+              fontWeight: 600,
+              color: "var(--ink)",
+              letterSpacing: "-0.01em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Wedding Budget Calculator
+          </span>
         </button>
 
         {/* ── Right: actions ── */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-          {/* Back arrow — icon only, no text, so it never crowds */}
+          {/* Back arrow — results page only */}
           {showBack && onBack && (
             <button
               onClick={onBack}
               aria-label="Adjust answers"
+              title="Adjust answers"
               style={{
                 width: 36,
                 height: 36,
@@ -89,7 +87,6 @@ export default function SiteHeader({
               }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "var(--alabaster)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "transparent")}
-              title="Adjust answers"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
