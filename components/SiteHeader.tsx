@@ -62,7 +62,7 @@ export default function SiteHeader({
           <img
             src="/logos/bymosaic-wordmark.svg"
             alt="By Mosaic"
-            style={{ height: 14, width: "auto", flexShrink: 0 }}
+            style={{ height: 16, width: "auto", flexShrink: 0 }}
           />
         </button>
 
