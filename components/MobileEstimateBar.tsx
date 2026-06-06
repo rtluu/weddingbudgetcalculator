@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence, useSpring, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useSpring, useReducedMotion, useDragControls } from "framer-motion";
 import { BudgetResult, Tier, Location, locationLabels } from "@/config/costModel";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -23,6 +23,7 @@ interface Props {
 export default function MobileEstimateBar({ result, step }: Props) {
   const shouldReduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
+  const dragControls = useDragControls();
   const [displayTotal, setDisplayTotal] = useState(result?.total ?? 0);
 
   const springTotal = useSpring(result?.total ?? 0, {
@@ -82,6 +83,17 @@ export default function MobileEstimateBar({ result, step }: Props) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.40, ease: EASE }}
+            drag="y"
+            dragControls={dragControls}
+            dragListener={false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.3 }}
+            dragMomentum={false}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 80 || info.velocity.y > 400) {
+                setOpen(false);
+              }
+            }}
             className="lg:hidden"
             style={{
               position: "fixed", bottom: 0, left: 0, right: 0,
@@ -94,9 +106,17 @@ export default function MobileEstimateBar({ result, step }: Props) {
               paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 76px)",
             }}
           >
-            {/* Drag handle */}
-            <div style={{ display: "flex", justifyContent: "center", padding: "14px 0 6px" }}>
-              <div style={{ width: 40, height: 4, borderRadius: 2, background: "var(--sand)" }} />
+            {/* Drag handle — touch here to pull down */}
+            <div
+              onPointerDown={(e) => dragControls.start(e)}
+              style={{
+                display: "flex", justifyContent: "center",
+                padding: "14px 0 6px",
+                touchAction: "none",
+                cursor: "grab",
+              }}
+            >
+              <div style={{ width: 40, height: 4, borderRadius: 2, background: "var(--clay)", opacity: 0.35 }} />
             </div>
 
             <div style={{ padding: "12px 24px 0" }}>
