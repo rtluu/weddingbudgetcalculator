@@ -14,9 +14,34 @@ const fmt = (n: number) =>
   }).format(n);
 
 const tierLabels: Record<Tier, string> = {
-  budget: "Budget / Intimate",
+  budget: "Budget / Conservative",
   moderate: "Moderate / Signature",
   luxury: "Luxury / Editorial",
+};
+
+// ─── DIY reduction model ──────────────────────────────────────────────────────
+// pct = fraction of planner-managed cost that a DIY couple can realistically save.
+// Venue and Attire are 0% — you still need a space and clothes regardless.
+// Planning/Coordination is 100% — the couple IS the coordinator in DIY mode.
+// Notes explain the specific swap or skip that produces the savings.
+const DIY_REDUCTIONS: Record<string, { pct: number; note: string }> = {
+  "Planning/Coordination": { pct: 1.00, note: "You become the coordinator — doable, but time-intensive" },
+  "Florals":               { pct: 0.60, note: "Grocery blooms, greenery, or Costco arrangements" },
+  "Hair & Makeup":         { pct: 0.50, note: "DIY or swap skills with a talented friend" },
+  "Favors":                { pct: 0.70, note: "Skip entirely — most guests forget them anyway" },
+  "Stationery":            { pct: 0.60, note: "Canva templates + Vistaprint, or go digital" },
+  "Decor":                 { pct: 0.50, note: "Amazon, thrift stores, candles, borrowed items" },
+  "Cake/Desserts":         { pct: 0.50, note: "Costco or grocery store bakery cake" },
+  "Videography":           { pct: 0.65, note: "Skip, or ask a friend with a nice camera" },
+  "Music (DJ/band)":       { pct: 0.40, note: "Curated Spotify playlist + quality speakers" },
+  "Transportation":        { pct: 0.30, note: "Uber/Lyft for guests vs. chartered shuttles" },
+  "Officiant":             { pct: 0.20, note: "Have a friend get ordained online — it's free" },
+  "Bar":                   { pct: 0.15, note: "Beer + wine only, skip the full bar program" },
+  "Catering":              { pct: 0.10, note: "Buffet or food stations vs. plated service" },
+  "Rentals":               { pct: 0.15, note: "Lean on venue-provided furniture and linens" },
+  "Photography":           { pct: 0.10, note: "Emerging photographer building their portfolio" },
+  "Venue":                 { pct: 0.00, note: "" },
+  "Attire (both)":         { pct: 0.00, note: "" },
 };
 
 function kristinasNote(result: BudgetResult): string {
@@ -59,8 +84,24 @@ export default function ResultsBreakdown({
 
   const plannerFee = result.tier === "luxury" ? 0.12 : 0.10;
   const plannerAmount = result.total * plannerFee;
-  const diyPenalty = result.total * 0.08; // avg overage without planner
-  const netWithPlanner = result.total + plannerAmount - diyPenalty;
+  const diyPenalty = result.total * 0.08;
+
+  // Build per-category DIY view
+  const diyCategories = result.categories.map((cat) => {
+    const reduction = DIY_REDUCTIONS[cat.name];
+    const pct = reduction?.pct ?? 0;
+    return {
+      ...cat,
+      diySubtotal: cat.subtotal * (1 - pct),
+      savings: cat.subtotal * pct,
+      pct,
+      note: reduction?.note ?? "",
+    };
+  });
+  const diySubtotal = diyCategories.reduce((s, c) => s + c.diySubtotal, 0);
+  const diyContingency = diySubtotal * 0.08;
+  const diyTotal = diySubtotal + diyContingency;
+  const diyTotalSavings = result.total - diyTotal;
 
   const containerVariants = {
     hidden: {},
@@ -186,15 +227,30 @@ export default function ResultsBreakdown({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: EASE }}
-          className="card-bone p-5 border-l-4"
-          style={{ borderLeftColor: "var(--terracotta)" }}
+          className="space-y-2"
         >
-          <p className="font-body text-sm" style={{ color: "var(--ink)" }}>
-            DIY couples typically overspend by 8–12% due to vendor missteps, timing errors, and not knowing what to negotiate.{" "}
-            <span style={{ color: "var(--terracotta)", fontWeight: 500 }}>
-              That&apos;s approximately {fmt(diyPenalty)} in avoidable overages
+          <div
+            className="p-4 rounded-lg flex items-baseline justify-between"
+            style={{ background: "rgba(110,114,83,0.10)", border: "1px solid var(--sand)" }}
+          >
+            <div>
+              <p className="font-body text-xs uppercase tracking-widest mb-0.5" style={{ color: "var(--olive)" }}>
+                DIY potential savings
+              </p>
+              <p className="font-body text-xs" style={{ color: "var(--muted)" }}>
+                Based on realistic swaps — not cutting corners on what matters
+              </p>
+            </div>
+            <span className="font-display text-xl font-semibold ml-4 flex-shrink-0" style={{ color: "var(--olive)" }}>
+              −{fmt(diyTotalSavings)}
+            </span>
+          </div>
+          <p className="font-body text-xs" style={{ color: "var(--muted)", paddingLeft: 2 }}>
+            Note: DIY couples typically overspend by 8–12% from vendor missteps alone —{" "}
+            <span style={{ color: "var(--terracotta)" }}>
+              ~{fmt(diyPenalty)} in avoidable overages
             </span>{" "}
-            on this budget — more than Kristina&apos;s coordination fee.
+            that often wipe out these savings.
           </p>
         </motion.div>
       )}
@@ -213,26 +269,63 @@ export default function ResultsBreakdown({
           animate="visible"
           className="space-y-0"
         >
-          {result.categories.map((cat) => (
-            <motion.div key={cat.name} variants={itemVariants} className="invoice-line">
-              <div className="flex-1 min-w-0">
-                <span className="invoice-label">{cat.name}</span>
-                {cat.name === "Planning/Coordination" && (
-                  <p className="font-body text-xs mt-0.5" style={{ color: "var(--clay)", opacity: 0.8 }}>
-                    Most LA couples underestimate this line.{" "}
-                    <a
-                      href={process.env.NEXT_PUBLIC_BOOKING_URL || "#lead"}
-                      className="underline hover:opacity-80 transition-opacity"
-                      style={{ color: "var(--clay)" }}
-                    >
-                      Free 20-min call →
-                    </a>
-                  </p>
-                )}
-              </div>
-              <span className="invoice-value">{fmt(cat.subtotal)}</span>
-            </motion.div>
-          ))}
+          {diyCategories.map((cat) => {
+            const hasSavings = diyMode && cat.pct > 0;
+            const isRemoved  = diyMode && cat.pct === 1.00;
+
+            return (
+              <motion.div key={cat.name} variants={itemVariants} className="invoice-line" style={{ alignItems: "flex-start" }}>
+                {/* Left: name + notes */}
+                <div className="flex-1 min-w-0 pr-4">
+                  <span className="invoice-label" style={{ textDecoration: isRemoved ? "line-through" : "none", opacity: isRemoved ? 0.5 : 1 }}>
+                    {cat.name}
+                  </span>
+                  {/* Planner mode: planning CTA */}
+                  {!diyMode && cat.name === "Planning/Coordination" && (
+                    <p className="font-body text-xs mt-0.5" style={{ color: "var(--clay)", opacity: 0.8 }}>
+                      Most LA couples underestimate this line.{" "}
+                      <a href={process.env.NEXT_PUBLIC_BOOKING_URL || "#lead"} className="underline hover:opacity-80 transition-opacity" style={{ color: "var(--clay)" }}>
+                        Free 20-min call →
+                      </a>
+                    </p>
+                  )}
+                  {/* DIY mode: swap note */}
+                  {hasSavings && cat.note && (
+                    <p className="font-body text-xs mt-0.5 leading-relaxed" style={{ color: "var(--olive)", opacity: 0.85 }}>
+                      {cat.note}
+                    </p>
+                  )}
+                </div>
+
+                {/* Right: price(s) */}
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  {hasSavings ? (
+                    <>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 6, justifyContent: "flex-end" }}>
+                        {/* original, struck out */}
+                        <span className="font-body text-xs" style={{ color: "var(--muted)", textDecoration: "line-through", fontVariantNumeric: "tabular-nums" }}>
+                          {fmt(cat.subtotal)}
+                        </span>
+                        {/* DIY price */}
+                        <span className="invoice-value" style={{ color: isRemoved ? "var(--muted)" : "var(--ink)" }}>
+                          {isRemoved ? "—" : fmt(cat.diySubtotal)}
+                        </span>
+                      </div>
+                      {/* savings badge */}
+                      <span style={{
+                        fontFamily: "var(--font-body)", fontSize: 11,
+                        color: "var(--olive)", display: "block", marginTop: 2,
+                      }}>
+                        save {fmt(cat.savings)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="invoice-value">{fmt(cat.subtotal)}</span>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
 
           {/* F&B service fee line */}
           <motion.div variants={itemVariants} className="invoice-line">
@@ -252,7 +345,21 @@ export default function ResultsBreakdown({
                 Things happen. This is the line most people skip, then regret.
               </p>
             </div>
-            <span className="invoice-value">{fmt(result.contingencyAmount)}</span>
+            {diyMode ? (
+              <div style={{ textAlign: "right" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                  <span className="font-body text-xs" style={{ color: "var(--muted)", textDecoration: "line-through", fontVariantNumeric: "tabular-nums" }}>
+                    {fmt(result.contingencyAmount)}
+                  </span>
+                  <span className="invoice-value">{fmt(diyContingency)}</span>
+                </div>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--olive)", display: "block", marginTop: 2 }}>
+                  save {fmt(result.contingencyAmount - diyContingency)}
+                </span>
+              </div>
+            ) : (
+              <span className="invoice-value">{fmt(result.contingencyAmount)}</span>
+            )}
           </motion.div>
 
           {/* Seasonal adjustment line */}
@@ -296,38 +403,39 @@ export default function ResultsBreakdown({
             variants={itemVariants}
             className="pt-4 pb-2 flex items-baseline justify-between"
           >
-            <span
-              className="font-body text-xs uppercase tracking-widest font-semibold"
-              style={{ color: "var(--ink)" }}
-            >
-              Estimated Total
+            <span className="font-body text-xs uppercase tracking-widest font-semibold" style={{ color: "var(--ink)" }}>
+              {diyMode ? "DIY Total" : "Estimated Total"}
             </span>
-            <span
-              className="font-display font-semibold"
-              style={{
-                fontSize: "1.75rem",
-                color: "var(--clay)",
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              {fmt(result.total)}
-            </span>
+            <div style={{ textAlign: "right" }}>
+              {diyMode && (
+                <span className="font-body text-sm" style={{ color: "var(--muted)", textDecoration: "line-through", fontVariantNumeric: "tabular-nums", display: "block", marginBottom: 2 }}>
+                  {fmt(result.total)}
+                </span>
+              )}
+              <span
+                className="font-display font-semibold"
+                style={{ fontSize: "1.75rem", color: diyMode ? "var(--olive)" : "var(--clay)", fontVariantNumeric: "tabular-nums" }}
+              >
+                {fmt(diyMode ? diyTotal : result.total)}
+              </span>
+            </div>
           </motion.div>
 
           {/* Range note */}
-          <motion.div
-            variants={itemVariants}
-            className="card-bone p-4 text-center"
-          >
+          <motion.div variants={itemVariants} className="card-bone p-4 text-center">
             <p className="font-body text-xs uppercase tracking-widest mb-1" style={{ color: "var(--muted)" }}>
-              Realistic range
+              {diyMode ? "DIY range" : "Realistic range"}
             </p>
-            <p
-              className="font-display font-medium"
-              style={{ fontSize: "1.25rem", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}
-            >
-              {fmt(result.rangeLow)} – {fmt(result.rangeHigh)}
+            <p className="font-display font-medium" style={{ fontSize: "1.25rem", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>
+              {diyMode
+                ? `${fmt(diyTotal * 0.9)} – ${fmt(diyTotal * 1.15)}`
+                : `${fmt(result.rangeLow)} – ${fmt(result.rangeHigh)}`}
             </p>
+            {diyMode && (
+              <p className="font-body text-xs mt-2" style={{ color: "var(--terracotta)" }}>
+                +{fmt(diyPenalty)} typical DIY overage risk not included above
+              </p>
+            )}
           </motion.div>
 
           {/* Timing insight notes */}
