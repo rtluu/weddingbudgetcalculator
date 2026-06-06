@@ -43,8 +43,6 @@ export default function HomePage() {
   const [weddingDayOfWeek, setWeddingDayOfWeek] = useState<DayOfWeek | null>(null);
   const [venueStatus, setVenueStatus] = useState<"touring" | "booked" | "none">("none");
   const [result, setResult] = useState<BudgetResult | null>(null);
-  const [showStickyFooter, setShowStickyFooter] = useState(false);
-  const [stickyDismissed, setStickyDismissed] = useState(false);
 
   // Derive timing inputs for the cost model from all date-related state
   const timingMonth: number | undefined = (() => {
@@ -69,17 +67,6 @@ export default function HomePage() {
       setResult(calculateWeddingBudget(guests, location, tier, timingMonth, timingDow));
     }
   }, [guests, location, tier, timingMonth, timingDow, step]);
-
-  // Sticky footer after scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 600 && !stickyDismissed) {
-        setShowStickyFooter(true);
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [stickyDismissed]);
 
   const handleLeadCapture = useCallback(
     async (data: { name: string; email: string; phone?: string }) => {
@@ -455,47 +442,6 @@ export default function HomePage() {
         </motion.div>
       )}
 
-      {/* ─── Sticky Footer ─────────────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {showStickyFooter && !stickyDismissed && step === 5 && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="fixed bottom-0 left-0 right-0 z-50 px-4 py-4"
-            style={{ background: "var(--ink)", borderTop: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-              <p
-                className="font-body text-sm"
-                style={{ color: "var(--bone)", opacity: 0.9 }}
-              >
-                Questions about your number? Ask Kristina.
-              </p>
-              <div className="flex items-center gap-3">
-                <a
-                  href={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-                  className="btn-clay text-sm py-2 px-4"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ background: "var(--clay)" }}
-                >
-                  Free consultation
-                </a>
-                <button
-                  onClick={() => setStickyDismissed(true)}
-                  className="font-body text-sm"
-                  style={{ color: "var(--muted)" }}
-                  aria-label="Dismiss"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }
