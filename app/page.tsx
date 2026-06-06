@@ -280,12 +280,34 @@ export default function HomePage() {
                         {/* Section header */}
                         <div className="relative">
                           <div className="relative z-10 pt-2">
-                            <p
-                              className="font-body text-xs uppercase tracking-widest mb-3"
-                              style={{ color: "var(--clay)" }}
-                            >
-                              Step {step} of 4
-                            </p>
+                            <div className="flex items-center gap-2 mb-3">
+                              {step > 1 && (
+                                <button
+                                  onClick={goBack}
+                                  aria-label="Go back"
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    padding: 0,
+                                    cursor: "pointer",
+                                    color: "var(--clay)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                    <path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                              )}
+                              <p
+                                className="font-body text-xs uppercase tracking-widest"
+                                style={{ color: "var(--clay)" }}
+                              >
+                                Step {step} of 4
+                              </p>
+                            </div>
                             <h2 className="display-lg mb-2">{stepConfig.title}</h2>
                             <p
                               className="font-body text-base"
