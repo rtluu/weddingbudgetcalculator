@@ -10,6 +10,7 @@ import FloatingRail from "@/components/FloatingRail";
 import { calculateWeddingBudget, BudgetResult, Tier, Location, DayOfWeek, dowDayLabels } from "@/config/costModel";
 import WeddingDatePicker from "@/components/WeddingDatePicker";
 import MobileEstimateBar from "@/components/MobileEstimateBar";
+import SiteHeader from "@/components/SiteHeader";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -146,33 +147,7 @@ export default function HomePage() {
           className="min-h-screen flex flex-col"
           style={{ background: "var(--alabaster)" }}
         >
-          {/* Header */}
-          <header className="px-6 py-5 flex items-center justify-between max-w-7xl mx-auto w-full">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ background: "var(--clay)" }}
-              >
-                <span className="font-display text-sm font-semibold" style={{ color: "var(--bone)" }}>
-                  M
-                </span>
-              </div>
-              <span
-                className="font-body text-sm font-medium"
-                style={{ color: "var(--ink)" }}
-              >
-                By Mosaic Events
-              </span>
-            </div>
-            <a
-              href={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-              className="btn-outline text-sm py-2 px-4"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Talk to Kristina
-            </a>
-          </header>
+          <SiteHeader bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"} />
 
           {/* Hero */}
           <main className="flex-1 flex items-center">
@@ -280,32 +255,10 @@ export default function HomePage() {
       {/* ─── Calculator Steps ─────────────────────────────────────────────────── */}
       {step >= 1 && step <= 4 && (
         <><div className="min-h-screen" style={{ background: "var(--alabaster)" }}>
-          {/* Header */}
-          <header className="px-6 py-5 flex items-center justify-between max-w-7xl mx-auto w-full border-b" style={{ borderColor: "var(--sand)" }}>
-            <button
-              onClick={restart}
-              className="flex items-center gap-2 font-body text-sm"
-              style={{ color: "var(--clay)" }}
-            >
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center"
-                style={{ background: "var(--clay)" }}
-              >
-                <span className="font-display text-xs font-semibold" style={{ color: "var(--bone)" }}>
-                  M
-                </span>
-              </div>
-              By Mosaic Events
-            </button>
-            <a
-              href={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-              className="btn-clay text-sm py-2 px-4"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Talk to Kristina
-            </a>
-          </header>
+          <SiteHeader
+            onLogoClick={restart}
+            bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
+          />
 
           {/* Main content with asymmetric grid */}
           <div className="max-w-7xl mx-auto px-6 py-8 lg:grid lg:gap-12" style={{ gridTemplateColumns: "7fr 4fr" }}>
@@ -443,40 +396,12 @@ export default function HomePage() {
           className="min-h-screen"
           style={{ background: "var(--alabaster)" }}
         >
-          {/* Header */}
-          <header className="px-6 py-5 flex items-center justify-between max-w-7xl mx-auto w-full border-b" style={{ borderColor: "var(--sand)" }}>
-            <button
-              onClick={restart}
-              className="flex items-center gap-2 font-body text-sm"
-              style={{ color: "var(--clay)" }}
-            >
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center"
-                style={{ background: "var(--clay)" }}
-              >
-                <span className="font-display text-xs font-semibold" style={{ color: "var(--bone)" }}>
-                  M
-                </span>
-              </div>
-              By Mosaic Events
-            </button>
-            <div className="flex gap-3">
-              <button
-                onClick={goBack}
-                className="btn-outline text-sm py-2 px-4"
-              >
-                ← Adjust
-              </button>
-              <a
-                href={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-                className="btn-clay text-sm py-2 px-4"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Talk to Kristina
-              </a>
-            </div>
-          </header>
+          <SiteHeader
+            onLogoClick={restart}
+            showBack
+            onBack={goBack}
+            bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
+          />
 
           {/* Results content */}
           <div className="max-w-7xl mx-auto px-6 py-8 lg:grid lg:gap-12" style={{ gridTemplateColumns: "7fr 4fr" }}>
