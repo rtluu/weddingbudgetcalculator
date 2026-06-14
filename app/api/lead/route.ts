@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { Tier, Location, locationLabels } from "@/config/costModel";
+import React from "react";
+import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
+import { Tier, Location, DayOfWeek, locationLabels, calculateWeddingBudget } from "@/config/costModel";
+import { EstimatePDF } from "./EstimatePDF";
 
 // Lazy-initialize so build doesn't fail without env vars
 function getResend() {
@@ -72,6 +75,9 @@ export async function POST(req: NextRequest) {
       tier,
       dateStatus,
       venueStatus,
+      venueName,
+      timingMonth,
+      timingDow,
       calculatedTotal,
     } = body as {
       name: string;
@@ -82,6 +88,9 @@ export async function POST(req: NextRequest) {
       tier: Tier;
       dateStatus: string;
       venueStatus: string;
+      venueName?: string;
+      timingMonth?: number;
+      timingDow?: DayOfWeek;
       calculatedTotal: number;
     };
 
@@ -95,6 +104,13 @@ export async function POST(req: NextRequest) {
     const score = scoreLead(guestCount, tier, venueStatus);
     const recipientEmail = process.env.RECIPIENT_EMAIL || "kristina@bymosaic.com";
     const locationName = locationLabels[location] ?? location;
+
+    // Generate PDF
+    const budgetResult = calculateWeddingBudget(guestCount, location, tier, timingMonth, timingDow);
+    const pdfBuffer = await renderToBuffer(
+      React.createElement(EstimatePDF, { name, result: budgetResult, venueName }) as React.ReactElement<DocumentProps>
+    );
+    const pdfBase64 = pdfBuffer.toString("base64");
 
     // ─── Email to Kristina ─────────────────────────────────────────────────
     const adminEmailHtml = `
@@ -163,6 +179,7 @@ export async function POST(req: NextRequest) {
       <div class="field-label">Venue status</div>
       <div class="field-value">${venueLabel[venueStatus] ?? venueStatus}</div>
     </div>
+    ${venueName ? `<div class="field"><div class="field-label">Venue name</div><div class="field-value" style="font-weight:500;">${venueName}</div></div>` : ""}
 
     <a href="mailto:${email}?subject=Your By Mosaic wedding estimate&body=Hi ${name}," class="cta">Reply to ${name} →</a>
 
@@ -193,13 +210,13 @@ export async function POST(req: NextRequest) {
     .cta { display: inline-block; padding: 14px 28px; background: #B07A57; color: #FBF8F3; text-decoration: none; border-radius: 6px; font-family: 'Helvetica Neue', sans-serif; font-size: 15px; margin: 8px 4px 8px 0; }
     .cta-outline { display: inline-block; padding: 13px 24px; background: transparent; color: #B07A57; text-decoration: none; border-radius: 6px; border: 1px solid #B07A57; font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin: 8px 4px; }
     .detail { font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #8C8275; }
-    .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #E4DAC9; }
+    .detail-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #E4DAC9; gap: 16px; }
     .footer { margin-top: 32px; font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #8C8275; text-align: center; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo">By Mosaic Events · Est. 2022 · Los Angeles</div>
+    <div class="logo">By Mosaic LLC · Los Angeles</div>
 
     <h1>Your wedding estimate, ${name.split(" ")[0]}.</h1>
     <p style="color: #8C8275; font-size: 15px; margin-bottom: 20px;">Built from real LA vendor data. Here's what your mosaic looks like.</p>
@@ -211,23 +228,22 @@ export async function POST(req: NextRequest) {
 
     <div>
       <div class="detail-row">
-        <span class="detail">Guests</span>
+        <span class="detail">Guests:</span>
         <span class="detail" style="color: #2B2622; font-weight: 500;">${guestCount}</span>
       </div>
       <div class="detail-row">
-        <span class="detail">Location</span>
+        <span class="detail">Location:</span>
         <span class="detail" style="color: #2B2622; font-weight: 500;">${locationName}</span>
       </div>
       <div class="detail-row">
-        <span class="detail">Style</span>
+        <span class="detail">Style:</span>
         <span class="detail" style="color: #2B2622; font-weight: 500;">${tierLabel[tier]}</span>
       </div>
+      ${venueName ? `<div class="detail-row"><span class="detail">Venue:</span><span class="detail" style="color: #2B2622; font-weight: 500;">${venueName}</span></div>` : ""}
     </div>
 
-    <div class="divider"></div>
-
-    <p class="note">
-      "Reply with any question — I read these myself. If your number surprised you, let&apos;s talk about which lines have the most flexibility. That&apos;s usually where we find room." — Kristina
+    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; color: #2B2622; line-height: 1.6; margin: 24px 0 8px 0;">
+      Your PDF is attached to this message and if you&apos;d like to talk with a wedding professional we&apos;re here to help!
     </p>
 
     <div style="margin-top: 24px;">
@@ -236,7 +252,7 @@ export async function POST(req: NextRequest) {
     </div>
 
     <div class="footer">
-      <p>By Mosaic Events · bymosaic.com<br>
+      <p>By Mosaic LLC · bymosaic.com<br>
       Numbers reflect current LA market rates. Individual quotes will vary.<br>
       You received this because you requested it from our budget calculator.</p>
     </div>
@@ -269,6 +285,12 @@ export async function POST(req: NextRequest) {
         subject: "Your By Mosaic wedding estimate",
         html: coupleEmailHtml,
         replyTo: recipientEmail,
+        attachments: [
+          {
+            filename: "your-mosaic-estimate.pdf",
+            content: pdfBase64,
+          },
+        ],
       })
     );
 

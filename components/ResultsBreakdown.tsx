@@ -52,7 +52,13 @@ function kristinasNote(result: BudgetResult): string {
   if (tier === "luxury") {
     return "Editorial-tier weddings have tight vendor choreography. The couples who execute these flawlessly almost always have a planner coordinating behind the scenes.";
   }
-  if (location === "santa-barbara" || location === "other-major-metro") {
+  if (
+    location === "santa-barbara" ||
+    location === "other-major-metro" ||
+    location === "washington-dc" ||
+    location === "maryland-montgomery" ||
+    location === "northern-virginia"
+  ) {
     return "This market is competitive. The venues that photograph beautifully book 12–18 months out. If you don't have a venue yet, that's the first call to make.";
   }
   if (guests >= 150) {
@@ -67,11 +73,13 @@ function kristinasNote(result: BudgetResult): string {
 interface ResultsBreakdownProps {
   result: BudgetResult;
   onLeadCapture: (data: { name: string; email: string; phone?: string }) => void;
+  alreadyCaptured?: boolean;
 }
 
 export default function ResultsBreakdown({
   result,
   onLeadCapture,
+  alreadyCaptured = false,
 }: ResultsBreakdownProps) {
   const shouldReduceMotion = useReducedMotion();
   const [diyMode, setDiyMode] = useState(false);
@@ -157,26 +165,38 @@ export default function ResultsBreakdown({
         <p className="font-body text-xs uppercase tracking-widest" style={{ color: "var(--muted)" }}>
           Your estimated range · {result.guests} guests · {locationLabels[result.location]} · {tierLabels[result.tier]}
         </p>
-        <div className="flex flex-wrap items-baseline gap-3">
+        <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em", flexWrap: "nowrap", overflow: "hidden" }}>
           <span
             className="font-display font-semibold"
             style={{
-              fontSize: "clamp(2.5rem, 8vw, 4rem)",
+              fontSize: "clamp(1.75rem, 6.5vw, 3.5rem)",
               color: "var(--clay)",
               fontVariantNumeric: "tabular-nums",
               fontOpticalSizing: "auto",
+              whiteSpace: "nowrap",
             }}
           >
             {fmt(result.rangeLow)}
           </span>
-          <span className="font-body text-2xl" style={{ color: "var(--muted)" }}>—</span>
+          <span
+            className="font-display"
+            style={{
+              fontSize: "clamp(1.75rem, 6.5vw, 3.5rem)",
+              color: "var(--clay)",
+              opacity: 0.4,
+              lineHeight: 1,
+            }}
+          >
+            –
+          </span>
           <span
             className="font-display font-semibold"
             style={{
-              fontSize: "clamp(2.5rem, 8vw, 4rem)",
-              color: "var(--ink)",
+              fontSize: "clamp(1.75rem, 6.5vw, 3.5rem)",
+              color: "var(--clay)",
               fontVariantNumeric: "tabular-nums",
               fontOpticalSizing: "auto",
+              whiteSpace: "nowrap",
             }}
           >
             {fmt(result.rangeHigh)}
@@ -186,8 +206,8 @@ export default function ResultsBreakdown({
           className="h-px w-16 rounded-full"
           style={{ background: "var(--clay)" }}
         />
-        <p className="font-body text-sm italic" style={{ color: "var(--muted)" }}>
-          "{kristinasNote(result)}" — Kristina
+        <p className="font-body text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+          {transitionCopy}
         </p>
       </motion.div>
 
@@ -466,8 +486,8 @@ export default function ResultsBreakdown({
         className="card-bone p-6 space-y-4"
         style={{ borderLeft: "3px solid var(--clay)" }}
       >
-        <p className="font-body text-sm leading-relaxed" style={{ color: "var(--ink)" }}>
-          {transitionCopy}
+        <p className="font-body text-sm italic leading-relaxed" style={{ color: "var(--ink)" }}>
+          "{kristinasNote(result)}" — Kristina
         </p>
         <div className="flex flex-wrap gap-3">
           <a
@@ -476,13 +496,20 @@ export default function ResultsBreakdown({
           >
             Schedule a free consultation
           </a>
-          <button
-            onClick={() => setShowLeadForm(true)}
-            className="btn-outline text-sm"
-          >
-            Email me this estimate (PDF)
-          </button>
+          {!alreadyCaptured && (
+            <button
+              onClick={() => setShowLeadForm(true)}
+              className="btn-outline text-sm"
+            >
+              Email me this estimate (PDF)
+            </button>
+          )}
         </div>
+        {alreadyCaptured && (
+          <p className="font-body text-xs" style={{ color: "var(--olive)" }}>
+            ✓ Your estimate is on its way — Kristina will be in touch within 24 hours.
+          </p>
+        )}
       </motion.div>
 
       {/* Lead capture form */}

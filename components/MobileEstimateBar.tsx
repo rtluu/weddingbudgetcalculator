@@ -255,6 +255,7 @@ export default function MobileEstimateBar({ result, step }: Props) {
           position: "fixed", bottom: 0, left: 0, right: 0,
           zIndex: 48,
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          boxShadow: "0 50vh 0 50vh var(--bone)",
         }}
       >
         <button

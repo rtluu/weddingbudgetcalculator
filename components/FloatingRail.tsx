@@ -12,7 +12,7 @@ const fmt = (n: number) =>
   }).format(n);
 
 const tierShort: Record<Tier, string> = {
-  budget: "Intimate",
+  budget: "Conservative",
   moderate: "Signature",
   luxury: "Editorial",
 };

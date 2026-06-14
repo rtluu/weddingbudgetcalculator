@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Hanken_Grotesk } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -32,6 +33,13 @@ export const metadata: Metadata = {
     description:
       "By Mosaic Events · Built by an LA wedding planner, not a spreadsheet. Free, instant, honest.",
     type: "website",
+    url: "https://bymosaic-wedding-budget.netlify.app",
+    siteName: "By Mosaic Wedding Budget Calculator",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "What will your wedding actually cost?",
+    description: "A real LA estimate in 60 seconds. Built by Kristina at By Mosaic Events — not a spreadsheet.",
   },
 };
 
@@ -52,6 +60,9 @@ export default function RootLayout({
       }
     >
       <body>{children}</body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }

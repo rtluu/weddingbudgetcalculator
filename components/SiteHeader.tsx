@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 interface Props {
   onLogoClick?: () => void;
   showBack?: boolean;
@@ -13,6 +15,16 @@ export default function SiteHeader({
   onBack,
   bookingUrl = "#",
 }: Props) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 600px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   return (
     <header
       style={{
@@ -21,6 +33,7 @@ export default function SiteHeader({
         position: "sticky",
         top: 0,
         zIndex: 40,
+        boxShadow: "0 -50vh 0 50vh var(--bone)",
       }}
     >
       <div
@@ -103,19 +116,31 @@ export default function SiteHeader({
               fontFamily: "var(--font-body)",
               fontSize: 13,
               fontWeight: 500,
-              padding: "8px 16px",
+              padding: isMobile ? "7px 12px" : "8px 16px",
               borderRadius: 8,
               background: "var(--clay)",
               color: "var(--bone)",
               textDecoration: "none",
               whiteSpace: "nowrap",
               flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
               transition: "background 0.15s",
             }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.background = "var(--terracotta)")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.background = "var(--clay)")}
           >
-            Talk to Kristina
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ flexShrink: 0 }}
+            >
+              <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" fill="currentColor"/>
+            </svg>
+            {isMobile ? "Chat" : "Talk to Kristina"}
           </a>
         </div>
       </div>

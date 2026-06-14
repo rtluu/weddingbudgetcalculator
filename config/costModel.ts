@@ -16,6 +16,10 @@ export type Location =
   | "palm-springs"
   | "socal-suburbs"
   | "other-major-metro"
+  // DC metro ("Other Metro" expansion) — calibrated 2026-06 from market research
+  | "washington-dc"
+  | "maryland-montgomery"
+  | "northern-virginia"
   | "us-average";
 
 export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0=Sun, 6=Sat
@@ -75,6 +79,12 @@ export const locationMultipliers: Record<Location, number> = {
   "palm-springs":      1.12,
   "socal-suburbs":     0.95,
   "other-major-metro": 1.40,
+  // DC metro — highest-cost catering region in the US; DC layers a 10% catering
+  // tax + steep venue F&B minimums (DC proper > LA, < NYC/SF). Affluent suburbs
+  // (Montgomery County, Northern Virginia) sit a notch below the District.
+  "washington-dc":       1.32,
+  "maryland-montgomery": 1.22,
+  "northern-virginia":   1.22,
   "us-average":        1.00,
 };
 
@@ -86,6 +96,9 @@ export const locationLabels: Record<Location, string> = {
   "palm-springs":      "Palm Springs",
   "socal-suburbs":     "SoCal Suburbs",
   "other-major-metro": "Other Major Metro",
+  "washington-dc":       "Washington, DC",
+  "maryland-montgomery": "Montgomery County, MD",
+  "northern-virginia":   "Northern Virginia",
   "us-average":        "US Average",
 };
 
@@ -107,6 +120,9 @@ export const locationLabels: Record<Location, string> = {
 //  San Diego: mildest seasonality of any SoCal market; beach weddings
 //    boost Jul–Aug slightly vs. other SoCal markets.
 //  Other Major Metro (NYC/SF): Jun is the peak, not Oct.
+//  DC metro (DC / Montgomery County / Northern Virginia): twin peaks — spring
+//    (cherry blossoms / lush vines, Apr–May) and a stronger fall (Sep–Oct,
+//    foliage + Loudoun wine-country harvest); humid Jul–Aug dip; winter valley.
 //  US Average: May–Jun and Sep–Oct are twin peaks nationally.
 export const seasonalMultipliers: Record<Location, number[]> = {
   "los-angeles": [
@@ -134,6 +150,19 @@ export const seasonalMultipliers: Record<Location, number[]> = {
   "other-major-metro": [
   // NYC/SF: June peak (outdoor season); Oct strong; winter sharp valley
     0.80,  0.82,  0.90,  1.03,  1.12,  1.15,  0.95,  0.95,  1.12,  1.13,  0.93,  0.85,
+  ],
+  "washington-dc": [
+  // Oct single peak (most popular month); spring cherry-blossom peak Apr–May;
+  // humid Jul–Aug dip; deep Dec–Feb valley
+    0.83,  0.85,  0.96,  1.12,  1.13,  1.06,  0.92,  0.90,  1.15,  1.18,  0.97,  0.85,
+  ],
+  "maryland-montgomery": [
+  // Mid-Atlantic suburb: May spring peak, strong Sep–Oct fall, humid-summer dip
+    0.82,  0.84,  0.92,  1.10,  1.16,  1.10,  0.93,  0.92,  1.15,  1.18,  0.97,  0.88,
+  ],
+  "northern-virginia": [
+  // Loudoun wine country: sharp Sep–Oct harvest/foliage peak; Apr–May spring
+    0.80,  0.81,  0.90,  1.08,  1.14,  1.05,  0.92,  0.92,  1.20,  1.22,  0.98,  0.83,
   ],
   "us-average": [
   // National: twin peaks May–Jun and Sep–Oct; Jan–Feb valley
@@ -214,7 +243,7 @@ export const categories: CategoryDef[] = [
   { name: "Rentals",              fixedBase: 250,  perGuestModerate: 18, isFnB: false, hasPerGuestOverride: true  },
   { name: "Decor",                fixedBase: 750,  perGuestModerate: 5,  isFnB: false, hasPerGuestOverride: false },
   { name: "Cake/Desserts",        fixedBase: 120,  perGuestModerate: 6,  isFnB: true,  hasPerGuestOverride: true  },
-  { name: "Hair & Makeup",        fixedBase: 350,  perGuestModerate: 7,  isFnB: false, hasPerGuestOverride: false },
+  { name: "Hair & Makeup",        fixedBase: 1600, perGuestModerate: 0,  isFnB: false, hasPerGuestOverride: false },
   { name: "Stationery",           fixedBase: 180,  perGuestModerate: 4,  isFnB: false, hasPerGuestOverride: true,  isHouseholdStationery: true },
   { name: "Transportation",       fixedBase: 450,  perGuestModerate: 0,  isFnB: false, hasPerGuestOverride: false },
   { name: "Officiant",            fixedBase: 350,  perGuestModerate: 0,  isFnB: false, hasPerGuestOverride: false },

@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.7",
     "@react-pdf/renderer": "^4.5.1",
     "framer-motion": "^12.40.0",
     "next": "16.2.7",
