@@ -12,6 +12,7 @@ import WeddingDatePicker from "@/components/WeddingDatePicker";
 import MobileEstimateBar from "@/components/MobileEstimateBar";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { trackLead } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -134,6 +135,12 @@ export default function HomePage() {
           timingDow,
           calculatedTotal: result?.total ?? 0,
         }),
+      });
+      trackLead("calculator", {
+        guest_count: guests,
+        location,
+        tier,
+        estimate: result?.total ?? 0,
       });
     },
     [guests, location, tier, dateStatus, venueStatus, venueName, timingMonth, timingDow, result]

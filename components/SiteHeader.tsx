@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Props {
   onLogoClick?: () => void;
@@ -48,33 +49,43 @@ export default function SiteHeader({
           gap: 12,
         }}
       >
-        {/* ── Left: product name ── */}
-        <button
-          onClick={onLogoClick}
-          aria-label="Wedding Budget Calculator — home"
-          style={{
-            background: "none",
-            border: "none",
-            cursor: onLogoClick ? "pointer" : "default",
-            padding: 0,
-            flexShrink: 1,
-            minWidth: 0,
-            textAlign: "left",
-          }}
-        >
-          <span
+        {/* ── Left: back-to-site + product name ── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 1, minWidth: 0 }}>
+          <Link
+            href="/"
+            aria-label="By Mosaic — home"
+            style={{ display: "flex", alignItems: "center", flexShrink: 0 }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/bymosaic-mark.svg" alt="By Mosaic" width={26} height={26} style={{ display: "block" }} />
+          </Link>
+          <button
+            onClick={onLogoClick}
+            aria-label="Wedding Budget Calculator — restart"
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 17,
-              fontWeight: 600,
-              color: "var(--ink)",
-              letterSpacing: "-0.01em",
-              whiteSpace: "nowrap",
+              background: "none",
+              border: "none",
+              cursor: onLogoClick ? "pointer" : "default",
+              padding: 0,
+              flexShrink: 1,
+              minWidth: 0,
+              textAlign: "left",
             }}
           >
-            Wedding Budget Calculator
-          </span>
-        </button>
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 17,
+                fontWeight: 600,
+                color: "var(--ink)",
+                letterSpacing: "-0.01em",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Wedding Budget Calculator
+            </span>
+          </button>
+        </div>
 
         {/* ── Right: actions ── */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>

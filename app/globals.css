@@ -12,9 +12,15 @@
   --sand:        #E4DAC9;
   --muted:       #8C8275;
 
+  /* Brand greens — from the By Mosaic mark (blended in as the primary marketing accent) */
+  --sage:        #8ABD91;  /* logo green */
+  --sage-deep:   #4F6F57;  /* AA-contrast text/buttons on light */
+  --sage-mist:   #E8F8E9;  /* faint tint / wash */
+
   /* Typography */
   --font-display: 'Fraunces', Georgia, serif;
   --font-body:    'Hanken Grotesk', system-ui, sans-serif;
+  --font-accent:  'Instrument Serif', Georgia, serif;
 
   /* Easing */
   --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
@@ -33,9 +39,13 @@
   --color-olive:      var(--olive);
   --color-sand:       var(--sand);
   --color-muted:      var(--muted);
+  --color-sage:       var(--sage);
+  --color-sage-deep:  var(--sage-deep);
+  --color-sage-mist:  var(--sage-mist);
 
   --font-display: var(--font-display);
   --font-body:    var(--font-body);
+  --font-accent:  var(--font-accent);
 }
 
 /* ─── Reset & Base ──────────────────────────────────────────────────────────── */
@@ -111,6 +121,28 @@ h1, h2, h3, h4, h5, h6 {
 .italic-serif {
   font-style: italic;
   font-variation-settings: 'opsz' 72;
+}
+
+/* Editorial uppercase display — the By Mosaic signature (high-contrast caps,
+   wide tracking). Used for About-page section headlines. */
+.display-caps {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  line-height: 1.12;
+  color: var(--ink);
+}
+
+/* Thin centered rule for flanking sub-text */
+.rule-thin {
+  width: clamp(120px, 30%, 280px);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+  border: none;
+  margin: 0 auto;
 }
 
 /* ─── Ghosted Section Numerals ───────────────────────────────────────────────── */
@@ -296,6 +328,303 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--bone);
 }
 
+/* ─── Sage CTA (marketing primary) ───────────────────────────────────────────── */
+.btn-sage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--sage-deep);
+  color: var(--bone);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.25s ease, transform 0.25s var(--ease-out-quart);
+}
+
+.btn-sage:hover {
+  background: #43604b;
+  transform: translateY(-1px);
+}
+
+.btn-sage-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: transparent;
+  color: var(--sage-deep);
+  border: 1px solid var(--sage-deep);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.btn-sage-outline:hover {
+  background: var(--sage-deep);
+  color: var(--bone);
+}
+
+/* ─── Marketing nav responsive switch ────────────────────────────────────────── */
+.nav-desktop { display: flex; }
+.nav-toggle  { display: none; }
+
+@media (max-width: 860px) {
+  .nav-desktop { display: none; }
+  .nav-toggle  { display: inline-flex; }
+}
+
+/* ─── Sticky CTA bar ─────────────────────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .sticky-cta-msg { display: none; }
+  .sticky-cta-secondary { display: none; }
+  .sticky-cta-inner { justify-content: center; }
+  .sticky-cta-inner > div { width: 100%; justify-content: center; }
+}
+
+/* ─── About: "Hi, I'm Kristina" — heading / images / body ─────────────────────── */
+.about-kristina {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-areas:
+    "heading images"
+    "body    images";
+  column-gap: 56px;
+  align-items: start;
+}
+.ak-heading  { grid-area: heading; margin-bottom: 24px; }
+.ak-images   { grid-area: images; }
+.ak-body     { grid-area: body; }
+.ak-img-wrap { padding-top: 56px; }
+
+@media (max-width: 820px) {
+  .about-kristina {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "images"
+      "body";
+  }
+  .ak-heading  { margin-bottom: 20px; }
+  .ak-images   { margin-bottom: 28px; }
+  .ak-img-wrap { padding-top: 0; }
+  .ak-img-main { width: 100% !important; }
+  .about-offset-img { display: none; }
+}
+
+/* ─── About: intro (section 1) — image | (head / body); splits on mobile ──────── */
+/* Desktop: smaller image column; the 1fr spacer rows absorb the image's extra
+   height so the eyebrow + headline + body group sits vertically centered and
+   tight (no big gap between the headline and the body). */
+.about-intro-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: 1fr min-content min-content 1fr;
+  grid-template-areas:
+    "image ."
+    "image head"
+    "image body"
+    "image .";
+  column-gap: 56px;
+  row-gap: 18px;
+  align-items: start;
+}
+.ai-image { grid-area: image; }
+.ai-head  { grid-area: head; }
+.ai-body  { grid-area: body; }
+
+@media (max-width: 900px) {
+  .about-intro-grid { column-gap: 40px; }
+}
+/* Mobile: eyebrow + headline, then image, then body */
+@media (max-width: 760px) {
+  .about-intro-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "head"
+      "image"
+      "body";
+    column-gap: 0;
+    row-gap: 28px;
+  }
+}
+
+/* ─── About: full responsive polish ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .about-page section {
+    padding-top: 56px !important;
+    padding-bottom: 60px !important;
+  }
+}
+@media (max-width: 380px) {
+  .about-page section {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+}
+/* Explore cards — give each card more breathing room from the sides on mobile,
+   and a touch more space between them, so they read as distinct, smaller blocks */
+@media (max-width: 640px) {
+  .about-explore-grid {
+    padding-left: 22px;
+    padding-right: 22px;
+    gap: 32px;
+  }
+}
+
+/* ─── Services: hero image carousel ──────────────────────────────────────────── */
+.svc-carousel {
+  position: relative;
+  height: 520px;
+  overflow: hidden;
+  background: var(--sand);
+}
+.svc-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(251, 248, 243, 0.85);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 4px 16px rgba(43, 38, 34, 0.18);
+  transition: background 0.2s ease;
+}
+.svc-arrow:hover { background: var(--bone); }
+.svc-arrow-left  { left: 20px; }
+.svc-arrow-right { right: 20px; }
+@media (max-width: 760px) {
+  .svc-carousel { height: 360px; }
+  .svc-arrow { width: 40px; height: 40px; }
+  .svc-arrow-left  { left: 12px; }
+  .svc-arrow-right { right: 12px; }
+}
+
+/* ─── Services: "Let's make it effortless" with decorative accent photos ──────── */
+.svc-effortless { padding: 110px 24px; }
+.svc-eff-img {
+  position: absolute;
+  overflow: hidden;
+  background: var(--sand);
+  box-shadow: 0 16px 44px rgba(43, 38, 34, 0.16);
+  z-index: 0;
+}
+.svc-eff-img-1 { left: max(24px, 4vw); bottom: 48px; width: 230px; aspect-ratio: 3 / 4; }
+.svc-eff-img-2 { right: max(24px, 4vw); top: 56px; width: 300px; aspect-ratio: 4 / 5; }
+
+/* Full-block background — hidden above the hamburger breakpoint */
+.svc-eff-bg { display: none; }
+
+/* At hamburger sizes: drop the floating accents, show a full-block background
+   image behind the frosted text panel for warmth + depth on smaller screens */
+@media (max-width: 860px) {
+  .svc-eff-img { display: none; }
+  .svc-eff-bg {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .svc-eff-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(251, 248, 243, 0.42);
+  }
+}
+@media (max-width: 600px) {
+  .svc-eff-text { padding: 30px 24px !important; }
+}
+
+/* ─── Services: "My Services" rows — image beside text (desktop),
+   Number → Service → Image → Details → Inquire (mobile) ──────────────────────── */
+.svc-row { display: grid; }
+.svc-head  { grid-area: head; }
+.svc-media { grid-area: media; }
+.svc-body  { grid-area: body; }
+
+@media (min-width: 761px) {
+  .svc-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto auto 1fr; /* 1fr spacers vertically center head+body against the image */
+    gap: 16px 48px;
+  }
+  .svc-row--left {
+    grid-template-areas:
+      "media ."
+      "media head"
+      "media body"
+      "media .";
+  }
+  .svc-row--right {
+    grid-template-areas:
+      ". media"
+      "head media"
+      "body media"
+      ". media";
+  }
+  .svc-media { align-self: center; }
+}
+
+@media (max-width: 760px) {
+  .svc-row {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "head"
+      "media"
+      "body";
+    row-gap: 18px;
+  }
+}
+
+/* ─── Services: FAQ accordion +/− indicator ──────────────────────────────────── */
+.faq-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  list-style: none;
+}
+.faq-summary::-webkit-details-marker { display: none; }
+.faq-summary::after {
+  content: "+";
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--sage-deep);
+  flex-shrink: 0;
+}
+details[open] > .faq-summary::after {
+  content: "\2212"; /* minus sign */
+}
+
+/* ─── Contact page grid ──────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ─── Reduced motion ─────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -328,14 +657,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── Utility classes ────────────────────────────────────────────────────────── */
-.text-clay    { color: var(--clay); }
-.text-olive   { color: var(--olive); }
-.text-muted   { color: var(--muted); }
-.text-ink     { color: var(--ink); }
-.text-sand    { color: var(--sand); }
-.bg-alabaster { background-color: var(--alabaster); }
-.bg-bone      { background-color: var(--bone); }
-.border-sand  { border-color: var(--sand); }
+.text-clay      { color: var(--clay); }
+.text-olive     { color: var(--olive); }
+.text-muted     { color: var(--muted); }
+.text-ink       { color: var(--ink); }
+.text-sand      { color: var(--sand); }
+.text-sage      { color: var(--sage-deep); }
+.bg-alabaster   { background-color: var(--alabaster); }
+.bg-bone        { background-color: var(--bone); }
+.bg-sage-mist   { background-color: var(--sage-mist); }
+.border-sand    { border-color: var(--sand); }
 
 .font-display { font-family: var(--font-display); }
 .font-body    { font-family: var(--font-body); }
+.font-accent  { font-family: var(--font-accent); }

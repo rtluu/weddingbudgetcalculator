@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Hanken_Grotesk } from "next/font/google";
+import { Fraunces, Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
@@ -16,30 +16,43 @@ const hankenGrotesk = Hanken_Grotesk({
   display: "swap",
 });
 
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Wedding Budget Calculator · By Mosaic Events",
+  metadataBase: new URL("https://bymosaic.com"),
+  title: {
+    default: "By Mosaic — Los Angeles Wedding & Social Event Planner",
+    template: "%s · By Mosaic",
+  },
   description:
-    "Get a real LA wedding cost estimate in 60 seconds. Built by Kristina at By Mosaic Events — an LA wedding planner who actually knows what things cost.",
+    "Los Angeles-based wedding & social event planner. Just like a mosaic, every detail — big or small — comes together to create something truly special. Crafting events as unique as mosaics.",
   keywords: [
-    "LA wedding budget",
-    "Los Angeles wedding cost",
+    "Los Angeles wedding planner",
+    "LA event planner",
     "wedding planning",
+    "By Mosaic",
     "By Mosaic Events",
-    "wedding calculator",
     "Southern California wedding",
+    "social event planning",
   ],
   openGraph: {
-    title: "What will your wedding actually cost? A real LA estimate.",
+    title: "By Mosaic — Los Angeles Wedding & Social Event Planner",
     description:
-      "By Mosaic Events · Built by an LA wedding planner, not a spreadsheet. Free, instant, honest.",
+      "Crafting events as unique as mosaics. Let's create your masterpiece.",
     type: "website",
-    url: "https://bymosaic-wedding-budget.netlify.app",
-    siteName: "By Mosaic Wedding Budget Calculator",
+    url: "https://bymosaic.com",
+    siteName: "By Mosaic",
   },
   twitter: {
     card: "summary_large_image",
-    title: "What will your wedding actually cost?",
-    description: "A real LA estimate in 60 seconds. Built by Kristina at By Mosaic Events — not a spreadsheet.",
+    title: "By Mosaic — LA Wedding & Social Event Planner",
+    description: "Crafting events as unique as mosaics. Let's create your masterpiece.",
   },
 };
 
@@ -51,11 +64,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${hankenGrotesk.variable}`}
+      className={`${fraunces.variable} ${hankenGrotesk.variable} ${instrumentSerif.variable}`}
       style={
         {
           "--font-display": "var(--font-fraunces)",
           "--font-body": "var(--font-hanken)",
+          "--font-accent": "var(--font-instrument)",
         } as React.CSSProperties
       }
     >
