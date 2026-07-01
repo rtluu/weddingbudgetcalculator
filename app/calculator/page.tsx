@@ -12,7 +12,6 @@ import WeddingDatePicker from "@/components/WeddingDatePicker";
 import MobileEstimateBar from "@/components/MobileEstimateBar";
 import SiteNav from "@/components/marketing/SiteNav";
 import SiteFooterFull from "@/components/marketing/SiteFooterFull";
-import CalcToolbar from "@/components/CalcToolbar";
 import { trackLead } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -183,11 +182,6 @@ export default function HomePage() {
     }
   };
 
-  const restart = () => {
-    setStep(0);
-    setResult(null);
-  };
-
   const pageVariants = {
     initial: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
     animate: { opacity: 1, y: 0 },
@@ -202,14 +196,6 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <SiteNav />
-      {step >= 1 && (
-        <CalcToolbar
-          step={step}
-          onBack={goBack}
-          onRestart={restart}
-          bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-        />
-      )}
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
       {/* ─── Landing Hero ────────────────────────────────────────────────────── */}
       {step === 0 && (
