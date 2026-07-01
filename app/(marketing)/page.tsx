@@ -3,9 +3,11 @@ import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
 import Eyebrow from "@/components/marketing/Eyebrow";
 import HeroVideo from "@/components/marketing/HeroVideo";
+import TestimonialModal from "@/components/marketing/TestimonialModal";
+import SocialProof from "@/components/marketing/SocialProof";
 import Carousel from "@/components/marketing/Carousel";
 import CTALink from "@/components/marketing/CTALink";
-import { HOME } from "@/config/copy";
+import { HOME, SERVICES } from "@/config/copy";
 
 const bodyStyle: React.CSSProperties = {
   fontFamily: "var(--font-body)",
@@ -69,53 +71,57 @@ export default function HomePage() {
           </div>
 
           <p style={{ ...accentItalic, fontSize: "clamp(1rem, 2vw, 1.3rem)", color: "var(--bone)" }}>{HOME.heroEyebrow}</p>
-          <hr style={{ border: "none", borderTop: "1px solid rgba(251,248,243,0.45)", width: 280, maxWidth: "70%", margin: "18px auto 0" }} />
+          <TestimonialModal />
         </div>
       </section>
 
-      {/* ── 2 · Brand intro ──────────────────────────────────────────────── */}
-      <section style={{ background: "var(--bone)", padding: "100px 24px 88px" }}>
+      {/* ── 2 · Services preview (mirrors /services "My Services") ───────── */}
+      <section style={{ background: "var(--alabaster)", padding: "100px 24px 96px" }}>
         <Reveal>
           <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
-            <h2 className="display-caps" style={{ fontSize: "clamp(2rem, 4.6vw, 3.2rem)", marginBottom: 30 }}>
+            <h2 className="display-caps" style={{ fontSize: "clamp(2rem, 4.6vw, 3.2rem)", marginBottom: 26 }}>
               {HOME.introTitle}
             </h2>
             <hr className="rule-thin" style={{ color: "var(--muted)", marginBottom: 26 }} />
-            <p style={{ ...accentItalic, fontSize: "clamp(1.15rem, 2vw, 1.5rem)", color: "var(--ink)", marginBottom: 26 }}>
+            <p style={{ ...accentItalic, fontSize: "clamp(1.15rem, 2vw, 1.5rem)", color: "var(--ink)" }}>
               {HOME.introQuote}
             </p>
-            <hr className="rule-thin" style={{ color: "var(--muted)", marginBottom: 34 }} />
-            <p style={{ ...bodyStyle, textAlign: "center", maxWidth: 660, margin: "0 auto 36px" }}>{HOME.introBody}</p>
-            <Link href="/services" style={ctaButton}>{HOME.introCta}</Link>
           </div>
         </Reveal>
-      </section>
 
-      {/* ── 3 · "Creating mosaic events since 2022" collage ──────────────── */}
-      <section style={{ background: "var(--bone)", padding: "24px 24px 100px" }}>
-        <div className="home-collage" style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <Reveal className="home-collage-l">
-            <div className="home-collage-img" style={{ aspectRatio: "3 / 4" }}>
-              <Image src="/photos/brownfoxcreative_clp_76.jpg" alt="" fill sizes="(max-width:760px) 100vw, 28vw" style={{ objectFit: "cover" }} />
-            </div>
-            <p style={{ ...accentItalic, fontSize: 19, color: "var(--muted)", textAlign: "center", marginTop: 22 }}>{HOME.collageCaptionLeft}</p>
-          </Reveal>
-          <Reveal className="home-collage-c" delay={0.08}>
-            <div className="home-collage-img" style={{ aspectRatio: "3 / 4" }}>
-              <Image src="/photos/280064243.jpg" alt="" fill sizes="(max-width:760px) 100vw, 40vw" style={{ objectFit: "cover" }} />
-            </div>
-          </Reveal>
-          <Reveal className="home-collage-r" delay={0.16}>
-            <div className="home-collage-img" style={{ aspectRatio: "3 / 4" }}>
-              <Image src="/photos/kristina_luu3579.jpg" alt="" fill sizes="(max-width:760px) 100vw, 28vw" style={{ objectFit: "cover" }} />
-            </div>
-            <p style={{ ...accentItalic, fontSize: 19, color: "var(--muted)", textAlign: "center", marginTop: 22 }}>{HOME.collageCaptionRight}</p>
-          </Reveal>
+        <div className="home-services-grid">
+          {SERVICES.map((s, i) => (
+            <Reveal as="div" key={s.slug} delay={i * 0.08}>
+              <Link href={`/services#${s.slug}`} className="home-service-card">
+                <div className="home-service-img" style={{ position: "relative", aspectRatio: "4 / 5", background: "var(--sand)" }}>
+                  <Image src={s.image} alt={s.name} fill sizes="(max-width:820px) 40vw, 33vw" style={{ objectFit: "cover" }} />
+                </div>
+                <div className="home-service-body">
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--sage-deep)" }}>
+                    0{i + 1}
+                  </p>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.25rem, 2vw, 1.5rem)", fontWeight: 500, color: "var(--ink)", lineHeight: 1.2, marginTop: 8 }}>
+                    {s.name}
+                  </h3>
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: 15, lineHeight: 1.7, color: "var(--muted)", marginTop: 12 }}>
+                    {s.summary}
+                  </p>
+                  <span style={{ display: "inline-block", marginTop: 16, fontFamily: "var(--font-body)", fontSize: 13, fontWeight: 600, letterSpacing: "0.04em", color: "var(--sage-deep)" }}>
+                    Learn more →
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: 56 }}>
+          <Link href="/services" style={ctaButton}>{HOME.introCta}</Link>
         </div>
       </section>
 
       {/* ── 4 · Portfolio — living mosaics ───────────────────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "90px 24px 0" }}>
+      <section style={{ background: "var(--bone)", padding: "90px 24px 0" }}>
         <Reveal>
           <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center" }}>
             <h2 className="display-caps" style={{ fontSize: "clamp(2rem, 4.6vw, 3.2rem)", marginBottom: 28 }}>
@@ -134,7 +140,7 @@ export default function HomePage() {
       </section>
 
       {/* ── 6 · Meet the Planner ─────────────────────────────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "96px 24px" }}>
+      <section style={{ background: "var(--alabaster)", padding: "96px 24px 40px" }}>
         <div className="home-planner" style={{ maxWidth: 1120, margin: "0 auto" }}>
           <Reveal className="home-planner-text">
             <p style={{ ...accentItalic, fontSize: 22, color: "var(--sage-deep)", marginBottom: 14 }}>{HOME.plannerEyebrow}</p>
@@ -150,24 +156,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 7 · Testimonial (full-bleed dark) ────────────────────────────── */}
-      <section style={{ position: "relative", overflow: "hidden", padding: "96px 24px", background: "#4D5B5F" }}>
-        <Image src="/photos/kristina_luu3579.jpg" alt="" aria-hidden fill sizes="100vw" style={{ objectFit: "cover", opacity: 0.16 }} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(57,69,72,0.7)" }} />
-        <div className="home-testimonial" style={{ position: "relative", zIndex: 1, maxWidth: 1080, margin: "0 auto" }}>
-          <Reveal className="home-testimonial-img">
-            <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4", overflow: "hidden", background: "var(--sand)", boxShadow: "0 16px 48px rgba(0,0,0,0.25)" }}>
-              <Image src="/photos/samantha_and_luis-487.jpg" alt="Samantha and Luis on their wedding day" fill sizes="(max-width:760px) 100vw, 38vw" style={{ objectFit: "cover" }} />
-            </div>
-          </Reveal>
-          <Reveal className="home-testimonial-text" delay={0.1}>
-            <blockquote className="display-caps" style={{ color: "var(--bone)", fontSize: "clamp(1.7rem, 3.6vw, 2.7rem)", margin: 0 }}>
-              “{HOME.testimonialQuote}”
-            </blockquote>
-            <p style={{ ...accentItalic, fontSize: 20, color: "var(--alabaster)", marginTop: 22 }}>{HOME.testimonialAttribution}</p>
-          </Reveal>
-        </div>
-      </section>
+      {/* ── 7 · Testimonials row ─────────────────────────────────────────── */}
+      <SocialProof showStats={false} bordered={false} background="var(--alabaster)" padding="40px 24px 72px" />
 
       {/* ── Calculator band (our addition) ───────────────────────────────── */}
       <section style={{ background: "var(--bone)", padding: "88px 24px", borderTop: "1px solid var(--sand)", borderBottom: "1px solid var(--sand)" }}>
@@ -190,6 +180,10 @@ export default function HomePage() {
 
       {/* ── 8 · Closing CTA — masterpiece ────────────────────────────────── */}
       <section className="home-closing" style={{ position: "relative", overflow: "hidden", background: "var(--alabaster)" }}>
+        {/* Full-block background image — shown at hamburger/mobile sizes */}
+        <div className="home-closing-bg" aria-hidden="true">
+          <Image src="/photos/bridal_bouquet.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />
+        </div>
         <div className="home-closing-img home-closing-img-1">
           <Image src="/photos/kg004048.jpg" alt="" aria-hidden fill sizes="300px" style={{ objectFit: "cover" }} />
         </div>

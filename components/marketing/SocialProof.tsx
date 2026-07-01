@@ -4,12 +4,16 @@ import { TESTIMONIALS, PROOF_STATS } from "@/config/copy";
 export default function SocialProof({
   background = "var(--bone)",
   showStats = true,
+  bordered = true,
+  padding = "72px 24px",
 }: {
   background?: string;
   showStats?: boolean;
+  bordered?: boolean;
+  padding?: string;
 }) {
   return (
-    <section style={{ background, padding: "72px 24px", borderTop: "1px solid var(--sand)" }}>
+    <section style={{ background, padding, borderTop: bordered ? "1px solid var(--sand)" : "none" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         {/* Testimonials */}
         <div

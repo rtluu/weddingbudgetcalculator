@@ -127,7 +127,7 @@ export default function ServicesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 72 }}>
             {SERVICES.map((s, i) => (
               <Reveal as="div" key={s.slug}>
-                <article className={`svc-row ${i % 2 === 1 ? "svc-row--right" : "svc-row--left"}`}>
+                <article id={s.slug} style={{ scrollMarginTop: 100 }} className={`svc-row ${i % 2 === 1 ? "svc-row--right" : "svc-row--left"}`}>
                   {/* Number + service name */}
                   <div className="svc-head">
                     <p style={{ fontFamily: "var(--font-body)", fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--sage-deep)", marginBottom: 12 }}>

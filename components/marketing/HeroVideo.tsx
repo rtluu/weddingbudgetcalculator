@@ -16,6 +16,7 @@ export default function HeroVideo({ src, poster }: { src: string; poster: string
 
   return (
     <video
+      data-hero-video
       autoPlay
       loop
       muted

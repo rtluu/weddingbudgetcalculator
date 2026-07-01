@@ -15,14 +15,14 @@ export const TESTIMONIALS = [
     detail: "Arcadia, California",
   },
   {
-    quote: "We were both able to be present on our day.",
+    quote: "We were both able to be present on our day because Kristina and team handled everything!",
     name: "Samantha & Luis",
     detail: "Rome, Italy",
   },
   {
     quote: "I couldn't have picked a better company to help with my proposal.",
     name: "Francisco & Jocelyne",
-    detail: "",
+    detail: "Santa Monica, California",
   },
 ] as const;
 
