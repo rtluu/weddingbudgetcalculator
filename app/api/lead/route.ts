@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
   <style>
     body { font-family: Georgia, serif; background: #F6F1E9; color: #2B2622; margin: 0; padding: 0; }
     .container { max-width: 600px; margin: 0 auto; padding: 32px 24px; }
-    .header { border-bottom: 2px solid #B07A57; padding-bottom: 16px; margin-bottom: 24px; }
+    .header { border-bottom: 2px solid #4F6F57; padding-bottom: 16px; margin-bottom: 24px; }
     .score { display: inline-block; padding: 6px 14px; border-radius: 4px; font-size: 14px; font-family: 'Helvetica Neue', sans-serif; margin-bottom: 20px; }
     .score-a { background: #FDE8D8; color: #9C5A3C; border: 1px solid #B07A57; }
     .score-b { background: #EDF5E0; color: #4A5224; border: 1px solid #6E7253; }
@@ -129,8 +129,8 @@ export async function POST(req: NextRequest) {
     .field { margin-bottom: 12px; }
     .field-label { font-family: 'Helvetica Neue', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #8C8275; margin-bottom: 2px; }
     .field-value { font-size: 16px; color: #2B2622; }
-    .total { font-size: 28px; font-weight: 600; color: #B07A57; margin: 16px 0; }
-    .cta { display: inline-block; padding: 12px 24px; background: #B07A57; color: #FBF8F3; text-decoration: none; border-radius: 6px; font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin-top: 16px; }
+    .total { font-size: 28px; font-weight: 600; color: #4F6F57; margin: 16px 0; }
+    .cta { display: inline-block; padding: 12px 24px; background: #4F6F57; color: #FBF8F3; text-decoration: none; border-radius: 6px; font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin-top: 16px; }
     .footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #E4DAC9; font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #8C8275; }
   </style>
 </head>
@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
     </div>
     <div class="field">
       <div class="field-label">Email</div>
-      <div class="field-value"><a href="mailto:${email}" style="color: #B07A57;">${email}</a></div>
+      <div class="field-value"><a href="mailto:${email}" style="color: #4F6F57;">${email}</a></div>
     </div>
     ${phone ? `<div class="field"><div class="field-label">Phone</div><div class="field-value">${phone}</div></div>` : ""}
 
@@ -203,12 +203,12 @@ export async function POST(req: NextRequest) {
     .container { max-width: 580px; margin: 0 auto; padding: 32px 24px; }
     .logo { font-size: 12px; font-family: 'Helvetica Neue', sans-serif; color: #8C8275; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
     h1 { font-size: 28px; line-height: 1.2; margin: 0 0 12px 0; }
-    .total { font-size: 36px; font-weight: 600; color: #B07A57; margin: 20px 0; }
+    .total { font-size: 36px; font-weight: 600; color: #4F6F57; margin: 20px 0; }
     .range { font-size: 14px; font-family: 'Helvetica Neue', sans-serif; color: #8C8275; }
     .divider { height: 1px; background: #E4DAC9; margin: 24px 0; }
     .note { font-style: italic; color: #8C8275; font-size: 16px; line-height: 1.6; }
-    .cta { display: inline-block; padding: 14px 28px; background: #B07A57; color: #FBF8F3; text-decoration: none; border-radius: 6px; font-family: 'Helvetica Neue', sans-serif; font-size: 15px; margin: 8px 4px 8px 0; }
-    .cta-outline { display: inline-block; padding: 13px 24px; background: transparent; color: #B07A57; text-decoration: none; border-radius: 6px; border: 1px solid #B07A57; font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin: 8px 4px; }
+    .cta { display: inline-block; padding: 14px 28px; background: #4F6F57; color: #FBF8F3; text-decoration: none; border-radius: 6px; font-family: 'Helvetica Neue', sans-serif; font-size: 15px; margin: 8px 4px 8px 0; }
+    .cta-outline { display: inline-block; padding: 13px 24px; background: transparent; color: #4F6F57; text-decoration: none; border-radius: 6px; border: 1px solid #4F6F57; font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin: 8px 4px; }
     .detail { font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #8C8275; }
     .detail-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #E4DAC9; gap: 16px; }
     .footer { margin-top: 32px; font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #8C8275; text-align: center; }

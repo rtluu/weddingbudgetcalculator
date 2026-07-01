@@ -199,7 +199,7 @@ export default function MobileEstimateBar({ result, step }: Props) {
                   {result.seasonNote && (
                     <div style={{
                       padding: "10px 12px", borderRadius: 8,
-                      background: "rgba(176,122,87,0.07)", border: "1px solid var(--sand)",
+                      background: "rgba(79, 111, 87,0.07)", border: "1px solid var(--sand)",
                     }}>
                       <p style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--ink)", lineHeight: 1.55 }}>
                         ◈ {result.seasonNote}

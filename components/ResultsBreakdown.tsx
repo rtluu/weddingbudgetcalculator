@@ -462,7 +462,7 @@ export default function ResultsBreakdown({
           {(result.seasonNote || result.dowNote) && (
             <motion.div variants={itemVariants} className="space-y-2">
               {result.seasonNote && (
-                <div className="flex gap-2 items-start p-3 rounded-lg" style={{ background: "rgba(176,122,87,0.07)", border: "1px solid var(--sand)" }}>
+                <div className="flex gap-2 items-start p-3 rounded-lg" style={{ background: "rgba(79, 111, 87,0.07)", border: "1px solid var(--sand)" }}>
                   <span style={{ color: "var(--clay)", fontSize: 14, flexShrink: 0 }}>◈</span>
                   <p className="font-body text-xs leading-relaxed" style={{ color: "var(--ink)" }}>{result.seasonNote}</p>
                 </div>

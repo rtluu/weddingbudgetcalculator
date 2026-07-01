@@ -230,7 +230,7 @@ export default function WeddingDatePicker({ value, onChange, compact }: Props) {
                   style={{
                     fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600,
                     color: isMonthsMode ? "var(--clay)" : "var(--ink)",
-                    background: isMonthsMode ? "rgba(176,122,87,0.10)" : "transparent",
+                    background: isMonthsMode ? "rgba(79, 111, 87,0.10)" : "transparent",
                     border: "none", borderRadius: 6, padding: "2px 6px", cursor: "pointer",
                     textDecoration: isMonthsMode ? "underline" : "none",
                     textDecorationColor: "var(--clay)",

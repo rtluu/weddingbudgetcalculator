@@ -5,12 +5,12 @@ import { locationLabels } from "@/config/costModel";
 
 const C = {
   bone: "#F6F1E9",
-  clay: "#B07A57",
+  clay: "#4F6F57", // brand accent — sage-deep (reskinned from warm clay)
   ink: "#2B2622",
   muted: "#8C8275",
   sand: "#E4DAC9",
   alabaster: "#FBF8F3",
-  terracotta: "#C4654A",
+  terracotta: "#C4654A", // semantic: seasonal premium (increase) — kept warm vs. olive discount
   olive: "#6E7253",
 };
 

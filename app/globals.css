@@ -6,8 +6,10 @@
   --alabaster:   #F6F1E9;
   --bone:        #FBF8F3;
   --ink:         #2B2622;
-  --clay:        #B07A57;
-  --terracotta:  #9C5A3C;
+  /* Warm palette retired — aliased to sage for site-wide consistency.
+     (Class/var names kept as clay/terracotta; values are now sage.) */
+  --clay:        #4F6F57;  /* = --sage-deep */
+  --terracotta:  #43604B;  /* = --sage-deep hover */
   --olive:       #6E7253;
   --sand:        #E4DAC9;
   --muted:       #8C8275;
@@ -188,7 +190,7 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   margin-top: -9px;
   transition: transform 0.15s var(--ease-out-quart), background 0.15s ease;
-  box-shadow: 0 2px 8px rgba(176, 122, 87, 0.35);
+  box-shadow: 0 2px 8px rgba(79, 111, 87, 0.35);
 }
 
 .slider-custom::-webkit-slider-thumb:hover {
@@ -209,7 +211,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--clay);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 8px rgba(176, 122, 87, 0.35);
+  box-shadow: 0 2px 8px rgba(79, 111, 87, 0.35);
 }
 
 /* ─── Letterpress Invoice ────────────────────────────────────────────────────── */
@@ -278,7 +280,7 @@ h1, h2, h3, h4, h5, h6 {
   border-color: var(--clay);
   border-width: 1px;
   background: var(--bone);
-  box-shadow: 0 0 0 1px var(--clay), 0 12px 36px rgba(176, 122, 87, 0.15);
+  box-shadow: 0 0 0 1px var(--clay), 0 12px 36px rgba(79, 111, 87, 0.15);
 }
 
 /* ─── CTA Buttons ────────────────────────────────────────────────────────────── */

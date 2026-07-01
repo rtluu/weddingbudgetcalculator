@@ -10,8 +10,9 @@ import FloatingRail from "@/components/FloatingRail";
 import { calculateWeddingBudget, BudgetResult, Tier, Location, DayOfWeek, dowDayLabels, locationLabels } from "@/config/costModel";
 import WeddingDatePicker from "@/components/WeddingDatePicker";
 import MobileEstimateBar from "@/components/MobileEstimateBar";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
+import SiteNav from "@/components/marketing/SiteNav";
+import SiteFooterFull from "@/components/marketing/SiteFooterFull";
+import CalcToolbar from "@/components/CalcToolbar";
 import { trackLead } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -199,7 +200,17 @@ export default function HomePage() {
   };
 
   return (
-    <>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <SiteNav />
+      {step >= 1 && (
+        <CalcToolbar
+          step={step}
+          onBack={goBack}
+          onRestart={restart}
+          bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
+        />
+      )}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
       {/* ─── Landing Hero ────────────────────────────────────────────────────── */}
       {step === 0 && (
         <motion.div
@@ -209,11 +220,9 @@ export default function HomePage() {
           animate="animate"
           exit="exit"
           transition={pageTransition}
-          className="min-h-screen flex flex-col"
+          className="flex-1 flex flex-col"
           style={{ background: "var(--alabaster)" }}
         >
-          <SiteHeader bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"} />
-
           {/* Hero */}
           <main className="flex-1 flex items-center">
             <div className="max-w-4xl mx-auto px-6 py-20">
@@ -299,18 +308,12 @@ export default function HomePage() {
               </motion.div>
             </div>
           </main>
-          <SiteFooter />
         </motion.div>
       )}
 
       {/* ─── Calculator Steps ─────────────────────────────────────────────────── */}
       {step >= 1 && step <= 4 && (
-        <><div className="min-h-screen" style={{ background: "var(--alabaster)" }}>
-          <SiteHeader
-            onLogoClick={restart}
-            bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-          />
-
+        <><div className="flex-1" style={{ background: "var(--alabaster)" }}>
           {/* Main content with asymmetric grid */}
           <div className="max-w-7xl mx-auto px-6 py-8 lg:grid lg:gap-12" style={{ gridTemplateColumns: "7fr 4fr" }}>
             {/* Left: Steps — pb-24 gives clearance for the mobile sticky bar */}
@@ -445,10 +448,6 @@ export default function HomePage() {
             />
           </div>
 
-          {/* Footer — extra bottom clearance on mobile so the sticky estimate bar doesn't cover it */}
-          <div className="pb-20 lg:pb-0">
-            <SiteFooter />
-          </div>
         </div>
 
         {/* Mobile sticky estimate bar (steps 2–4 only) */}
@@ -464,10 +463,9 @@ export default function HomePage() {
           initial="initial"
           animate="animate"
           transition={pageTransition}
-          className="min-h-screen flex flex-col"
+          className="flex-1 flex flex-col"
           style={{ background: "var(--alabaster)" }}
         >
-          <SiteHeader onLogoClick={restart} bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"} />
           <main className="flex-1 flex items-center justify-center px-6 py-12">
             <motion.div
               className="w-full max-w-md space-y-6"
@@ -536,7 +534,6 @@ export default function HomePage() {
               </button>
             </motion.div>
           </main>
-          <SiteFooter />
         </motion.div>
       )}
 
@@ -548,14 +545,9 @@ export default function HomePage() {
           initial="initial"
           animate="animate"
           transition={pageTransition}
-          className="min-h-screen"
+          className="flex-1"
           style={{ background: "var(--alabaster)" }}
         >
-          <SiteHeader
-            onLogoClick={restart}
-            bookingUrl={process.env.NEXT_PUBLIC_BOOKING_URL || "#"}
-          />
-
           {/* Results content */}
           <div className="max-w-4xl mx-auto px-6 py-8">
             <div className="min-w-0">
@@ -645,11 +637,11 @@ export default function HomePage() {
               />
             </div>
           </div>
-          <SiteFooter />
         </motion.div>
       )}
-
-    </>
+      </div>
+      <SiteFooterFull />
+    </div>
   );
 }
 
