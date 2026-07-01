@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import ParallaxImage from "@/components/marketing/ParallaxImage";
 import { ABOUT, ABOUT_EXPLORE } from "@/config/copy";
 
 export const metadata: Metadata = {
@@ -22,90 +21,7 @@ const bodyStyle: React.CSSProperties = {
 export default function AboutPage() {
   return (
     <div className="about-page">
-      {/* ── 1 · The love of bringing people together ─────────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "84px 24px 96px" }}>
-        <div className="about-intro-grid" style={{ maxWidth: 1180, margin: "0 auto" }}>
-          {/* Eyebrow + headline */}
-          <Reveal className="ai-head">
-            <p
-              className="font-accent"
-              style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", fontSize: 22, color: "var(--sage-deep)", marginBottom: 18 }}
-            >
-              {ABOUT.s1Eyebrow}
-            </p>
-            <h1 className="display-caps" style={{ fontSize: "clamp(2rem, 4vw, 3.1rem)", margin: 0 }}>
-              {ABOUT.s1Title}
-            </h1>
-          </Reveal>
-
-          {/* Image */}
-          <Reveal className="ai-image" delay={0.05}>
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                aspectRatio: "3 / 4",
-                background: "var(--sand)",
-                overflow: "hidden",
-              }}
-            >
-              <Image
-                src="/photos/samantha_and_luis-504.jpg"
-                alt="A couple at their golden-hour reception, beneath a palm tree"
-                fill
-                sizes="(max-width: 760px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
-                priority
-              />
-            </div>
-          </Reveal>
-
-          {/* Body */}
-          <Reveal className="ai-body" delay={0.1}>
-            <p style={bodyStyle}>{ABOUT.s1Body}</p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── 2 · Personalized service, heartfelt dedication (dark band) ───── */}
-      <section style={{ position: "relative", padding: "132px 24px", overflow: "hidden", backgroundColor: "rgba(77, 91, 95, 1)" }}>
-        {/* Veil image at 50% over the slate background — parallax on scroll */}
-        <ParallaxImage src="/photos/samantha_and_luis-055.jpg" opacity={0.5} objectPosition="center 55%" />
-        <Reveal>
-          <div style={{ position: "relative", zIndex: 1, maxWidth: 820, margin: "0 auto", textAlign: "center", color: "var(--bone)" }}>
-            <h2 className="display-caps" style={{ color: "var(--bone)", fontSize: "clamp(1.8rem, 4vw, 3rem)", marginBottom: 34 }}>
-              {ABOUT.s2Title}
-            </h2>
-            <hr className="rule-thin" style={{ color: "var(--sand)", marginBottom: 26 }} />
-            <p
-              className="font-accent"
-              style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", fontSize: "clamp(1.15rem, 2vw, 1.45rem)", lineHeight: 1.55, color: "var(--alabaster)", maxWidth: 620, margin: "0 auto" }}
-            >
-              {ABOUT.s2Sub}
-            </p>
-            <hr className="rule-thin" style={{ color: "var(--sand)", marginTop: 26, marginBottom: 40 }} />
-            <Link
-              href="/contact"
-              style={{
-                display: "inline-block",
-                background: "var(--bone)",
-                color: "var(--ink)",
-                fontFamily: "var(--font-body)",
-                fontSize: 13,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                fontWeight: 500,
-                padding: "15px 34px",
-                textDecoration: "none",
-              }}
-            >
-              {ABOUT.s2Cta}
-            </Link>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ── 3 · Hi, I'm Kristina! ────────────────────────────────────────── */}
+      {/* ── Hi, I'm Kristina! ────────────────────────────────────────────── */}
       <section style={{ background: "var(--bone)", padding: "96px 24px" }}>
         <div
           className="about-kristina"

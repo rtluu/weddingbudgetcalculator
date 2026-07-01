@@ -2,18 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import Carousel from "@/components/marketing/Carousel";
+import Eyebrow from "@/components/marketing/Eyebrow";
 import { SERVICES, SERVICES_PAGE, SERVICES_FAQ } from "@/config/copy";
-
-const SERVICES_HERO_IMAGES = [
-  "/photos/samantha_and_luis-425.jpg",
-  "/photos/kg004048.jpg",
-  "/photos/l_and_b-168.jpg",
-  "/photos/l_and_b-452.jpg",
-  "/photos/nnn_4788.jpg",
-  "/photos/dsc0404.jpg",
-  "/photos/ldphotography31.jpg",
-];
 
 export const metadata: Metadata = {
   title: "Services",
@@ -32,98 +22,36 @@ const bodyStyle: React.CSSProperties = {
 export default function ServicesPage() {
   return (
     <div className="services-page">
-      {/* ── 1 · Hero image carousel ──────────────────────────────────────── */}
-      <Carousel images={SERVICES_HERO_IMAGES} variant="edge" height={520} />
-
-      {/* ── 2 · Headline + tagline + monogram ────────────────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "80px 24px 64px" }}>
-        <Reveal>
-          <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
-            <h1 className="display-caps" style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", marginBottom: 30 }}>
-              {SERVICES_PAGE.heroTitle}
+      {/* ── Header ────────────────────────────────────────────────────────── */}
+      <section style={{ background: "var(--alabaster)", padding: "96px 24px 48px" }}>
+        <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
+          <Reveal>
+            <Eyebrow align="center">Wedding &amp; social event planning</Eyebrow>
+            <h1 className="display-xl" style={{ marginBottom: 22 }}>
+              Let&apos;s create your{" "}
+              <span style={{ whiteSpace: "nowrap" }}>
+                <em className="italic-serif" style={{ color: "var(--sage-deep)" }}>mosaic</em> event
+              </span>
             </h1>
-            <hr className="rule-thin" style={{ color: "var(--muted)", marginBottom: 24 }} />
             <p
-              className="font-accent"
-              style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", fontSize: "clamp(1.15rem, 2vw, 1.45rem)", lineHeight: 1.55, color: "var(--ink)", maxWidth: 640, margin: "0 auto" }}
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: 18,
+                lineHeight: 1.7,
+                color: "var(--muted)",
+                maxWidth: 640,
+                margin: "0 auto",
+              }}
             >
               {SERVICES_PAGE.heroTagline}
             </p>
-            <hr className="rule-thin" style={{ color: "var(--muted)", marginTop: 24 }} />
-            {/* BM monogram */}
-            <div
-              style={{
-                width: 66,
-                height: 84,
-                borderRadius: "50%",
-                border: "1px solid var(--muted)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 2,
-                margin: "44px auto 0",
-                color: "var(--muted)",
-              }}
-            >
-              <span style={{ fontFamily: "var(--font-display)", fontSize: 19, lineHeight: 1 }}>B</span>
-              <span style={{ fontFamily: "var(--font-display)", fontSize: 19, lineHeight: 1 }}>M</span>
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ── 3 · Let's Make It Effortless ─────────────────────────────────── */}
-      <section className="svc-effortless" style={{ position: "relative", overflow: "hidden", background: "var(--bone)" }}>
-        {/* Full-block background image — shown at hamburger/mobile sizes */}
-        <div className="svc-eff-bg" aria-hidden="true">
-          <Image src="/photos/kg004048.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />
-        </div>
-        {/* Floating accent photos — shown above the hamburger breakpoint */}
-        <div className="svc-eff-img svc-eff-img-1">
-          <Image src="/photos/13.jpg" alt="" aria-hidden="true" fill sizes="280px" style={{ objectFit: "cover" }} />
-        </div>
-        <div className="svc-eff-img svc-eff-img-2">
-          <Image src="/photos/kg004048.jpg" alt="" aria-hidden="true" fill sizes="320px" style={{ objectFit: "cover" }} />
-        </div>
-        <div
-          className="svc-eff-text"
-          style={{
-            position: "relative",
-            zIndex: 1,
-            maxWidth: 660,
-            margin: "0 auto",
-            padding: "44px 48px",
-            borderRadius: 12,
-            background: "rgba(251, 248, 243, 0.6)",
-            backdropFilter: "blur(14px) saturate(1.08)",
-            WebkitBackdropFilter: "blur(14px) saturate(1.08)",
-            boxShadow: "0 12px 48px rgba(43, 38, 34, 0.06)",
-          }}
-        >
-          <Reveal>
-            <p
-              className="font-accent"
-              style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", fontSize: 22, color: "var(--sage-deep)", marginBottom: 16 }}
-            >
-              {SERVICES_PAGE.effortlessEyebrow}
-            </p>
-            <h2 className="display-caps" style={{ fontSize: "clamp(1.9rem, 4vw, 2.8rem)", marginBottom: 28 }}>
-              {SERVICES_PAGE.title}
-            </h2>
-            <p style={bodyStyle}>{SERVICES_PAGE.intro}</p>
           </Reveal>
         </div>
       </section>
 
-      {/* ── 4 · My Services (alternating image/text rows) ────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "96px 24px 88px" }}>
+      {/* ── My Services (alternating image/text rows) ────────────────────── */}
+      <section style={{ background: "var(--bone)", padding: "80px 24px 88px", borderTop: "1px solid var(--sand)" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <Reveal>
-            <h2 className="display-caps" style={{ textAlign: "center", fontSize: "clamp(1.9rem, 4vw, 2.8rem)", marginBottom: 64 }}>
-              {SERVICES_PAGE.servicesHeader}
-            </h2>
-          </Reveal>
           <div style={{ display: "flex", flexDirection: "column", gap: 72 }}>
             {SERVICES.map((s, i) => (
               <Reveal as="div" key={s.slug}>
@@ -208,10 +136,36 @@ export default function ServicesPage() {
         </Reveal>
       </section>
 
-      {/* ── 7 · Closing CTA ──────────────────────────────────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "96px 24px", textAlign: "center" }}>
-        <Reveal>
-          <div style={{ maxWidth: 700, margin: "0 auto" }}>
+      {/* ── 7 · Closing CTA — effortless-style frosted panel + accents ───── */}
+      <section className="svc-effortless" style={{ position: "relative", overflow: "hidden", background: "var(--alabaster)" }}>
+        {/* Full-block background image — shown at hamburger/mobile sizes */}
+        <div className="svc-eff-bg" aria-hidden="true">
+          <Image src="/photos/kg004048.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />
+        </div>
+        {/* Floating accent photos — shown above the hamburger breakpoint */}
+        <div className="svc-eff-img svc-eff-img-1">
+          <Image src="/photos/13.jpg" alt="" aria-hidden="true" fill sizes="280px" style={{ objectFit: "cover" }} />
+        </div>
+        <div className="svc-eff-img svc-eff-img-2">
+          <Image src="/photos/kg004048.jpg" alt="" aria-hidden="true" fill sizes="320px" style={{ objectFit: "cover" }} />
+        </div>
+        <div
+          className="svc-eff-text"
+          style={{
+            position: "relative",
+            zIndex: 1,
+            maxWidth: 660,
+            margin: "0 auto",
+            padding: "44px 48px",
+            borderRadius: 12,
+            background: "rgba(246, 241, 233, 0.6)",
+            backdropFilter: "blur(14px) saturate(1.08)",
+            WebkitBackdropFilter: "blur(14px) saturate(1.08)",
+            boxShadow: "0 12px 48px rgba(43, 38, 34, 0.06)",
+            textAlign: "center",
+          }}
+        >
+          <Reveal>
             <h2 className="display-caps" style={{ fontSize: "clamp(1.9rem, 4vw, 2.8rem)", marginBottom: 26 }}>
               {SERVICES_PAGE.ctaTitle}
             </h2>
@@ -236,8 +190,8 @@ export default function ServicesPage() {
             >
               {SERVICES_PAGE.cta}
             </Link>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
     </div>
   );
