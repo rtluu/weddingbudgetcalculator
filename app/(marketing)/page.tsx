@@ -61,9 +61,9 @@ export default function HomePage() {
           {/* EST 2022 seal */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, margin: "40px 0 30px" }}>
             <span style={{ fontFamily: "var(--font-display)", fontSize: 14, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--bone)" }}>Est</span>
-            <span style={{ width: 62, height: 62, borderRadius: "50%", background: "var(--olive)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ width: 62, height: 62, borderRadius: "50%", background: "var(--olive)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/bymosaic-mark.svg" alt="" width={36} height={36} />
+              <img src="/logos/bymosaic-mark.svg" alt="" width={62} height={62} style={{ display: "block" }} />
             </span>
             <span style={{ fontFamily: "var(--font-display)", fontSize: 14, letterSpacing: "0.18em", color: "var(--bone)" }}>2022</span>
           </div>
@@ -133,25 +133,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 5 · Calculator band (our addition) ───────────────────────────── */}
-      <section style={{ background: "var(--sage-mist)", padding: "88px 24px" }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
-          <Reveal>
-            <Eyebrow>{HOME.calcEyebrow}</Eyebrow>
-            <h2 className="display-lg" style={{ marginBottom: 18 }}>{HOME.calcTitle}</h2>
-            <p style={bodyStyle}>{HOME.calcBody}</p>
-            <CTALink href="/calculator" location="home_calc_band" label={HOME.calcCta} className="btn-sage" style={{ marginTop: 26, padding: "14px 30px", fontSize: 16 }}>
-              {HOME.calcCta} →
-            </CTALink>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", borderRadius: 12, overflow: "hidden", background: "var(--sand)", boxShadow: "0 12px 40px rgba(43,38,34,0.10)" }}>
-              <Image src="/photos/kristina_luu4052.jpg" alt="A thoughtfully styled reception tablescape" fill sizes="(max-width:700px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ── 6 · Meet the Planner ─────────────────────────────────────────── */}
       <section style={{ background: "var(--alabaster)", padding: "96px 24px" }}>
         <div className="home-planner" style={{ maxWidth: 1120, margin: "0 auto" }}>
@@ -184,6 +165,25 @@ export default function HomePage() {
               “{HOME.testimonialQuote}”
             </blockquote>
             <p style={{ ...accentItalic, fontSize: 20, color: "var(--alabaster)", marginTop: 22 }}>{HOME.testimonialAttribution}</p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── Calculator band (our addition) ───────────────────────────────── */}
+      <section style={{ background: "var(--bone)", padding: "88px 24px", borderTop: "1px solid var(--sand)", borderBottom: "1px solid var(--sand)" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
+          <Reveal>
+            <Eyebrow>{HOME.calcEyebrow}</Eyebrow>
+            <h2 className="display-lg" style={{ marginBottom: 18 }}>{HOME.calcTitle}</h2>
+            <p style={bodyStyle}>{HOME.calcBody}</p>
+            <CTALink href="/calculator" location="home_calc_band" label={HOME.calcCta} className="btn-sage" style={{ marginTop: 26, padding: "14px 30px", fontSize: 16 }}>
+              {HOME.calcCta} →
+            </CTALink>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", borderRadius: 12, overflow: "hidden", background: "var(--sand)", boxShadow: "0 12px 40px rgba(43,38,34,0.10)" }}>
+              <Image src="/photos/kristina_luu4052.jpg" alt="A thoughtfully styled reception tablescape" fill sizes="(max-width:700px) 100vw, 50vw" style={{ objectFit: "cover" }} />
+            </div>
           </Reveal>
         </div>
       </section>
