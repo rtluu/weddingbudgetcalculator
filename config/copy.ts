@@ -35,43 +35,53 @@ export const PROOF_STATS = [
 ] as const;
 
 export const HOME = {
+  // §1 Hero (video)
+  heroBrand: "By Mosaic",
+  heroBrandSub: "Events",
+  heroEst: "Est 2022",
   heroEyebrow: "Los Angeles-based wedding & social event planner",
-  heroTitle: "Crafting events as unique as mosaics",
-  heroSub:
-    "Just like a mosaic, every detail — big or small — comes together to create something truly special.",
-  heroCtaPrimary: "Schedule a consultation",
-  heroCtaSecondary: "Browse the portfolio",
 
-  introEyebrow: "Get to know me",
+  // §2 Brand intro
+  introTitle: "Crafting events as unique as mosaics",
   introQuote: "Every celebration is a masterpiece in the making.",
   introBody:
-    "As the owner and lead planner, my greatest passion is creating experiences that bring people together to celebrate life's most meaningful moments. Planning is my love language, and I pour my heart into every event because it's not just about the celebration — it's about telling your story.",
-  introBody2:
-    "Your event should reflect your unique story and style, and I'd be honored to be part of yours.",
-  introCta: "Get to know me",
+    "Just like a mosaic, every detail—big or small—comes together to create something truly special. With a personal touch and heartfelt dedication, I craft events as unique and beautiful as the people behind them. My goal is to bring your vision, personality, and story to life, turning your special moments into memories you'll cherish forever.",
+  introCta: "View the services",
 
-  servicesEyebrow: "What I offer",
-  servicesTitle: "Three ways to bring your vision to life",
-  servicesCta: "View the services",
+  // §3 "Creating mosaic events since 2022" collage
+  collageCaptionLeft: "Los Angeles-based event planner",
+  collageCaptionRight: "Creating mosaic events since 2022",
 
+  // §4 Portfolio — living mosaics
+  portfolioTitle: "Events are living mosaics",
+  portfolioBody:
+    "Your event should reflect your unique story and style, and I'd be honored to be part of yours. Browse through the events and weddings I've brought to life—you might just find some inspiration for your own celebration!",
+  portfolioCta: "Browse the portfolio",
+
+  // §5 Calculator band (our addition)
   calcEyebrow: "Plan with real numbers",
   calcTitle: "What will your wedding actually cost?",
   calcBody:
     "Before the first consultation, get an honest estimate built on real Southern California vendor data — not national averages from a content farm. Sixty seconds, no email required.",
   calcCta: "Try the budget calculator",
 
-  portfolioEyebrow: "Featured moments & celebrations",
-  portfolioTitle: "Where every event is carefully curated and flawlessly executed",
-  portfolioCta: "Explore the portfolio",
+  // §6 Meet the Planner
+  plannerEyebrow: "Meet the Planner",
+  plannerName: "Kristina Luu",
+  plannerBody:
+    "As the owner and lead planner, my greatest passion is creating experiences that bring people together to celebrate life's most meaningful moments. Planning is my love language, and I pour my heart into every event because it's not just about the celebration—it's about telling your story. I take the time to truly listen, collaborate, and understand your vision, ensuring every detail reflects your unique personality and what matters most to you. I can't wait to connect and bring your vision to life!",
+  plannerCta: "Get to know me",
 
-  testimonialQuote:
-    "We were both able to be present on our day.",
-  testimonialAttribution: "Samantha & Luis",
+  // §7 Testimonial
+  testimonialQuote: "We were both able to be present on our day",
+  testimonialAttribution: "Samantha and Luis",
 
+  // §8 Closing CTA
+  closingEyebrow: "Ready to get started?",
   closingTitle: "Let's create your masterpiece",
   closingBody:
-    "Your event should reflect your unique story and style, and I'd be honored to be part of yours.",
-  closingCta: "Begin your journey",
+    "Your event should feel like you, which is why I take a personalized approach to planning. Whether it's an intimate gathering or a grand celebration, my goal is to create an experience that reflects your style and story. Together, we'll craft unforgettable moments, weaving thoughtful details into a masterpiece you'll cherish forever. Schedule a free consultation with me, and let's start bringing your event to life!",
+  closingCta: "Schedule a consultation",
 } as const;
 
 // About page — verbatim from /about, structured to mirror the original layout

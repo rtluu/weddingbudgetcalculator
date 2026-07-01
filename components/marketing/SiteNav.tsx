@@ -20,6 +20,12 @@ export default function SiteNav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Current-page label for the collapsed (mobile) header. Home shows nothing —
+  // the wordmark already signals it.
+  const currentLabel = pathname.startsWith("/calculator")
+    ? "Budget Calculator"
+    : NAV_LINKS.find((l) => l.href !== "/" && pathname.startsWith(l.href))?.label ?? null;
+
   return (
     <header
       style={{
@@ -78,6 +84,7 @@ export default function SiteNav() {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: 14,
@@ -96,6 +103,28 @@ export default function SiteNav() {
             Budget Calculator
           </Link>
         </div>
+
+        {/* Current page — mobile only */}
+        {currentLabel && (
+          <span
+            className="nav-current"
+            style={{
+              marginLeft: "auto",
+              fontFamily: "var(--font-body)",
+              fontSize: 12,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+              color: "var(--sage-deep)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              minWidth: 0,
+            }}
+          >
+            {currentLabel}
+          </span>
+        )}
 
         {/* Mobile toggle */}
         <button
@@ -138,6 +167,7 @@ export default function SiteNav() {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
               onClick={() => setOpen(false)}
               style={{
                 fontFamily: "var(--font-body)",

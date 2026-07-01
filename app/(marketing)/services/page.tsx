@@ -2,8 +2,18 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import ServicesCarousel from "@/components/marketing/ServicesCarousel";
+import Carousel from "@/components/marketing/Carousel";
 import { SERVICES, SERVICES_PAGE, SERVICES_FAQ } from "@/config/copy";
+
+const SERVICES_HERO_IMAGES = [
+  "/photos/samantha_and_luis-425.jpg",
+  "/photos/kg004048.jpg",
+  "/photos/l_and_b-168.jpg",
+  "/photos/l_and_b-452.jpg",
+  "/photos/nnn_4788.jpg",
+  "/photos/dsc0404.jpg",
+  "/photos/ldphotography31.jpg",
+];
 
 export const metadata: Metadata = {
   title: "Services",
@@ -23,7 +33,7 @@ export default function ServicesPage() {
   return (
     <div className="services-page">
       {/* ── 1 · Hero image carousel ──────────────────────────────────────── */}
-      <ServicesCarousel />
+      <Carousel images={SERVICES_HERO_IMAGES} variant="edge" height={520} />
 
       {/* ── 2 · Headline + tagline + monogram ────────────────────────────── */}
       <section style={{ background: "var(--alabaster)", padding: "80px 24px 64px" }}>
