@@ -182,6 +182,12 @@ export default function HomePage() {
     }
   };
 
+  const restart = () => {
+    setStep(0);
+    setResult(null);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const pageVariants = {
     initial: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
     animate: { opacity: 1, y: 0 },
@@ -347,6 +353,21 @@ export default function HomePage() {
                               >
                                 Step {step} of 4
                               </p>
+                              <button
+                                onClick={restart}
+                                className="font-body text-xs"
+                                style={{
+                                  marginLeft: "auto",
+                                  background: "none",
+                                  border: "none",
+                                  padding: 0,
+                                  cursor: "pointer",
+                                  color: "var(--muted)",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                Start over
+                              </button>
                             </div>
                             <h2 className="display-lg mb-2">{stepConfig.title}</h2>
                             <p
