@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Fraunces, Hanken_Grotesk, Instrument_Serif } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
+import { SITE, SOCIAL_LINKS, siteUrl } from "@/config/site";
+import JsonLd from "@/components/JsonLd";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -25,7 +27,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bymosaic.com"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "By Mosaic — Los Angeles Wedding & Social Event Planner",
     template: "%s · By Mosaic",
@@ -46,7 +48,7 @@ export const metadata: Metadata = {
     description:
       "Crafting events as unique as mosaics. Let's create your masterpiece.",
     type: "website",
-    url: "https://bymosaic.com",
+    url: siteUrl,
     siteName: "By Mosaic",
   },
   twitter: {
@@ -54,6 +56,34 @@ export const metadata: Metadata = {
     title: "By Mosaic — LA Wedding & Social Event Planner",
     description: "Crafting events as unique as mosaics. Let's create your masterpiece.",
   },
+};
+
+// Site-wide LocalBusiness structured data for local SEO / rich results.
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${siteUrl}/#business`,
+  name: SITE.name,
+  alternateName: "By Mosaic Events",
+  description: SITE.tagline,
+  url: siteUrl,
+  image: `${siteUrl}/logos/bymosaic-mark.svg`,
+  logo: `${siteUrl}/logos/bymosaic-mark.svg`,
+  email: SITE.email,
+  telephone: SITE.phoneHref.replace("tel:", ""),
+  foundingDate: String(SITE.established),
+  priceRange: "$$$",
+  areaServed: [
+    { "@type": "City", name: "Los Angeles" },
+    { "@type": "AdministrativeArea", name: "Southern California" },
+  ],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Los Angeles",
+    addressRegion: "CA",
+    addressCountry: "US",
+  },
+  sameAs: SOCIAL_LINKS.map((s) => s.href),
 };
 
 export default function RootLayout({
@@ -73,7 +103,10 @@ export default function RootLayout({
         } as React.CSSProperties
       }
     >
-      <body>{children}</body>
+      <body>
+        <JsonLd data={localBusinessJsonLd} />
+        {children}
+      </body>
       {process.env.NEXT_PUBLIC_GA_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       )}

@@ -53,10 +53,10 @@ The highest-leverage work: make correctness automatic instead of manual.
 
 ## Phase 3 — SEO, metadata & performance
 
-- [ ] **Structured data (JSON-LD)**: `LocalBusiness` (site-wide), `FAQPage` (Services
+- [x] **Structured data (JSON-LD)**: `LocalBusiness` (site-wide), `FAQPage` (Services
       FAQs), `BlogPosting` (per post), `Review`/`AggregateRating` (testimonials).
-- [ ] **Per-page / per-post OG images** (dynamic `opengraph-image` in blog/[slug], etc.).
-- [ ] Set `metadataBase` from an env-driven site URL so canonical/OG match the live host
+- [x] **Per-page / per-post OG images** (dynamic `opengraph-image` in blog/[slug], etc.).
+- [x] Set `metadataBase` from an env-driven site URL so canonical/OG match the live host
       (netlify subdomain now, `bymosaic.com` later) — no code change at domain switch.
 - [ ] Audit client boundaries; lazy-load below-the-fold heavy client components
       (calculator band, carousels) and confirm framer-motion isn't blocking LCP.

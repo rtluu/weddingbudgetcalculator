@@ -10,6 +10,11 @@ export const SITE = {
   calendlyUrl: "https://calendly.com/kristina-bymosaic/30min",
 } as const;
 
+// Canonical origin for metadata/OG/JSON-LD. Env-driven so canonical URLs match
+// the live host — set NEXT_PUBLIC_SITE_URL per environment (netlify subdomain
+// now, bymosaic.com later); no code change needed at the domain switch.
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bymosaic.com";
+
 export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },

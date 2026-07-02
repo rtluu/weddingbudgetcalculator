@@ -3,7 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
 import PageHeader, { Accent } from "@/components/marketing/PageHeader";
+import JsonLd from "@/components/JsonLd";
 import { SERVICES, SERVICES_PAGE, SERVICES_FAQ } from "@/config/copy";
+
+// FAQ rich-result structured data, generated from the same FAQ content.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: SERVICES_FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
 
 export const metadata: Metadata = {
   title: "Services",
@@ -22,6 +34,7 @@ const bodyStyle: React.CSSProperties = {
 export default function ServicesPage() {
   return (
     <div className="services-page">
+      <JsonLd data={faqJsonLd} />
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <PageHeader
         eyebrow="Wedding & social event planning"

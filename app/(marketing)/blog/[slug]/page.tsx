@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Reveal from "@/components/marketing/Reveal";
+import JsonLd from "@/components/JsonLd";
+import { siteUrl } from "@/config/site";
 import { BLOG_POSTS, getPost, AUTHOR_BIO } from "@/content/blog";
 
 export function generateStaticParams() {
@@ -38,8 +40,26 @@ export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
   const post = getPost(slug);
   if (!post) notFound();
 
+  const blogPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    image: `${siteUrl}${post.coverImage}`,
+    datePublished: post.publishedAt,
+    author: { "@type": "Person", name: post.author },
+    publisher: {
+      "@type": "Organization",
+      name: "By Mosaic",
+      logo: { "@type": "ImageObject", url: `${siteUrl}/logos/bymosaic-mark.svg` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${siteUrl}/blog/${post.slug}` },
+    articleSection: post.category,
+  };
+
   return (
     <article style={{ background: "var(--alabaster)" }}>
+      <JsonLd data={blogPostingJsonLd} />
       {/* Header */}
       <header style={{ maxWidth: 760, margin: "0 auto", padding: "80px 24px 40px", textAlign: "center" }}>
         <p
