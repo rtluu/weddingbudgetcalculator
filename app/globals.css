@@ -600,6 +600,14 @@ h1, h2, h3, h4, h5, h6 {
 .svc-head  { grid-area: head; }
 .svc-media { grid-area: media; }
 .svc-body  { grid-area: body; }
+.svc-media-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3; /* moderate crop when stacked (mobile) */
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--sand);
+}
 
 @media (min-width: 761px) {
   .svc-row {
@@ -622,6 +630,8 @@ h1, h2, h3, h4, h5, h6 {
       ". media";
   }
   .svc-media { align-self: center; }
+  /* Taller portrait crop in the two-column layout to fill the text column */
+  .svc-media-frame { aspect-ratio: 3 / 4; }
 }
 
 @media (max-width: 760px) {
@@ -656,6 +666,37 @@ h1, h2, h3, h4, h5, h6 {
 details[open] > .faq-summary::after {
   content: "\2212"; /* minus sign */
 }
+
+/* ─── Services: "What's included" disclosure ─────────────────────────────────── */
+.svc-included {
+  margin-top: 22px;
+  border-top: 1px solid var(--sand);
+  border-bottom: 1px solid var(--sand);
+}
+.svc-included-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  list-style: none;
+  cursor: pointer;
+  padding: 15px 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--sage-deep);
+}
+.svc-included-summary::-webkit-details-marker { display: none; }
+.svc-included-summary::after {
+  content: "+";
+  font-size: 22px;
+  line-height: 1;
+  color: var(--sage-deep);
+  flex-shrink: 0;
+}
+details[open] > .svc-included-summary::after { content: "\2212"; }
 
 /* ─── Homepage: §2 services preview grid ─────────────────────────────────────── */
 .home-services-grid {

@@ -67,14 +67,32 @@ export default function ServicesPage() {
                   </div>
                   {/* Image */}
                   <div className="svc-media">
-                    <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 3", borderRadius: 12, overflow: "hidden", background: "var(--sand)" }}>
+                    <div className="svc-media-frame">
                       <Image src={s.image} alt={s.name} fill sizes="(max-width: 700px) 100vw, 50vw" style={{ objectFit: "cover" }} />
                     </div>
                   </div>
                   {/* Details + inquire */}
                   <div className="svc-body">
                     <p style={bodyStyle}>{s.full}</p>
-                    <p style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--sage-deep)", marginTop: 18 }}>
+
+                    <details className="svc-included">
+                      <summary className="svc-included-summary">What&apos;s included</summary>
+                      <ul style={{ listStyle: "none", padding: "0 0 18px", margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+                        {s.included.map((item) => (
+                          <li key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontFamily: "var(--font-body)", fontSize: 15, lineHeight: 1.5, color: "var(--ink)", opacity: 0.9 }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 3, color: "var(--sage-deep)" }} aria-hidden="true">
+                              <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+
+                    <p style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 600, color: "var(--ink)", marginTop: 26 }}>
+                      {s.investment}
+                    </p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--sage-deep)", marginTop: 6 }}>
                       {s.timeline}
                     </p>
                     <Link href="/contact" className="btn-sage-outline" style={{ marginTop: 24, fontSize: 14 }}>
