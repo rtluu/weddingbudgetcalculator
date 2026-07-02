@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 // "View testimonial" button + lightbox overlay playing the Vimeo BTS/testimonial
 // video. While the overlay is open the hero background video is paused (and
@@ -84,7 +85,7 @@ export default function TestimonialModal() {
         View testimonial
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -144,7 +145,8 @@ export default function TestimonialModal() {
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
