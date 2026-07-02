@@ -724,41 +724,15 @@ details[open] > .svc-included-summary::after { content: "\2212"; }
   .home-service-img { order: 2; }
 }
 
-/* ─── Homepage: §3 "since 2022" collage ──────────────────────────────────────── */
-.home-collage {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr 1fr;
-  gap: 36px;
-  align-items: start;
-}
-.home-collage-l, .home-collage-r { margin-top: 72px; }
-.home-collage-img {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  background: var(--sand);
-}
-@media (max-width: 760px) {
-  .home-collage { grid-template-columns: 1fr; gap: 30px; max-width: 420px; }
-  .home-collage-l, .home-collage-r { margin-top: 0; }
-}
-
-/* ─── Homepage: §6 Meet the Planner / §7 Testimonial two-column ───────────────── */
+/* ─── Homepage: Meet the Planner two-column ──────────────────────────────────── */
 .home-planner {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
   align-items: center;
 }
-.home-testimonial {
-  display: grid;
-  grid-template-columns: 0.8fr 1fr;
-  gap: 56px;
-  align-items: center;
-}
 @media (max-width: 820px) {
   .home-planner { grid-template-columns: 1fr; gap: 36px; }
-  .home-testimonial { grid-template-columns: 1fr; gap: 32px; max-width: 480px; margin: 0 auto; }
 }
 
 /* ─── Homepage: §8 closing — frosted text + scattered accents ─────────────────── */

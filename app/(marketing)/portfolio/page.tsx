@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import Eyebrow from "@/components/marketing/Eyebrow";
+import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import PortfolioGrid from "@/components/marketing/PortfolioGrid";
 import PortfolioGallery from "@/components/marketing/PortfolioGallery";
 import { PORTFOLIO, PORTFOLIO_HEADER } from "@/config/copy";
@@ -16,31 +16,15 @@ export default function PortfolioPage() {
   return (
     <>
       {/* Hero */}
-      <section style={{ background: "var(--alabaster)", minHeight: "clamp(360px, 46vh, 520px)", padding: "56px 24px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
-          <Reveal>
-            <Eyebrow align="center">{PORTFOLIO_HEADER.eyebrow}</Eyebrow>
-            <h1 className="display-xl" style={{ marginBottom: 22 }}>
-              Carefully curated, flawlessly{" "}
-              <em className="italic-serif" style={{ color: "var(--sage-deep)" }}>
-                executed
-              </em>
-            </h1>
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 18,
-                lineHeight: 1.7,
-                color: "var(--muted)",
-                maxWidth: 600,
-                margin: "0 auto",
-              }}
-            >
-              {PORTFOLIO_HEADER.intro}
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <PageHeader
+        eyebrow={PORTFOLIO_HEADER.eyebrow}
+        title={
+          <>
+            Carefully curated, flawlessly <Accent>executed</Accent>
+          </>
+        }
+        subtitle={PORTFOLIO_HEADER.intro}
+      />
 
       {/* Featured grid */}
       <section style={{ background: "var(--bone)", padding: "56px 24px 80px", borderTop: "1px solid var(--sand)" }}>

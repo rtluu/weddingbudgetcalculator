@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/marketing/Reveal";
 import Eyebrow from "@/components/marketing/Eyebrow";
+import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import ContactForm from "@/components/marketing/ContactForm";
 import CalendlyEmbed from "@/components/marketing/CalendlyEmbed";
 import SocialProof from "@/components/marketing/SocialProof";
@@ -15,23 +16,17 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <section style={{ background: "var(--alabaster)", minHeight: "clamp(360px, 46vh, 520px)", padding: "56px 24px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
-          <Reveal>
-            <Eyebrow align="center">Inquire with By Mosaic</Eyebrow>
-            <h1 className="display-xl" style={{ marginBottom: 20 }}>
-              Let&apos;s create your{" "}
-              <em className="italic-serif" style={{ color: "var(--sage-deep)" }}>
-                masterpiece
-              </em>
-            </h1>
-            <p style={{ fontFamily: "var(--font-body)", fontSize: 18, lineHeight: 1.7, color: "var(--muted)", maxWidth: 560, margin: "0 auto" }}>
-              Interested in working with us? Reach out using the contact form or schedule a free
-              consultation with Kristina.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <PageHeader
+        eyebrow="Inquire with By Mosaic"
+        title={
+          <>
+            Let&apos;s create your <Accent>masterpiece</Accent>
+          </>
+        }
+        subtitle="Interested in working with us? Reach out using the contact form or schedule a free consultation with Kristina."
+        containerMaxWidth={720}
+        subtitleMaxWidth={560}
+      />
 
       {/* Form + info */}
       <section style={{ background: "var(--bone)", padding: "56px 24px 88px", borderTop: "1px solid var(--sand)" }}>

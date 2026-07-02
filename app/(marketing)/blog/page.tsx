@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import Eyebrow from "@/components/marketing/Eyebrow";
+import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import { BLOG_POSTS } from "@/content/blog";
 
 export const metadata: Metadata = {
@@ -22,32 +22,15 @@ function formatDate(iso: string) {
 export default function BlogIndexPage() {
   return (
     <>
-      <section style={{ background: "var(--alabaster)", minHeight: "clamp(360px, 46vh, 520px)", padding: "56px 24px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
-          <Reveal>
-            <Eyebrow align="center">Wedding Wisdom</Eyebrow>
-            <h1 className="display-xl" style={{ marginBottom: 20 }}>
-              The{" "}
-              <em className="italic-serif" style={{ color: "var(--sage-deep)" }}>
-                journal
-              </em>
-            </h1>
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 18,
-                lineHeight: 1.7,
-                color: "var(--muted)",
-                maxWidth: 600,
-                margin: "0 auto",
-              }}
-            >
-              Expert tips, creative ideas, and insider advice to help you plan not just your
-              wedding, but any special event with confidence and ease.
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <PageHeader
+        eyebrow="Wedding Wisdom"
+        title={
+          <>
+            The <Accent>journal</Accent>
+          </>
+        }
+        subtitle="Expert tips, creative ideas, and insider advice to help you plan not just your wedding, but any special event with confidence and ease."
+      />
 
       <section style={{ background: "var(--bone)", padding: "56px 24px 96px", borderTop: "1px solid var(--sand)" }}>
         <div

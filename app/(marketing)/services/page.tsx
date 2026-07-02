@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import Eyebrow from "@/components/marketing/Eyebrow";
+import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import { SERVICES, SERVICES_PAGE, SERVICES_FAQ } from "@/config/copy";
 
 export const metadata: Metadata = {
@@ -23,31 +23,19 @@ export default function ServicesPage() {
   return (
     <div className="services-page">
       {/* ── Header ────────────────────────────────────────────────────────── */}
-      <section style={{ background: "var(--alabaster)", minHeight: "clamp(360px, 46vh, 520px)", padding: "56px 24px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
-          <Reveal>
-            <Eyebrow align="center">Wedding &amp; social event planning</Eyebrow>
-            <h1 className="display-xl" style={{ marginBottom: 22 }}>
-              Let&apos;s create your{" "}
-              <span style={{ whiteSpace: "nowrap" }}>
-                <em className="italic-serif" style={{ color: "var(--sage-deep)" }}>mosaic</em> event
-              </span>
-            </h1>
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 18,
-                lineHeight: 1.7,
-                color: "var(--muted)",
-                maxWidth: 640,
-                margin: "0 auto",
-              }}
-            >
-              {SERVICES_PAGE.heroTagline}
-            </p>
-          </Reveal>
-        </div>
-      </section>
+      <PageHeader
+        eyebrow="Wedding & social event planning"
+        title={
+          <>
+            Let&apos;s create your{" "}
+            <span style={{ whiteSpace: "nowrap" }}>
+              <Accent>mosaic</Accent> event
+            </span>
+          </>
+        }
+        subtitle={SERVICES_PAGE.heroTagline}
+        subtitleMaxWidth={640}
+      />
 
       {/* ── My Services (alternating image/text rows) ────────────────────── */}
       <section style={{ background: "var(--bone)", padding: "80px 24px 88px", borderTop: "1px solid var(--sand)" }}>

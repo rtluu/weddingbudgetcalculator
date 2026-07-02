@@ -43,9 +43,9 @@ The highest-leverage work: make correctness automatic instead of manual.
 
 - [ ] Extract shared style tokens/among marketing pages: `bodyStyle`, `ctaButton`,
       `accentItalic` → one module (e.g. `components/marketing/styles.ts`).
-- [ ] Extract a **`<PageHeader eyebrow title subtitle />`** component for the
+- [x] Extract a **`<PageHeader eyebrow title subtitle />`** component for the
       Services/Portfolio/Blog/Contact heroes (min-height + flex centering in one place).
-- [ ] Remove dead CSS (`.home-collage*`, `.home-testimonial*`) and unused config keys
+- [x] Remove dead CSS (`.home-collage*`, `.home-testimonial*`) and unused config keys
       (`bestFor`, `effortlessEyebrow`, `SERVICES_PAGE.title/intro`, `heroTitle/heroTagline`,
       `ABOUT.s1*/s2*`, `collageCaption*`) — or reinstate the sections that used them.
 - [ ] Split the 1,147-line `app/calculator/page.tsx` into a state hook +
