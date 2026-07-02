@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Location, locationLabels } from "@/config/costModel";
+import { Location } from "@/config/costModel";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -56,7 +56,6 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
               key={loc.id}
               role="radio"
               aria-checked={isSelected}
-              aria-expanded={isOtherMetro ? otherMetroOpen : undefined}
               onClick={() => onChange(loc.id)}
               className="relative py-3 px-4 rounded-full text-sm font-medium transition-colors duration-300 text-left"
               style={{

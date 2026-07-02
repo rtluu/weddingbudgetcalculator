@@ -7,7 +7,9 @@ import { EstimatePDF } from "./EstimatePDF";
 
 // Lazy-initialize so build doesn't fail without env vars
 function getResend() {
-  return new Resend(process.env.RESEND_API_KEY ?? "placeholder");
+  const key = process.env.RESEND_API_KEY;
+  if (!key) console.error("[email] RESEND_API_KEY is not set - notification emails will NOT be delivered.");
+  return new Resend(key ?? "placeholder");
 }
 
 type LeadScore = "A" | "B" | "C";

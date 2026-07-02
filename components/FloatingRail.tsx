@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useReducedMotion, useSpring } from "framer-motion";
-import { BudgetResult, Tier, Location, locationLabels } from "@/config/costModel";
+import { BudgetResult, Tier, locationLabels } from "@/config/costModel";
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-US", {

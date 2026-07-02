@@ -8,25 +8,25 @@ items off as they land.
 
 The highest-leverage work: make correctness automatic instead of manual.
 
-- [ ] **Fix ESLint scope.** Add `.netlify/**` (and any other build output) to
+- [x] **Fix ESLint scope.** Add `.netlify/**` (and any other build output) to
       `globalIgnores` in `eslint.config.mjs`. Today `npx eslint .` = ~5,900 false
       problems from `.netlify/`, hiding ~29 real ones. `npm run lint` must be clean-signal.
-- [ ] **CI on every PR/push** (`.github/workflows/ci.yml`): `npm ci`, typecheck
+- [x] **CI on every PR/push** (`.github/workflows/ci.yml`): `npm ci`, typecheck
       (`tsc --noEmit`), `npm run lint`, `npm test`, `npm run build`. Block merge on red.
-- [ ] **Pre-commit hook** (husky + lint-staged): run eslint --fix + tsc on staged files.
-- [ ] **Add `typecheck` script** (`tsc --noEmit`) and wire into CI + pre-commit.
-- [ ] **Enable jsdom test env** for component tests (`jest-environment-jsdom` is already
+- [x] **Pre-commit hook** (husky + lint-staged): run eslint --fix + tsc on staged files.
+- [x] **Add `typecheck` script** (`tsc --noEmit`) and wire into CI + pre-commit.
+- [x] **Enable jsdom test env** for component tests (`jest-environment-jsdom` is already
       installed) + `@testing-library/react` so we can test UI, not just pure logic.
-- [ ] **Deploy gate**: only `netlify deploy --prod` after CI is green (document in
+- [x] **Deploy gate**: only `netlify deploy --prod` after CI is green (document in
       `deploy-workflow` memory; consider Netlify's own build checks).
 
 ## Phase 1 — Correctness & tests
 
-- [ ] Fix the 12 real ESLint errors: `react/no-unescaped-entities`, the 2×
+- [x] Fix the 12 real ESLint errors: `react/no-unescaped-entities`, the 2×
       `setState`-in-effect (calculator), and 2× `Cannot create components during
       render` (`lib/generatePDF.tsx` — hoist component defs out of render).
-- [ ] Clear the 17 warnings (unused vars; `aria-expanded` on `role=radio`).
-- [ ] **Expand cost-model tests** (`config/costModel.ts`): seasonal multipliers,
+- [x] Clear the 17 warnings (unused vars; `aria-expanded` on `role=radio`).
+- [x] **Expand cost-model tests** (`config/costModel.ts`): seasonal multipliers,
       day-of-week adjustments, contingency, F&B service, every location/tier, edge
       guest counts. This is the money math — it deserves broad coverage.
 - [ ] **Test the lead/contact API handlers** (`app/api/**`): payload validation,
@@ -34,9 +34,9 @@ The highest-leverage work: make correctness automatic instead of manual.
 - [ ] **Component smoke tests** for the calculator flow (step transitions, estimate
       updates) and the two portals (TestimonialModal, PortfolioGallery lightbox).
 - [ ] **Add runtime validation** (zod) at API boundaries + form inputs; return typed errors.
-- [ ] **Error boundaries** around the calculator and the marketing route group; a
+- [x] **Error boundaries** around the calculator and the marketing route group; a
       friendly fallback instead of a white screen.
-- [ ] **Fail loud on missing env** in prod (Resend key, GA id, booking URL) — log/throw
+- [x] **Fail loud on missing env** in prod (Resend key, GA id, booking URL) — log/throw
       at startup rather than silently no-op'ing lead delivery.
 
 ## Phase 2 — Consolidation & dead-code removal

@@ -20,9 +20,22 @@ interface Props {
   compact?: boolean;
 }
 
+// Module-scope so it isn't re-created every render (react-hooks/static-components).
+function Chevron({ dir }: { dir: "left" | "right" }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      {dir === "left"
+        ? <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        : <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      }
+    </svg>
+  );
+}
+
 export default function WeddingDatePicker({ value, onChange, compact }: Props) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const todayYear = today.getFullYear();
 
   const [viewYear, setViewYear]       = useState(value?.getFullYear()  ?? today.getFullYear());
   const [viewMonth, setViewMonth]     = useState(value?.getMonth()      ?? today.getMonth());
@@ -55,8 +68,8 @@ export default function WeddingDatePicker({ value, onChange, compact }: Props) {
 
   const goYearPage = useCallback((delta: number) => {
     setDirection(delta);
-    setYearStart((s) => Math.max(today.getFullYear(), s + delta * YEAR_PAGE));
-  }, [today.getFullYear()]);
+    setYearStart((s) => Math.max(todayYear, s + delta * YEAR_PAGE));
+  }, [todayYear]);
 
   // ── header prev/next based on mode ──────────────────────────────────────────
   const handlePrev = () => {
@@ -160,15 +173,6 @@ export default function WeddingDatePicker({ value, onChange, compact }: Props) {
     padding: "10px 0",
     textAlign: "center",
   };
-
-  const Chevron = ({ dir }: { dir: "left" | "right" }) => (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-      {dir === "left"
-        ? <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        : <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      }
-    </svg>
-  );
 
   const inner = (
     <div>

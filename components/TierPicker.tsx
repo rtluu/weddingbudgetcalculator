@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Tier } from "@/config/costModel";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 
 interface TierCard {
   id: Tier;

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { BudgetResult, Tier, Location, locationLabels } from "@/config/costModel";
+import { BudgetResult, Tier, locationLabels } from "@/config/costModel";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -90,8 +90,6 @@ export default function ResultsBreakdown({
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const plannerFee = result.tier === "luxury" ? 0.12 : 0.10;
-  const plannerAmount = result.total * plannerFee;
   const diyPenalty = result.total * 0.08;
 
   // Build per-category DIY view
@@ -487,7 +485,7 @@ export default function ResultsBreakdown({
         style={{ borderLeft: "3px solid var(--clay)" }}
       >
         <p className="font-body text-sm italic leading-relaxed" style={{ color: "var(--ink)" }}>
-          "{kristinasNote(result)}" — Kristina
+          “{kristinasNote(result)}” â Kristina
         </p>
         <div className="flex flex-wrap gap-3">
           <a

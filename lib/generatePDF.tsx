@@ -5,9 +5,8 @@ import {
   Text,
   View,
   StyleSheet,
-  Font,
 } from "@react-pdf/renderer";
-import { BudgetResult, Tier, Location, locationLabels } from "@/config/costModel";
+import { BudgetResult, Tier, locationLabels } from "@/config/costModel";
 
 // ─── Fonts ─────────────────────────────────────────────────────────────────────
 // Note: @react-pdf/renderer requires embedded fonts or system fonts
@@ -352,9 +351,9 @@ export function BudgetPDF({ result, coupleNames, generatedDate }: BudgetPDFProps
         {/* ─── Signature ────────────────────────────────────────────────────────── */}
         <View style={styles.signatureBlock}>
           <Text style={styles.signatureText}>
-            "Reply with any question — I read these myself. These numbers are built from
+            “Reply with any question â I read these myself. These numbers are built from
             real LA vendor data I see every season. If your total surprised you, let&apos;s
-            talk about where there&apos;s flexibility and where there isn&apos;t."
+            talk about where there&apos;s flexibility and where there isn&apos;t.”
           </Text>
           <Text style={styles.signatureName}>Kristina</Text>
           <Text style={styles.signatureTitle}>

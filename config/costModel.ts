@@ -341,12 +341,10 @@ export function calculateWeddingBudget(
   const contingencyAmount = subtotalBeforeContingency * contingencyRate;
   const total             = subtotalBeforeContingency + contingencyAmount;
 
-  // DoW savings = difference between Saturday baseline and actual DoW, post-location+seasonal
-  const saturdayTotal = saturdaySubtotal * locationMult * seasonMult * (1 + contingencyRate);
   // Also add F&B factor to saturday baseline for accurate comparison
   const satFnB = rawCategories
     .filter(({ cat }) => FNB_NAMES.has(cat.name))
-    .reduce((s, { cat, subtotal: _ }) => {
+    .reduce((s, { cat }) => {
       const pgRate = cat.hasPerGuestOverride ? (perGuestByTier[cat.name]?.[tier] ?? cat.perGuestModerate) : cat.perGuestModerate;
       const guestCount = cat.isHouseholdStationery ? guests * 0.5 : guests;
       const base = cat.hasPerGuestOverride

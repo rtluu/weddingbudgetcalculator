@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useSpring, useReducedMotion, useDragControls } from "framer-motion";
-import { BudgetResult, Tier, Location, locationLabels } from "@/config/costModel";
+import { BudgetResult, Tier, locationLabels } from "@/config/costModel";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSpring, motion, useReducedMotion, useMotionValue, useTransform } from "framer-motion";
+import { useSpring, motion, useReducedMotion } from "framer-motion";
 
 interface GuestSliderProps {
   value: number;

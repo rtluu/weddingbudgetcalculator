@@ -7,7 +7,7 @@ import LocationPicker from "@/components/LocationPicker";
 import TierPicker from "@/components/TierPicker";
 import ResultsBreakdown from "@/components/ResultsBreakdown";
 import FloatingRail from "@/components/FloatingRail";
-import { calculateWeddingBudget, BudgetResult, Tier, Location, DayOfWeek, dowDayLabels, locationLabels } from "@/config/costModel";
+import { calculateWeddingBudget, BudgetResult, Tier, Location, DayOfWeek, locationLabels } from "@/config/costModel";
 import WeddingDatePicker from "@/components/WeddingDatePicker";
 import MobileEstimateBar from "@/components/MobileEstimateBar";
 import SiteNav from "@/components/marketing/SiteNav";
@@ -97,7 +97,7 @@ export default function HomePage() {
 
     setResult(calculateWeddingBudget(gNum, l, t, mNum, dNum));
     setStep(6); // bypass soft gate for shared links
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
 
   // Write URL params when on results so the estimate is shareable
   useEffect(() => {
