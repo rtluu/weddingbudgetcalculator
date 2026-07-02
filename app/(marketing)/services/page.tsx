@@ -23,7 +23,7 @@ export default function ServicesPage() {
   return (
     <div className="services-page">
       {/* ── Header ────────────────────────────────────────────────────────── */}
-      <section style={{ background: "var(--alabaster)", padding: "96px 24px 48px" }}>
+      <section style={{ background: "var(--alabaster)", minHeight: "clamp(360px, 46vh, 520px)", padding: "56px 24px", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
           <Reveal>
             <Eyebrow align="center">Wedding &amp; social event planning</Eyebrow>

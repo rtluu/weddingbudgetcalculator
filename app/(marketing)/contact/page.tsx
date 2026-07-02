@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <section style={{ background: "var(--alabaster)", padding: "88px 24px 40px", textAlign: "center" }}>
+      <section style={{ background: "var(--alabaster)", minHeight: "clamp(360px, 46vh, 520px)", padding: "56px 24px", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
         <div style={{ maxWidth: 720, margin: "0 auto" }}>
           <Reveal>
             <Eyebrow align="center">Inquire with By Mosaic</Eyebrow>
