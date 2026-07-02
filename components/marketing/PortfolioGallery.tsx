@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 
 export default function PortfolioGallery({
@@ -34,16 +35,11 @@ export default function PortfolioGallery({
 
   return (
     <>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: 12,
-        }}
-      >
+      <div className="pf-gallery">
         {images.map((src, i) => (
           <button
             key={src}
+            className="pf-gallery-item"
             onClick={() => {
               setIndex(i);
               setOpen(true);
@@ -71,7 +67,7 @@ export default function PortfolioGallery({
         ))}
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -148,7 +144,8 @@ export default function PortfolioGallery({
           >
             {index + 1} / {images.length}
           </p>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
@@ -156,6 +153,7 @@ export default function PortfolioGallery({
 
 const navBtn: React.CSSProperties = {
   position: "absolute",
+  zIndex: 2,
   width: 44,
   height: 44,
   borderRadius: "50%",

@@ -698,6 +698,21 @@ details[open] > .faq-summary::after {
 }
 details[open] > .svc-included-summary::after { content: "\2212"; }
 
+/* ─── Portfolio: per-case-study masonry board ────────────────────────────────── */
+.pf-gallery {
+  column-count: 5;
+  column-gap: 12px;
+}
+.pf-gallery-item {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  break-inside: avoid;
+}
+@media (max-width: 1100px) { .pf-gallery { column-count: 4; } }
+@media (max-width: 820px)  { .pf-gallery { column-count: 3; } }
+@media (max-width: 560px)  { .pf-gallery { column-count: 2; } }
+
 /* ─── Homepage: §2 services preview grid ─────────────────────────────────────── */
 .home-services-grid {
   display: grid;
