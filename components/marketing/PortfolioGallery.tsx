@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+
+// Height "units" per image (relative to column width) — must match the
+// aspect-ratio used when rendering, so column balancing is accurate.
+const heightUnit = (i: number) => (i % 5 === 0 ? 1 : 4 / 3); // 1:1 vs 3:4
 
 export default function PortfolioGallery({
   images,
@@ -13,6 +17,36 @@ export default function PortfolioGallery({
 }) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+
+  // Responsive masonry column count — capped so small galleries stay filled
+  // (~2.5 images per column) instead of leaving sparse, orphaned columns.
+  const [cols, setCols] = useState(() =>
+    Math.max(1, Math.min(4, Math.ceil(images.length / 2.5)))
+  );
+  useEffect(() => {
+    const compute = () => {
+      const w = window.innerWidth;
+      const maxCols = w <= 560 ? 2 : w <= 820 ? 3 : w <= 1100 ? 4 : 5;
+      setCols(Math.max(1, Math.min(maxCols, Math.ceil(images.length / 2.5))));
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [images.length]);
+
+  // True masonry: drop each image into the currently shortest column (ties
+  // break left), so space fills vertically and to the left with no gaps.
+  const columns = useMemo(() => {
+    const heights: number[] = new Array(cols).fill(0);
+    const buckets: { src: string; i: number }[][] = Array.from({ length: cols }, () => []);
+    images.forEach((src, i) => {
+      let t = 0;
+      for (let c = 1; c < cols; c++) if (heights[c] < heights[t] - 1e-6) t = c;
+      buckets[t].push({ src, i });
+      heights[t] += heightUnit(i);
+    });
+    return buckets;
+  }, [images, cols]);
 
   const close = useCallback(() => setOpen(false), []);
   const next = useCallback(() => setIndex((i) => (i + 1) % images.length), [images.length]);
@@ -35,35 +69,39 @@ export default function PortfolioGallery({
 
   return (
     <>
-      <div className="pf-gallery">
-        {images.map((src, i) => (
-          <button
-            key={src}
-            className="pf-gallery-item"
-            onClick={() => {
-              setIndex(i);
-              setOpen(true);
-            }}
-            aria-label={`View photo ${i + 1} of ${images.length} from ${couple}`}
-            style={{
-              position: "relative",
-              aspectRatio: i % 5 === 0 ? "1 / 1" : "3 / 4",
-              border: "1px solid var(--sand)",
-              borderRadius: 8,
-              overflow: "hidden",
-              cursor: "zoom-in",
-              padding: 0,
-              background: "var(--sand)",
-            }}
-          >
-            <Image
-              src={src}
-              alt={`${couple} — photo ${i + 1}`}
-              fill
-              sizes="(max-width: 700px) 50vw, 25vw"
-              style={{ objectFit: "cover" }}
-            />
-          </button>
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+        {columns.map((col, ci) => (
+          <div key={ci} style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+            {col.map(({ src, i }) => (
+              <button
+                key={src}
+                onClick={() => {
+                  setIndex(i);
+                  setOpen(true);
+                }}
+                aria-label={`View photo ${i + 1} of ${images.length} from ${couple}`}
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: i % 5 === 0 ? "1 / 1" : "3 / 4",
+                  border: "1px solid var(--sand)",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  cursor: "zoom-in",
+                  padding: 0,
+                  background: "var(--sand)",
+                }}
+              >
+                <Image
+                  src={src}
+                  alt={`${couple} — photo ${i + 1}`}
+                  fill
+                  sizes="(max-width: 700px) 50vw, 25vw"
+                  style={{ objectFit: "cover" }}
+                />
+              </button>
+            ))}
+          </div>
         ))}
       </div>
 
