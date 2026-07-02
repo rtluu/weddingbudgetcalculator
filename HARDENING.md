@@ -64,12 +64,12 @@ The highest-leverage work: make correctness automatic instead of manual.
 
 ## Phase 4 — Ongoing agentic guardrails
 
-- [ ] `AGENTS.md`/`CLAUDE.md` house rules: "build+lint+test must pass; branch-first;
+- [x] `AGENTS.md`/`CLAUDE.md` house rules: "build+lint+test must pass; branch-first;
       no direct commits to main; no dead code left behind."
-- [ ] A `verify` script (`npm run verify` = typecheck + lint + test + build) as the
+- [x] A `verify` script (`npm run verify` = typecheck + lint + test + build) as the
       single gate agents and humans run before shipping.
-- [ ] Dependabot/renovate for dependency freshness; pin Node in CI to match Netlify.
-- [ ] Keep this file updated as the source of truth for maintainability work.
+- [x] Dependabot/renovate for dependency freshness; pin Node in CI to match Netlify.
+- [x] Keep this file updated as the source of truth for maintainability work.
 
 ---
 _Audit baseline (2026-07-02): 1 test file; no CI/hooks; ESLint scanning `.netlify/`
