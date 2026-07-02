@@ -1,0 +1,177 @@
+import { useState, useEffect, useMemo, useCallback } from "react";
+import {
+  calculateWeddingBudget,
+  type BudgetResult,
+  type Tier,
+  type Location,
+  type DayOfWeek,
+} from "@/config/costModel";
+import { trackLead } from "@/lib/analytics";
+
+export type DateStatus = "yes" | "season" | "not-sure";
+
+const VALID_LOCATIONS: Location[] = [
+  "los-angeles", "santa-barbara", "orange-county", "san-diego", "palm-springs",
+  "socal-suburbs", "other-major-metro", "washington-dc", "maryland-montgomery",
+  "northern-virginia", "us-average",
+];
+const VALID_TIERS: Tier[] = ["budget", "moderate", "luxury"];
+
+// All state, derived values, effects, and handlers for the budget calculator.
+// The estimate is fully derived from the inputs (no result state / effect).
+export function useWeddingBudgetCalculator() {
+  const [step, setStep] = useState(0); // 0 landing, 1-4 steps, 5 soft gate, 6 results
+  const [guests, setGuests] = useState(100);
+  const [location, setLocation] = useState<Location>("los-angeles");
+  const [tier, setTier] = useState<Tier>("moderate");
+  const [dateStatus, setDateStatus] = useState<DateStatus>("not-sure");
+  const [weddingDate, setWeddingDate] = useState<Date | null>(null);
+  const [weddingSeason, setWeddingSeason] = useState<"spring" | "summer" | "fall" | "winter" | null>(null);
+  const [weddingDayOfWeek, setWeddingDayOfWeek] = useState<DayOfWeek | null>(null);
+  const [venueStatus, setVenueStatus] = useState<"touring" | "booked" | "none">("none");
+  const [venueName, setVenueName] = useState("");
+  const [leadCaptured, setLeadCaptured] = useState(false);
+  const [softGateName, setSoftGateName] = useState("");
+  const [softGateEmail, setSoftGateEmail] = useState("");
+  const [softGateSubmitting, setSoftGateSubmitting] = useState(false);
+
+  // Derive the cost-model timing inputs from all date-related state.
+  const timingMonth: number | undefined = (() => {
+    if (weddingDate) return weddingDate.getMonth();
+    if (weddingSeason === "spring") return 3; // April
+    if (weddingSeason === "summer") return 6; // July
+    if (weddingSeason === "fall") return 9;   // October
+    if (weddingSeason === "winter") return 0; // January
+    return undefined;
+  })();
+
+  const timingDow: DayOfWeek | undefined = (() => {
+    if (weddingDate) return weddingDate.getDay() as DayOfWeek;
+    if (weddingDayOfWeek !== null) return weddingDayOfWeek;
+    return undefined;
+  })();
+
+  // Estimate is derived — recomputes automatically as inputs change.
+  const result: BudgetResult = useMemo(
+    () => calculateWeddingBudget(guests, location, tier, timingMonth, timingDow),
+    [guests, location, tier, timingMonth, timingDow]
+  );
+
+  // Hydrate from shared URL params on first load (bypasses the soft gate).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const g = params.get("g");
+    const l = params.get("l") as Location | null;
+    const t = params.get("t") as Tier | null;
+    const m = params.get("m");
+    const d = params.get("d");
+    if (!g || !l || !t || !VALID_LOCATIONS.includes(l) || !VALID_TIERS.includes(t)) return;
+
+    const gNum = Math.min(300, Math.max(20, parseInt(g)));
+    const mNum = m !== null ? parseInt(m) : undefined;
+    const dNum = d !== null ? (parseInt(d) as DayOfWeek) : undefined;
+
+    setGuests(gNum);
+    setLocation(l);
+    setTier(t);
+    if (mNum !== undefined) {
+      const season = mNum >= 2 && mNum <= 4 ? "spring" : mNum >= 5 && mNum <= 7 ? "summer" : mNum >= 8 && mNum <= 10 ? "fall" : "winter";
+      setWeddingSeason(season);
+      setDateStatus("season");
+    }
+    if (dNum !== undefined) setWeddingDayOfWeek(dNum);
+    setStep(6);
+  }, []);
+
+  // Write URL params on the results step so the estimate is shareable.
+  useEffect(() => {
+    if (step !== 6) return;
+    const params = new URLSearchParams();
+    params.set("g", String(guests));
+    params.set("l", location);
+    params.set("t", tier);
+    if (timingMonth !== undefined) params.set("m", String(timingMonth));
+    if (timingDow !== undefined) params.set("d", String(timingDow));
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [step, guests, location, tier, timingMonth, timingDow]);
+
+  const handleLeadCapture = useCallback(
+    async (data: { name: string; email: string; phone?: string }) => {
+      await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          guestCount: guests,
+          location,
+          tier,
+          dateStatus,
+          venueStatus,
+          venueName: venueName || undefined,
+          timingMonth,
+          timingDow,
+          calculatedTotal: result.total,
+        }),
+      });
+      trackLead("calculator", { guest_count: guests, location, tier, estimate: result.total });
+    },
+    [guests, location, tier, dateStatus, venueStatus, venueName, timingMonth, timingDow, result]
+  );
+
+  const scrollTop = () => {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goNext = () => {
+    setStep((s) => (s < 4 ? s + 1 : 5)); // step 4 → soft gate
+    scrollTop();
+  };
+
+  const goBack = () => {
+    setStep((s) => (s === 6 ? 4 : s > 0 ? s - 1 : s)); // skip soft gate from results
+  };
+
+  const goToStep = (n: number) => setStep(n);
+
+  const handleSoftGateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!softGateName || !softGateEmail) return;
+    setSoftGateSubmitting(true);
+    try {
+      await handleLeadCapture({ name: softGateName, email: softGateEmail });
+      setLeadCaptured(true);
+    } catch {
+      // proceed regardless
+    } finally {
+      setSoftGateSubmitting(false);
+      setStep(6);
+      scrollTop();
+    }
+  };
+
+  const restart = () => {
+    setStep(0);
+    scrollTop();
+  };
+
+  return {
+    step, setStep,
+    guests, setGuests,
+    location, setLocation,
+    tier, setTier,
+    dateStatus, setDateStatus,
+    weddingDate, setWeddingDate,
+    weddingSeason, setWeddingSeason,
+    weddingDayOfWeek, setWeddingDayOfWeek,
+    venueStatus, setVenueStatus,
+    venueName, setVenueName,
+    leadCaptured,
+    softGateName, setSoftGateName,
+    softGateEmail, setSoftGateEmail,
+    softGateSubmitting,
+    timingMonth, timingDow,
+    result,
+    goNext, goBack, goToStep, restart,
+    handleLeadCapture, handleSoftGateSubmit,
+  };
+}

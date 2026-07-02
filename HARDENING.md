@@ -48,7 +48,7 @@ The highest-leverage work: make correctness automatic instead of manual.
 - [x] Remove dead CSS (`.home-collage*`, `.home-testimonial*`) and unused config keys
       (`bestFor`, `effortlessEyebrow`, `SERVICES_PAGE.title/intro`, `heroTitle/heroTagline`,
       `ABOUT.s1*/s2*`, `collageCaption*`) — or reinstate the sections that used them.
-- [ ] Split the 1,147-line `app/calculator/page.tsx` into a state hook +
+- [~] (in progress) Split the 1,147-line `app/calculator/page.tsx` into a state hook +
       per-step components; shrink the client boundary where possible.
 
 ## Phase 3 — SEO, metadata & performance
