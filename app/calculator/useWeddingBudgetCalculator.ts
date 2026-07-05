@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   calculateWeddingBudget,
   type BudgetResult,
@@ -6,7 +6,7 @@ import {
   type Location,
   type DayOfWeek,
 } from "@/config/costModel";
-import { trackLead } from "@/lib/analytics";
+import { track, trackLead } from "@/lib/analytics";
 
 export type DateStatus = "yes" | "season" | "not-sure";
 
@@ -16,6 +16,16 @@ const VALID_LOCATIONS: Location[] = [
   "northern-virginia", "us-average",
 ];
 const VALID_TIERS: Tier[] = ["budget", "moderate", "luxury"];
+
+// Names for the GA funnel (step 0 = landing is covered by the /calculator page_view).
+const STEP_NAMES: Record<number, string> = {
+  1: "guests",
+  2: "location",
+  3: "date_venue",
+  4: "style_tier",
+  5: "soft_gate",
+  6: "results",
+};
 
 // All state, derived values, effects, and handlers for the budget calculator.
 // The estimate is fully derived from the inputs (no result state / effect).
@@ -56,6 +66,17 @@ export function useWeddingBudgetCalculator() {
     () => calculateWeddingBudget(guests, location, tier, timingMonth, timingDow),
     [guests, location, tier, timingMonth, timingDow]
   );
+
+  // GA funnel: fire calculator_step once per step first reached (forward only),
+  // so we can see where people drop off between landing and the estimate.
+  const maxStepReached = useRef(0);
+  useEffect(() => {
+    if (step > maxStepReached.current) {
+      maxStepReached.current = step;
+      const stepName = STEP_NAMES[step];
+      if (stepName) track("calculator_step", { step, step_name: stepName });
+    }
+  }, [step]);
 
   // Hydrate from shared URL params on first load (bypasses the soft gate).
   useEffect(() => {
