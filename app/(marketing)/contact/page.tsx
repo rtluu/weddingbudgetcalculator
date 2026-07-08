@@ -4,7 +4,6 @@ import Eyebrow from "@/components/marketing/Eyebrow";
 import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import ContactForm from "@/components/marketing/ContactForm";
 import CalendlyEmbed from "@/components/marketing/CalendlyEmbed";
-import SocialProof from "@/components/marketing/SocialProof";
 import { SITE, SOCIAL_LINKS } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -78,7 +77,7 @@ export default function ContactPage() {
       </section>
 
       {/* Calendly */}
-      <section style={{ background: "var(--sage-mist)", padding: "80px 24px" }}>
+      <section style={{ background: "var(--alabaster)", padding: "80px 24px" }}>
         <div style={{ maxWidth: 880, margin: "0 auto" }}>
           <Reveal>
             <Eyebrow align="center">Prefer to book directly?</Eyebrow>
@@ -93,9 +92,6 @@ export default function ContactPage() {
           </Reveal>
         </div>
       </section>
-
-      {/* Reassurance / proof */}
-      <SocialProof background="var(--alabaster)" showStats={false} />
     </>
   );
 }

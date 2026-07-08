@@ -156,7 +156,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ── 7 · Closing CTA — effortless-style frosted panel + accents ───── */}
-      <section className="svc-effortless" style={{ position: "relative", overflow: "hidden", background: "var(--alabaster)" }}>
+      <section className="svc-effortless" style={{ position: "relative", overflow: "hidden", background: "var(--bone)" }}>
         {/* Full-block background image — shown at hamburger/mobile sizes */}
         <div className="svc-eff-bg" aria-hidden="true">
           <Image src="/photos/kg004048.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />

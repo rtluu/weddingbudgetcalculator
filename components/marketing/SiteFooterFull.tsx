@@ -34,7 +34,6 @@ export default function SiteFooterFull() {
                 <Link href={l.href} style={navLink}>{l.label}</Link>
               </li>
             ))}
-            <li><Link href="/calculator" style={navLink}>Budget Calculator</Link></li>
           </ul>
         </nav>
 

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
-import Eyebrow from "@/components/marketing/Eyebrow";
 import HeroVideo from "@/components/marketing/HeroVideo";
 import TestimonialModal from "@/components/marketing/TestimonialModal";
 import SocialProof from "@/components/marketing/SocialProof";
@@ -159,27 +158,8 @@ export default function HomePage() {
       {/* ── 7 · Testimonials row ─────────────────────────────────────────── */}
       <SocialProof showStats={false} bordered={false} background="var(--alabaster)" padding="40px 24px 72px" />
 
-      {/* ── Calculator band (our addition) ───────────────────────────────── */}
-      <section style={{ background: "var(--bone)", padding: "88px 24px", borderTop: "1px solid var(--sand)", borderBottom: "1px solid var(--sand)" }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
-          <Reveal>
-            <Eyebrow>{HOME.calcEyebrow}</Eyebrow>
-            <h2 className="display-lg" style={{ marginBottom: 18 }}>{HOME.calcTitle}</h2>
-            <p style={bodyStyle}>{HOME.calcBody}</p>
-            <CTALink href="/calculator" location="home_calc_band" label={HOME.calcCta} className="btn-sage" style={{ marginTop: 26, padding: "14px 30px", fontSize: 16 }}>
-              {HOME.calcCta} →
-            </CTALink>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 2", borderRadius: 12, overflow: "hidden", background: "var(--sand)", boxShadow: "0 12px 40px rgba(43,38,34,0.10)" }}>
-              <Image src="/photos/kristina_luu4052.jpg" alt="A thoughtfully styled reception tablescape" fill sizes="(max-width:700px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ── 8 · Closing CTA — masterpiece ────────────────────────────────── */}
-      <section className="home-closing" style={{ position: "relative", overflow: "hidden", background: "var(--alabaster)" }}>
+      <section className="home-closing" style={{ position: "relative", overflow: "hidden", background: "var(--bone)" }}>
         {/* Full-block background image — shown at hamburger/mobile sizes */}
         <div className="home-closing-bg" aria-hidden="true">
           <Image src="/photos/bridal_bouquet.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />

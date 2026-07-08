@@ -1,12 +1,6 @@
 // By Mosaic — marketing copy (verbatim from bymosaic.com where quoted)
 // Long-form About/Services paragraphs are re-captured exactly in their own steps.
 
-// ─── Conversion system ───────────────────────────────────────────────────────
-// One consistent primary CTA across the whole site (the calculator is the
-// low-commitment lead magnet); consultation is the secondary action.
-export const PRIMARY_CTA = { label: "See your wedding estimate", href: "/calculator" } as const;
-export const SECONDARY_CTA = { label: "Schedule a consultation", href: "/contact" } as const;
-
 // Real, attributed testimonials (verbatim fragments from bymosaic.com).
 export const TESTIMONIALS = [
   {
@@ -57,13 +51,6 @@ export const HOME = {
   portfolioBody:
     "Your event should reflect your unique story and style, and I'd be honored to be part of yours. Browse through the events and weddings I've brought to life—you might just find some inspiration for your own celebration!",
   portfolioCta: "Browse the portfolio",
-
-  // §5 Calculator band (our addition)
-  calcEyebrow: "Plan with real numbers",
-  calcTitle: "What will your wedding actually cost?",
-  calcBody:
-    "Before the first consultation, get an honest estimate built on real Southern California vendor data — not national averages from a content farm. Sixty seconds, no email required.",
-  calcCta: "Try the budget calculator",
 
   // §6 Meet the Planner
   plannerEyebrow: "Meet the Planner",

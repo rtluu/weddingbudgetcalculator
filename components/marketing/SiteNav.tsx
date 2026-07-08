@@ -99,9 +99,6 @@ export default function SiteNav() {
               {link.label}
             </Link>
           ))}
-          <Link href="/calculator" className="btn-sage" style={{ padding: "8px 16px", fontSize: 13 }}>
-            Budget Calculator
-          </Link>
         </div>
 
         {/* Current page — mobile only */}
@@ -183,14 +180,6 @@ export default function SiteNav() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/calculator"
-            className="btn-sage"
-            onClick={() => setOpen(false)}
-            style={{ marginTop: 14, width: "100%" }}
-          >
-            Budget Calculator
-          </Link>
         </div>
       )}
     </header>
