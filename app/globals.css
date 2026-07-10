@@ -701,9 +701,9 @@ details[open] > .svc-included-summary::after { content: "\2212"; }
 /* ─── Homepage: §2 services preview grid ─────────────────────────────────────── */
 .home-services-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 36px;
-  max-width: 1120px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 44px;
+  max-width: 820px;
   margin: 56px auto 0;
 }
 .home-service-card {

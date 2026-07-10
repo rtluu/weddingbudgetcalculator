@@ -7,7 +7,7 @@ export const SITE = {
   email: "info@bymosaic.com",
   phone: "240.760.8649",
   phoneHref: "tel:+12407608649",
-  calendlyUrl: "https://calendly.com/kristina-bymosaic/30min",
+  calendlyUrl: "https://calendly.com/kristina-bymosaic/15min",
 } as const;
 
 // Canonical origin for metadata/OG/JSON-LD. Env-driven so canonical URLs match
@@ -20,7 +20,6 @@ export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Portfolio", href: "/portfolio" },
-  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 

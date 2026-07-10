@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { BLOG_POSTS } from "@/content/blog";
 
 const BASE = "https://bymosaic.com";
 
@@ -9,7 +8,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/services",
     "/portfolio",
-    "/blog",
     "/contact",
   ].map((path) => ({
     url: `${BASE}${path}`,
@@ -18,12 +16,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : 0.8,
   }));
 
-  const blogRoutes = BLOG_POSTS.map((post) => ({
-    url: `${BASE}/blog/${post.slug}`,
-    lastModified: new Date(post.publishedAt),
-    changeFrequency: "yearly" as const,
-    priority: 0.6,
-  }));
-
-  return [...staticRoutes, ...blogRoutes];
+  return staticRoutes;
 }

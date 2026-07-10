@@ -5,7 +5,7 @@ import { SITE } from "@/config/site";
 import { trackLead } from "@/lib/analytics";
 
 // Inline Calendly scheduling widget. Loads the Calendly script once and
-// renders the inline widget pointed at Kristina's 30-min consultation.
+// renders the inline widget pointed at Kristina's 15-min consultation.
 export default function CalendlyEmbed() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -33,7 +33,7 @@ export default function CalendlyEmbed() {
       ref={ref}
       className="calendly-inline-widget"
       data-url={`${SITE.calendlyUrl}?hide_gdpr_banner=1&background_color=fbf8f3&primary_color=4f6f57&text_color=2b2622`}
-      style={{ minWidth: 320, height: 660, width: "100%" }}
+      style={{ minWidth: 320, height: 700, width: "100%" }}
     />
   );
 }

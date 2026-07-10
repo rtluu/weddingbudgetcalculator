@@ -56,7 +56,7 @@ export const HOME = {
   plannerEyebrow: "Meet the Planner",
   plannerName: "Kristina Luu",
   plannerBody:
-    "As the owner and lead planner, my greatest passion is creating experiences that bring people together to celebrate life's most meaningful moments. Planning is my love language, and I pour my heart into every event because it's not just about the celebration—it's about telling your story. I take the time to truly listen, collaborate, and understand your vision, ensuring every detail reflects your unique personality and what matters most to you. I can't wait to connect and bring your vision to life!",
+    "As the owner and lead planner, my greatest passion is creating experiences that bring people together to celebrate life's most meaningful moments. Planning is my love language, and I pour my heart into every event because it's not just about the celebration—it's about telling your story. I take the time to truly listen, collaborate, and understand your vision, ensuring every detail reflects your unique personality and what matters most to you. I can't wait to connect and bring your event to life!",
   plannerCta: "Get to know me",
 
   // §7 Testimonial
@@ -67,7 +67,7 @@ export const HOME = {
   closingEyebrow: "Ready to get started?",
   closingTitle: "Let's create your masterpiece",
   closingBody:
-    "Your event should feel like you, which is why I take a personalized approach to planning. Whether it's an intimate gathering or a grand celebration, my goal is to create an experience that reflects your style and story. Together, we'll craft unforgettable moments, weaving thoughtful details into a masterpiece you'll cherish forever. Schedule a free consultation with me, and let's start bringing your event to life!",
+    "Your event should feel like you, which is why I take a personalized approach to planning. Whether you're celebrating a birthday, wedding, baby shower, anniversary, or another meaningful milestone, my goal is to create an experience that reflects your unique style and story. Together, we'll craft unforgettable moments, weaving thoughtful details into a masterpiece you'll cherish forever. Schedule a free 15 minute consultation, and let's start bringing your vision to life!",
   closingCta: "Schedule a consultation",
 } as const;
 
@@ -90,11 +90,11 @@ export const ABOUT = {
   kristinaIntro:
     "I'm a wedding and social event planner based in Los Angeles, with a love for lists and all things organized.",
   story1:
-    "My love for event planning began in 2012 while volunteering for a nonprofit, and I've been hooked ever since. Over the years, I've gained hands-on experience in catering and worked alongside other planners, all of which inspired me to launch By Mosaic Events in 2022. Now, I get to help turn events into living mosaics — celebrations as unique and beautiful as the people behind them.",
+    "My love for event planning began in 2012 while volunteering for a nonprofit, where I discovered my passion for bringing people together through meaningful experiences. After gaining hands-on experience in catering and working alongside other planners, I launched By Mosaic Events in 2022 to create celebrations that feel personal, intentional, and uniquely yours.",
   story2:
-    "Originally from Texas, I now call Los Angeles home, where I live with my husband and our mini Goldendoodle, Sadie. When I'm not planning events for others, I'm usually hosting one myself — just ask my husband or friends! Bringing people together is what I love most.",
+    "Originally from Texas, I now call Los Angeles home with my husband, our daughter, Aria, and our goldendoodle, Sadie. When I'm not planning events, you can usually find me hosting one of my own — because bringing people together has always been what I love most.",
   philosophy:
-    "For me, event planning isn't just about logistics — it's about creating moments you can truly savor. My goal is to make your celebration seamless, stress-free, and unforgettable, so you can be fully present in the memories you're making.",
+    "For me, event planning is about more than logistics; it's about creating moments you can truly savor. My goal is to make your celebration seamless and stress-free, so you can be fully present in the memories you're making.",
   signoff: "Xoxo, Kristina",
 
   // Section 4 — testimonial band
@@ -105,9 +105,8 @@ export const ABOUT = {
 
 // Section 5 — three "explore" cards on sage (images match bymosaic.com/about)
 export const ABOUT_EXPLORE = [
-  { label: "Featured on the By Mosaic blog", href: "/blog", image: "/photos/kg003770.jpg", external: false },
   { label: "Let's be friends on Instagram", href: "https://www.instagram.com/bymosaicevents/", image: "/photos/kg003815.jpg", external: true },
-  { label: "Schedule a consultation with Kristina", href: "/contact", image: "/photos/kristina_luu3468.jpg", external: false },
+  { label: "Inquire with Kristina", href: "/contact", image: "/photos/kristina_luu3468.jpg", external: false },
 ] as const;
 
 // Three services (verbatim descriptions from /services)
@@ -120,21 +119,42 @@ export const SERVICES = [
     summary:
       "From the initial concept and design to bringing it to life on your wedding day, I will handle every aspect of the planning process.",
     full:
-      "From the initial concept and design to bringing it to life on your wedding day, I will handle every aspect of the planning process. From finding the right vendors to managing your budget, creating timelines, and coordinating all the little details, I've got it covered — so you can focus on enjoying every moment.",
+      "This all-inclusive service is designed to bring your wedding to life from start to finish. From budget management and timeline creation to thoughtful décor and design details, every element is thoughtfully planned and executed to create a seamless, beautiful, and stress-free wedding experience.",
     bestFor: "Couples who want a true partner from day one — hands-off, concept to wedding day.",
     included: [
       "Unlimited planning support & communication throughout",
-      "Full design & styling concept — mood board, palette, décor direction",
+      "Full design & styling concept",
       "Vendor sourcing, referrals & contract review",
       "Budget creation & management",
       "Detailed timeline & floor-plan development",
       "Guest logistics — seating, accommodations & transport guidance",
       "Rehearsal coordination",
-      "Full wedding-day management with assistant(s)",
+      "Full wedding-day management",
     ],
-    investment: "Starting at $6,500",
+    investment: "Starting at $6,000",
     timeline: "Best booked 8–16 months before the wedding.",
     image: "/photos/samantha_and_luis-425.jpg",
+  },
+  {
+    slug: "partial-wedding-planning",
+    name: "Partial Wedding Planning",
+    label: "Partial Wedding Planning",
+    summary:
+      "Perfect for couples who want to take the lead on planning while having a trusted partner by your side.",
+    full:
+      "Perfect for couples who want to take the lead on planning while having a trusted partner by your side. With guidance, organization, and creative support along the way, I'll help bring your wedding vision to life.",
+    bestFor: "Couples planning it themselves who want expert guidance and a pro to run the wedding day.",
+    included: [
+      "Ongoing guidance & consultation throughout the planning process",
+      "Vendor referrals/recommendations & contract review",
+      "Venue walk-through to assist with the planning of the event space and logistics",
+      "Vendor coordination of all of the details for your big day",
+      "Rehearsal coordination",
+      "Full wedding-day management",
+    ],
+    investment: "Starting at $4,000",
+    timeline: "Best booked 6–12 months before the wedding.",
+    image: "/photos/280064311.jpg",
   },
   {
     slug: "event-management",
@@ -184,7 +204,7 @@ export const SERVICES = [
 export const SERVICES_PAGE = {
   heroTitle: "Let's create your mosaic event",
   heroTagline:
-    "With meticulous attention to detail, creativity, and a genuine care of your unique story, I craft meaningful celebrations that leave a lasting impression.",
+    "Whether you're celebrating a birthday, wedding, baby shower, anniversary, or another special milestone, I'm here to bring your event to life. With thoughtful details, creative design, and a genuine passion for bringing people together, I create meaningful celebrations that feel uniquely yours.",
   effortlessEyebrow: "Planning an event?",
   title: "Let's make it effortless",
   intro:

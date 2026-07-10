@@ -37,7 +37,7 @@ export default function ServicesPage() {
       <JsonLd data={faqJsonLd} />
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <PageHeader
-        eyebrow="Wedding & social event planning"
+        eyebrow="Weddings & Social Events"
         title={
           <>
             Let&apos;s create your{" "}
