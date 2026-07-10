@@ -124,10 +124,10 @@ export const SERVICES = [
     included: [
       "Unlimited planning support & communication throughout",
       "Full design & styling concept",
+      "Venue sourcing & recommendations",
       "Vendor sourcing, referrals & contract review",
       "Budget creation & management",
       "Detailed timeline & floor-plan development",
-      "Guest logistics — seating, accommodations & transport guidance",
       "Rehearsal coordination",
       "Full wedding-day management",
     ],
@@ -158,23 +158,23 @@ export const SERVICES = [
   },
   {
     slug: "event-management",
-    name: "Event Management (Day-of Coordination)",
-    label: 'Event Management — sometimes called "Day of Coordination"',
+    name: "Event Management (Month-of Coordination)",
+    label: 'Event Management — sometimes called "Month-of Coordination"',
     summary:
       "Perfect for clients who have handled the majority of the planning but want professional support to oversee the logistics and final details.",
     full:
-      "Perfect for clients who have handled the majority of the planning but want professional support to oversee the logistics and final details. Starting 60 days before your event, I'll take the lead to ensure every element comes together seamlessly.",
+      "Perfect for couples who have planned the majority of their wedding but want a trusted professional to manage the final details. Beginning 30–45 days before your wedding, I'll step in to coordinate the logistics and ensure everything comes together seamlessly so you can enjoy your day.",
     bestFor: "Couples who've done the planning and want a pro to run the day flawlessly.",
     included: [
-      "Planning handoff starting ~60 days before",
+      "Planning handoff starting ~30 days before",
       "Final-weeks vendor confirmation & communication",
+      "Attend final venue walk-through",
       "Detailed day-of timeline",
       "Floor-plan & layout review",
       "Rehearsal coordination",
-      "Full day-of management + setup/teardown oversight with assistant",
-      "Single point of contact for all vendors on the day",
+      "Full wedding-day management",
     ],
-    investment: "Starting at $2,200",
+    investment: "Starting at $2,500",
     timeline: "Best booked 4–12 months prior to your event date.",
     image: "/photos/l_and_b-396.jpg",
   },
@@ -185,17 +185,20 @@ export const SERVICES = [
     summary:
       "This package is tailored to meet your event needs because no two celebrations are the same.",
     full:
-      "Similar to the Full-Service Wedding Planning package, but designed for private events like birthdays, proposals, and any other special occasion you envision. This package is tailored to meet your event needs because no two celebrations are the same.",
+      "Designed for life's special moments beyond weddings, this service brings your vision to life for celebrations such as birthdays, anniversaries, proposals, showers, private gatherings, and more. From concept to execution, I handle the details to create a thoughtfully planned event that feels personal, memorable, and uniquely yours.",
     bestFor: "Birthdays, proposals, showers, dinner parties & milestone celebrations.",
     included: [
-      "Custom scope — planning, design, and/or coordination",
-      "Concept & design direction",
-      "Vendor sourcing & coordination",
-      "Timeline & logistics",
-      "On-site event management",
+      "Initial consultation & event vision development",
+      "Full design & styling concept",
+      "Vendor sourcing, referrals & communication",
+      "Budget creation & management",
+      "Venue site visit & logistics planning",
+      "Décor & styling support",
+      "Detailed timeline & floor-plan development",
+      "Full event-day management",
     ],
     investment: "Custom quote — tailored to each celebration",
-    timeline: "For birthdays, proposals, showers, and special occasions.",
+    timeline: "Best booked 3–6 months before the event. For larger or more complex celebrations (100+ guests), booking 6+ months ahead is recommended.",
     image: "/photos/kristina_luu3579.jpg",
   },
 ] as const;
@@ -226,10 +229,6 @@ export const SERVICES_FAQ = [
   {
     q: "Why should I hire an event planner?",
     a: "It's simple — planners take the stress out of the entire planning process. By working with a planner, you not only save time and money but also gain an expert to navigate the complexities of vendor coordination, logistics, and design. Let me handle the details, so you can focus on what matters most.",
-  },
-  {
-    q: "How far in advance should we book?",
-    a: "For full-service wedding planning, 8–16 months before the wedding to allow enough time for planning, vendor selection, and ensuring all the details are covered. Booking early also helps secure top vendors and venues! For event management, between 4–12 months prior to the event date.",
   },
   {
     q: "Do you travel outside the California area?",

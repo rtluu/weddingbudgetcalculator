@@ -144,6 +144,26 @@ export default function TestimonialModal() {
                 style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
               />
             </div>
+            <p
+              style={{
+                marginTop: 14,
+                textAlign: "center",
+                fontFamily: "var(--font-body)",
+                fontSize: 13,
+                letterSpacing: "0.02em",
+                color: "rgba(251,248,243,0.55)",
+              }}
+            >
+              Video Credit:{" "}
+              <a
+                href="https://jimmyshinfilms.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "rgba(251,248,243,0.85)", textDecoration: "underline", textUnderlineOffset: 2 }}
+              >
+                Jimmy Shin Films
+              </a>
+            </p>
           </div>
         </div>,
         document.body

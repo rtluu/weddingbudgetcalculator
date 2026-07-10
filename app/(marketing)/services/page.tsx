@@ -20,7 +20,7 @@ const faqJsonLd = {
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Full-Service Wedding Planning, Event Management (Day-of Coordination), and Social Event Planning with By Mosaic — thoughtful planning for a stress-free celebration.",
+    "Full-Service Wedding Planning, Event Management (Month-of Coordination), and Social Event Planning with By Mosaic — thoughtful planning for a stress-free celebration.",
 };
 
 const bodyStyle: React.CSSProperties = {
