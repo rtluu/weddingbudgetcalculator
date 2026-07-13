@@ -13,6 +13,7 @@ import SiteFooterFull from "@/components/marketing/SiteFooterFull";
 import { useWeddingBudgetCalculator } from "./useWeddingBudgetCalculator";
 import CopyLinkButton from "./CopyLinkButton";
 import DateStatusPicker from "./DateStatusPicker";
+import BarStylePicker from "./BarStylePicker";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -43,6 +44,9 @@ export default function HomePage() {
     weddingDayOfWeek, setWeddingDayOfWeek,
     venueStatus, setVenueStatus,
     venueName, setVenueName,
+    venueType, setVenueType,
+    barStyle, setBarStyle,
+    toggleCategory,
     leadCaptured,
     softGateName, setSoftGateName,
     softGateEmail, setSoftGateEmail,
@@ -265,10 +269,15 @@ export default function HomePage() {
                               onVenueChange={setVenueStatus}
                               venueName={venueName}
                               onVenueNameChange={setVenueName}
+                              venueType={venueType}
+                              onVenueTypeChange={setVenueType}
                             />
                           )}
                           {step === 4 && (
-                            <TierPicker value={tier} onChange={setTier} />
+                            <div className="space-y-8">
+                              <TierPicker value={tier} onChange={setTier} />
+                              <BarStylePicker value={barStyle} onChange={setBarStyle} />
+                            </div>
                           )}
                         </div>
 
@@ -505,6 +514,7 @@ export default function HomePage() {
                 result={result}
                 onLeadCapture={handleLeadCapture}
                 alreadyCaptured={leadCaptured}
+                onToggleCategory={toggleCategory}
               />
             </div>
           </div>

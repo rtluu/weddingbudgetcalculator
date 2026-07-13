@@ -49,7 +49,7 @@ export default function MobileEstimateBar({ result, step }: Props) {
   if (step < 2 || step >= 5) return null;
 
   const topCats = result
-    ? [...result.categories].sort((a, b) => b.subtotal - a.subtotal).slice(0, 4)
+    ? result.categories.filter((c) => c.included).sort((a, b) => b.subtotal - a.subtotal).slice(0, 4)
     : [];
 
   const hasSeasonalNote = result?.seasonNote || result?.dowNote;

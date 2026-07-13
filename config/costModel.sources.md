@@ -79,3 +79,61 @@ Moderate, Saturday, annual-average unless noted:
 
 Calibration harness (drafts + anchor checks) lived in the session scratchpad;
 the same anchors are enforced by the validation tests.
+
+---
+
+# v2 addendum (2026-07): metro expansion, scale effects, new inputs
+
+## New metro research
+
+| Metro | Spend anchors | Multiplier | F&B factor (tax basis) |
+|---|---|---|---|
+| New York City | Knot NYC avg $75.0K; Zola $99.5K@150 ($663/pp); Manhattan $87.7K vs outer boroughs $62.3K | 1.75 | 1.36 (8.875%) |
+| SF Bay Area | Zola SF $84.6K@150 ($564/pp); Bay Area ~$524/pp; Wine Country catering from $175/pp | 1.67 | 1.36 (8.63% + SF mandates) |
+| Chicago | Zola $81K@150 (city-skewed); suburbs $30–55K@100–150; ~$250+/pp | 1.28 | 1.36 (11.25–11.75% — highest US meal tax) |
+| Boston | WR $42.9–52.4K@100–150; ~$381/pp; catering+bar $125–225/pp | 1.30 | 1.30 (7.0% MA meals) |
+| Seattle | Metro avg $53.1K; WR $54.2–66.2K@150–200; ~$344/pp | 1.18 | 1.35 (10.35%) |
+| Miami | $45–60K avg; WR $33.4–40.8K@125 (low-bias) | 1.18 | 1.30 (7.0%) |
+| Dallas–Fort Worth | $25–50K range | 0.98 | 1.31 (8.25%) |
+| Atlanta | Urban $30–50K; GA avg $32K | 0.95 | 1.32 (~8.9%) |
+| Other US Metro (fallback) | recalibrated to mid-tier (Denver/Philly/Nashville class) | 1.25 | 1.32 |
+
+Seasonal shapes: NYC/Chicago/Boston have hard winter valleys with Jun +
+Sep/Oct peaks; Seattle peaks sharply Jul–Aug (dry season); Miami is
+inverted (Nov–Apr peak; Jun–Sep heat + hurricane trough); DFW/Atlanta have
+spring + fall twin peaks with hot-summer dips.
+
+## Scale effects
+
+- **Micro taper (≤40 guests)**: fixed costs ×(0.52 + 0.48·g/40). LA
+  elopement/micro packages run $4.5–9.5K plus venue and F&B; real 20–30-guest
+  LA weddings land ~$15–25K, not the ~$27K a full-vendor lineup implies.
+- **Volume pricing (>200 guests)**: per-guest rates on Catering/Bar/Rentals/
+  Cake slide to −10% by 300 (caterers quote volume discounts at 150+).
+
+## New inputs
+
+- **Venue type**: all-inclusive venues bundle rentals (74% of venues) and
+  catering overhead — Rentals ×0.35, Decor ×0.8, Venue fixed ×1.15, Catering
+  fixed ×0.5. Raw spaces: Venue ×0.7, Rentals ×1.6, Catering fixed ×1.3,
+  Transportation ×1.2 (forum/planner consensus: raw-space totals often match
+  or exceed all-inclusive once rentals and fees land).
+- **Bar style** per-guest rates: beer & wine $14/18/24, standard $19/34/56,
+  premium $40/55/75 (by tier), none = $0 — from open-bar tier guides
+  (basic $15–30, standard $30–50, premium $50–90).
+
+## Other v2 changes
+
+- **Inflation**: MODEL_VINTAGE 2025.5, ~3.5%/yr escalation to the wedding
+  year, capped at 3 years.
+- **Cake** now carries sales tax + a cutting-fee allowance instead of the
+  full 22% venue service charge.
+- **Timing cap**: combined seasonal × day-of-week venue-axis swing clamped
+  to [0.55, 1.25] to avoid demand double-counting.
+- **Ranges**: −8%/+22% in calibrated metros; −12%/+30% in fallback buckets
+  (other-major-metro, us-average) where point estimates are least certain.
+- **Luxury service premium**: Photography/Videography/Planning/HMU location
+  sensitivity floors at 0.7 in the luxury tier (NYC/SF luxury photographers
+  run 1.6–2.5× other metros, far above the dampened moderate premium).
+- Dead `perGuestRate`/`fixedBase` fields removed from `CategoryResult`;
+  replaced by `included` (line-exclusion support).

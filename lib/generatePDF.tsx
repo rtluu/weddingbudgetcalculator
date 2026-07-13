@@ -312,8 +312,12 @@ export function BudgetPDF({ result, coupleNames, generatedDate }: BudgetPDFProps
 
         {result.categories.map((cat) => (
           <View key={cat.name} style={styles.lineItem}>
-            <Text style={styles.lineItemLabel}>{cat.name}</Text>
-            <Text style={styles.lineItemValue}>{fmt(cat.subtotal)}</Text>
+            <Text style={[styles.lineItemLabel, cat.included ? {} : { opacity: 0.45, textDecoration: "line-through" }]}>
+              {cat.name}{cat.included ? "" : "  (not included)"}
+            </Text>
+            <Text style={[styles.lineItemValue, cat.included ? {} : { color: "#8C8275", textDecoration: "line-through" }]}>
+              {fmt(cat.subtotal)}
+            </Text>
           </View>
         ))}
 

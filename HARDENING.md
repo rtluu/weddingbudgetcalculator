@@ -62,6 +62,15 @@ The highest-leverage work: make correctness automatic instead of manual.
       (calculator band, carousels) and confirm framer-motion isn't blocking LCP.
 - [ ] Lighthouse/Core-Web-Vitals pass; add `@next/third-parties` GA only in prod with a real id.
 
+## Phase 3.5 — Cost-model stewardship
+
+- [ ] **Recalibrate the cost model yearly** (last: 2026-07). A freshness test in
+      `__tests__/costModel.test.ts` goes red when `MODEL_VINTAGE` passes ~14 months.
+      Re-run the market research per `config/costModel.sources.md` and retune anchors.
+- [ ] **Validate against real client invoices.** Kristina's actual client books are
+      better ground truth than any survey — compare a handful of recent weddings
+      against the model's line items and adjust LA-market coefficients.
+
 ## Phase 4 — Ongoing agentic guardrails
 
 - [x] `AGENTS.md`/`CLAUDE.md` house rules: "build+lint+test must pass; branch-first;

@@ -164,7 +164,8 @@ export default function FloatingRail({
               >
                 Biggest lines
               </p>
-              {[...result.categories]
+              {result.categories
+                .filter((c) => c.included)
                 .sort((a, b) => b.subtotal - a.subtotal)
                 .slice(0, 3)
                 .map((cat) => (

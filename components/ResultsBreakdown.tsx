@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { BudgetResult, Tier, locationLabels } from "@/config/costModel";
+import { BudgetResult, Tier, locationLabels, OPTIONAL_CATEGORIES } from "@/config/costModel";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -74,12 +74,14 @@ interface ResultsBreakdownProps {
   result: BudgetResult;
   onLeadCapture: (data: { name: string; email: string; phone?: string }) => void;
   alreadyCaptured?: boolean;
+  onToggleCategory?: (name: string) => void;
 }
 
 export default function ResultsBreakdown({
   result,
   onLeadCapture,
   alreadyCaptured = false,
+  onToggleCategory,
 }: ResultsBreakdownProps) {
   const shouldReduceMotion = useReducedMotion();
   const [diyMode, setDiyMode] = useState(false);
@@ -104,7 +106,7 @@ export default function ResultsBreakdown({
       note: reduction?.note ?? "",
     };
   });
-  const diySubtotal = diyCategories.reduce((s, c) => s + c.diySubtotal, 0);
+  const diySubtotal = diyCategories.reduce((s, c) => (c.included ? s + c.diySubtotal : s), 0);
   const diyContingency = diySubtotal * result.contingencyRate;
   const diyTotal = diySubtotal + diyContingency;
   const diyTotalSavings = result.total - diyTotal;
@@ -288,8 +290,10 @@ export default function ResultsBreakdown({
           className="space-y-0"
         >
           {diyCategories.map((cat) => {
-            const hasSavings = diyMode && cat.pct > 0;
-            const isRemoved  = diyMode && cat.pct === 1.00;
+            const isExcluded = !cat.included;
+            const hasSavings = !isExcluded && diyMode && cat.pct > 0;
+            const isRemoved  = isExcluded || (diyMode && cat.pct === 1.00);
+            const isToggleable = !!onToggleCategory && OPTIONAL_CATEGORIES.includes(cat.name);
 
             return (
               <motion.div key={cat.name} variants={itemVariants} className="invoice-line" style={{ alignItems: "flex-start" }}>
@@ -298,6 +302,17 @@ export default function ResultsBreakdown({
                   <span className="invoice-label" style={{ textDecoration: isRemoved ? "line-through" : "none", opacity: isRemoved ? 0.5 : 1 }}>
                     {cat.name}
                   </span>
+                  {isToggleable && (
+                    <button
+                      onClick={() => onToggleCategory(cat.name)}
+                      className="font-body text-xs ml-2 underline transition-opacity hover:opacity-70"
+                      style={{ color: isExcluded ? "var(--clay)" : "var(--muted)", cursor: "pointer" }}
+                      aria-pressed={isExcluded}
+                      aria-label={isExcluded ? `Add ${cat.name} back to the estimate` : `Remove ${cat.name} from the estimate`}
+                    >
+                      {isExcluded ? "add back" : "skip"}
+                    </button>
+                  )}
                   {/* Planner mode: planning CTA */}
                   {!diyMode && cat.name === "Planning/Coordination" && (
                     <p className="font-body text-xs mt-0.5" style={{ color: "var(--clay)", opacity: 0.8 }}>
@@ -317,7 +332,14 @@ export default function ResultsBreakdown({
 
                 {/* Right: price(s) */}
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  {hasSavings ? (
+                  {isExcluded ? (
+                    <span className="invoice-value" style={{ color: "var(--muted)" }}>
+                      <span className="font-body text-xs mr-1.5" style={{ textDecoration: "line-through", fontVariantNumeric: "tabular-nums" }}>
+                        {fmt(cat.subtotal)}
+                      </span>
+                      —
+                    </span>
+                  ) : hasSavings ? (
                     <>
                       <div style={{ display: "flex", alignItems: "baseline", gap: 6, justifyContent: "flex-end" }}>
                         {/* original, struck out */}
@@ -455,6 +477,17 @@ export default function ResultsBreakdown({
               </p>
             )}
           </motion.div>
+
+          {/* Full-boat explainer */}
+          <motion.p
+            variants={itemVariants}
+            className="font-body text-xs text-center leading-relaxed"
+            style={{ color: "var(--muted)" }}
+          >
+            This estimate prices every line item at typical market rates — published
+            &ldquo;average wedding cost&rdquo; figures skip several of them. Not booking
+            something? Hit &ldquo;skip&rdquo; on that line to make the number yours.
+          </motion.p>
 
           {/* Timing insight notes */}
           {(result.seasonNote || result.dowNote) && (

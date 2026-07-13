@@ -247,13 +247,17 @@ export function EstimatePDF({ name, result, venueName }: Props) {
         <Text style={s.sectionLabel}>Category breakdown</Text>
         {sorted.map((cat) => (
           <View key={cat.name} style={s.row}>
-            <Text style={s.rowLabel}>{cat.name}</Text>
-            <Text style={s.rowValue}>{fmt(cat.subtotal)}</Text>
+            <Text style={[s.rowLabel, cat.included ? {} : { opacity: 0.45, textDecoration: "line-through" }]}>
+              {cat.name}{cat.included ? "" : "  (not included)"}
+            </Text>
+            <Text style={cat.included ? s.rowValue : [s.rowValueMuted, { textDecoration: "line-through" }]}>
+              {fmt(cat.subtotal)}
+            </Text>
           </View>
         ))}
 
         <View style={s.row}>
-          <Text style={[s.rowLabel, { opacity: 0.7 }]}>F&B service + tax (est. 30%)</Text>
+          <Text style={[s.rowLabel, { opacity: 0.7 }]}>F&B service charge + tax</Text>
           <Text style={s.rowValueMuted}>{fmt(result.fnbServiceAmount)}</Text>
         </View>
 
