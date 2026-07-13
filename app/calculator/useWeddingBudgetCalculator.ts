@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   calculateWeddingBudget,
+  OPTIONAL_CATEGORIES,
   type BudgetResult,
   type Tier,
   type Location,
   type DayOfWeek,
+  type VenueType,
+  type BarStyle,
 } from "@/config/costModel";
 import { track, trackLead } from "@/lib/analytics";
 
@@ -13,9 +16,12 @@ export type DateStatus = "yes" | "season" | "not-sure";
 const VALID_LOCATIONS: Location[] = [
   "los-angeles", "santa-barbara", "orange-county", "san-diego", "palm-springs",
   "socal-suburbs", "other-major-metro", "washington-dc", "maryland-montgomery",
-  "northern-virginia", "us-average",
+  "northern-virginia", "new-york-city", "sf-bay-area", "chicago", "boston",
+  "seattle", "miami", "dallas-fort-worth", "atlanta", "us-average",
 ];
 const VALID_TIERS: Tier[] = ["budget", "moderate", "luxury"];
+const VALID_VENUE_TYPES: VenueType[] = ["standard", "all-inclusive", "raw-space"];
+const VALID_BAR_STYLES: BarStyle[] = ["none", "beer-wine", "standard", "premium"];
 
 // Names for the GA funnel (step 0 = landing is covered by the /calculator page_view).
 const STEP_NAMES: Record<number, string> = {
@@ -40,6 +46,9 @@ export function useWeddingBudgetCalculator() {
   const [weddingDayOfWeek, setWeddingDayOfWeek] = useState<DayOfWeek | null>(null);
   const [venueStatus, setVenueStatus] = useState<"touring" | "booked" | "none">("none");
   const [venueName, setVenueName] = useState("");
+  const [venueType, setVenueType] = useState<VenueType>("standard");
+  const [barStyle, setBarStyle] = useState<BarStyle>("standard");
+  const [excludedCategories, setExcludedCategories] = useState<string[]>([]);
   const [leadCaptured, setLeadCaptured] = useState(false);
   const [softGateName, setSoftGateName] = useState("");
   const [softGateEmail, setSoftGateEmail] = useState("");
@@ -61,10 +70,33 @@ export function useWeddingBudgetCalculator() {
     return undefined;
   })();
 
+  // Wedding year for inflation: the picked date's year, or the next occurrence
+  // of the chosen month/season (a month earlier than the current one means
+  // next year).
+  const weddingYear: number | undefined = (() => {
+    if (weddingDate) return weddingDate.getFullYear();
+    if (timingMonth === undefined) return undefined;
+    const now = new Date();
+    return timingMonth >= now.getMonth() ? now.getFullYear() : now.getFullYear() + 1;
+  })();
+
+  const toggleCategory = useCallback((name: string) => {
+    if (!OPTIONAL_CATEGORIES.includes(name)) return;
+    setExcludedCategories((prev) =>
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+    );
+  }, []);
+
   // Estimate is derived — recomputes automatically as inputs change.
   const result: BudgetResult = useMemo(
-    () => calculateWeddingBudget(guests, location, tier, timingMonth, timingDow),
-    [guests, location, tier, timingMonth, timingDow]
+    () =>
+      calculateWeddingBudget(guests, location, tier, timingMonth, timingDow, {
+        weddingYear,
+        venueType,
+        barStyle,
+        excludedCategories,
+      }),
+    [guests, location, tier, timingMonth, timingDow, weddingYear, venueType, barStyle, excludedCategories]
   );
 
   // GA funnel: fire calculator_step once per step first reached (forward only),
@@ -86,6 +118,9 @@ export function useWeddingBudgetCalculator() {
     const t = params.get("t") as Tier | null;
     const m = params.get("m");
     const d = params.get("d");
+    const vt = params.get("vt") as VenueType | null;
+    const b = params.get("b") as BarStyle | null;
+    const x = params.get("x");
     if (!g || !l || !t || !VALID_LOCATIONS.includes(l) || !VALID_TIERS.includes(t)) return;
 
     const gNum = Math.min(300, Math.max(20, parseInt(g)));
@@ -101,6 +136,9 @@ export function useWeddingBudgetCalculator() {
       setDateStatus("season");
     }
     if (dNum !== undefined) setWeddingDayOfWeek(dNum);
+    if (vt && VALID_VENUE_TYPES.includes(vt)) setVenueType(vt);
+    if (b && VALID_BAR_STYLES.includes(b)) setBarStyle(b);
+    if (x) setExcludedCategories(x.split("|").filter((n) => OPTIONAL_CATEGORIES.includes(n)));
     setStep(6);
   }, []);
 
@@ -113,8 +151,11 @@ export function useWeddingBudgetCalculator() {
     params.set("t", tier);
     if (timingMonth !== undefined) params.set("m", String(timingMonth));
     if (timingDow !== undefined) params.set("d", String(timingDow));
+    if (venueType !== "standard") params.set("vt", venueType);
+    if (barStyle !== "standard") params.set("b", barStyle);
+    if (excludedCategories.length > 0) params.set("x", excludedCategories.join("|"));
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [step, guests, location, tier, timingMonth, timingDow]);
+  }, [step, guests, location, tier, timingMonth, timingDow, venueType, barStyle, excludedCategories]);
 
   const handleLeadCapture = useCallback(
     async (data: { name: string; email: string; phone?: string }) => {
@@ -131,12 +172,16 @@ export function useWeddingBudgetCalculator() {
           venueName: venueName || undefined,
           timingMonth,
           timingDow,
+          venueType,
+          barStyle,
+          excludedCategories,
+          weddingYear,
           calculatedTotal: result.total,
         }),
       });
       trackLead("calculator", { guest_count: guests, location, tier, estimate: result.total });
     },
-    [guests, location, tier, dateStatus, venueStatus, venueName, timingMonth, timingDow, result]
+    [guests, location, tier, dateStatus, venueStatus, venueName, timingMonth, timingDow, venueType, barStyle, excludedCategories, weddingYear, result]
   );
 
   const scrollTop = () => {
@@ -186,6 +231,9 @@ export function useWeddingBudgetCalculator() {
     weddingDayOfWeek, setWeddingDayOfWeek,
     venueStatus, setVenueStatus,
     venueName, setVenueName,
+    venueType, setVenueType,
+    barStyle, setBarStyle,
+    excludedCategories, toggleCategory,
     leadCaptured,
     softGateName, setSoftGateName,
     softGateEmail, setSoftGateEmail,

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import WeddingDatePicker from "@/components/WeddingDatePicker";
-import { type DayOfWeek } from "@/config/costModel";
+import { type DayOfWeek, type VenueType, venueTypeLabels } from "@/config/costModel";
 import { type DateStatus } from "./useWeddingBudgetCalculator";
 
 // ─── Date Status Picker ────────────────────────────────────────────────────────
@@ -13,6 +13,7 @@ export default function DateStatusPicker({
   weddingDayOfWeek, onDayOfWeekChange,
   venueStatus, onVenueChange,
   venueName, onVenueNameChange,
+  venueType, onVenueTypeChange,
 }: {
   dateStatus: DateStatus;
   onDateChange: (v: DateStatus) => void;
@@ -26,6 +27,8 @@ export default function DateStatusPicker({
   onVenueChange: (v: "touring" | "booked" | "none") => void;
   venueName: string;
   onVenueNameChange: (v: string) => void;
+  venueType: VenueType;
+  onVenueTypeChange: (v: VenueType) => void;
 }) {
   const EASE_REF = [0.22, 1, 0.36, 1] as const;
 
@@ -66,6 +69,12 @@ export default function DateStatusPicker({
     { id: "booked", label: "Venue booked" },
     { id: "touring", label: "Currently touring" },
     { id: "none", label: "Haven't started" },
+  ];
+
+  const venueTypeOptions: { id: VenueType; note: string }[] = [
+    { id: "standard",      note: "Site fee + outside caterer" },
+    { id: "all-inclusive", note: "Catering & rentals bundled" },
+    { id: "raw-space",     note: "Bring everything in" },
   ];
 
   function getDateInsight(date: Date): { text: string; color: string } {
@@ -433,6 +442,38 @@ export default function DateStatusPicker({
             </p>
           </motion.div>
         )}
+        {/* Venue type — shapes the rentals/catering split in the estimate */}
+        <div className="space-y-3 pt-2">
+          <p className="font-body text-sm font-medium" style={{ color: "var(--ink)" }}>
+            What kind of venue are you picturing?
+          </p>
+          <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }} role="radiogroup" aria-label="Venue type">
+            {venueTypeOptions.map((opt) => {
+              const selected = venueType === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => onVenueTypeChange(opt.id)}
+                  className="text-left px-4 py-3 rounded-lg transition-all duration-200"
+                  style={{
+                    background: selected ? "var(--clay)" : "var(--bone)",
+                    color: selected ? "var(--bone)" : "var(--ink)",
+                    border: `1px solid ${selected ? "var(--clay)" : "var(--sand)"}`,
+                    cursor: "pointer",
+                  }}
+                >
+                  <p className="font-body text-sm font-medium">{venueTypeLabels[opt.id]}</p>
+                  <p className="font-body text-xs mt-0.5" style={{ color: selected ? "rgba(251,248,243,0.75)" : "var(--muted)" }}>
+                    {opt.note}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {venueStatus === "touring" && (
           <motion.p
             initial={{ opacity: 0, y: 4 }}

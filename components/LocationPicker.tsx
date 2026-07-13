@@ -16,8 +16,17 @@ const locations: { id: Location; short: string }[] = [
   { id: "us-average",        short: "US Average" },
 ];
 
-// "Other Metro" expands to reveal these DC-metro markets.
+// "Other Metro" expands to reveal these named markets (each individually
+// calibrated in the cost model); "Other US Metro" itself is the fallback.
 const otherMetroChildren: { id: Location; short: string; sub: string }[] = [
+  { id: "new-york-city",       short: "New York City",         sub: "Manhattan · Brooklyn · metro" },
+  { id: "sf-bay-area",         short: "SF Bay Area",           sub: "San Francisco · Wine Country" },
+  { id: "chicago",             short: "Chicago",               sub: "City · North Shore · suburbs" },
+  { id: "boston",              short: "Boston",                sub: "Greater Boston · Cape" },
+  { id: "seattle",             short: "Seattle",               sub: "Puget Sound region" },
+  { id: "miami",               short: "Miami",                 sub: "South Florida" },
+  { id: "dallas-fort-worth",   short: "Dallas–Fort Worth",     sub: "DFW metroplex" },
+  { id: "atlanta",             short: "Atlanta",               sub: "Metro Atlanta" },
   { id: "washington-dc",       short: "Washington, DC",        sub: "The District" },
   { id: "maryland-montgomery", short: "Montgomery County, MD", sub: "Bethesda · Potomac · Rockville" },
   { id: "northern-virginia",   short: "Northern Virginia",     sub: "Arlington · Loudoun wine country" },
@@ -111,13 +120,13 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
                 className="font-body text-xs uppercase tracking-widest"
                 style={{ color: "var(--muted)" }}
               >
-                Washington, DC metro
+                Pick your metro
               </p>
               <div
                 className="grid gap-2"
                 style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
                 role="radiogroup"
-                aria-label="DC metro market"
+                aria-label="Metro market"
               >
                 {otherMetroChildren.map((child) => {
                   const selected = value === child.id;
@@ -147,8 +156,8 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
                 })}
               </div>
               <p className="font-body text-xs" style={{ color: "var(--muted)" }}>
-                Outside the DC area? &ldquo;Other Metro&rdquo; uses a general NYC/SF/Chicago
-                baseline.
+                Don&apos;t see your city? Keep &ldquo;Other Metro&rdquo; selected — it uses a
+                calibrated mid-tier big-city baseline.
               </p>
             </div>
           </motion.div>
@@ -165,25 +174,41 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
         style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}
       >
         {value === "los-angeles" &&
-          "LA vendors run ~26% above the national baseline. Venue availability and vendor minimums drive this."}
+          "LA venues and catering run ~30% above the national baseline. Venue availability and vendor minimums drive this."}
         {value === "santa-barbara" &&
-          "Santa Barbara adds ~40% premium. It's one of the most sought-after wedding markets in the US."}
+          "Santa Barbara adds a ~45% venue premium. It's one of the most sought-after wedding markets in the US."}
         {value === "orange-county" &&
-          "Orange County runs ~20% above national — strong demand, limited venue inventory."}
+          "Orange County runs ~22% above national — strong demand, limited venue inventory."}
         {value === "san-diego" &&
-          "San Diego is ~10% above national — a relative bargain compared to LA or SB."}
+          "San Diego is ~12% above national — a relative bargain compared to LA or SB."}
         {value === "palm-springs" &&
-          "Palm Springs adds ~12% — popular venue market with high seasonal demand in spring and fall."}
+          "Palm Springs adds ~14% — desert-winter demand peaks November through April."}
         {value === "socal-suburbs" &&
-          "SoCal suburbs run ~5% below the national baseline — more value, still beautiful venues."}
+          "SoCal suburbs sit right at the national baseline — more value, still beautiful venues."}
         {value === "other-major-metro" &&
-          "Major metros (NYC, SF, Chicago) run ~40% above national baseline."}
+          "Calibrated mid-tier big-city baseline (~25% above national) for metros not listed by name."}
         {value === "washington-dc" &&
-          "DC runs ~32% above national — the country's priciest catering market, plus a 10% DC catering tax and steep venue food-and-beverage minimums."}
+          "DC runs ~34% above national — the country's priciest catering market, plus a 10% DC catering tax and steep venue food-and-beverage minimums."}
         {value === "maryland-montgomery" &&
-          "Montgomery County runs ~22% above national — DC-suburb pricing on catering and country-club venues, a notch below the District itself."}
+          "Montgomery County runs ~20% above national — DC-suburb pricing on catering and country-club venues, a notch below the District itself."}
         {value === "northern-virginia" &&
           "Northern Virginia runs ~22% above national — DC-metro affluence plus a premium Loudoun wine-country venue scene."}
+        {value === "new-york-city" &&
+          "NYC is the country's most expensive market — venues and catering run ~75% above national (Manhattan higher, outer boroughs lower)."}
+        {value === "sf-bay-area" &&
+          "The Bay Area runs ~65% above national on venues and catering, with wine-country venues at a further premium."}
+        {value === "chicago" &&
+          "Chicago runs ~28% above national — plus the nation's highest meal tax (up to 11.75%) on catering."}
+        {value === "boston" &&
+          "Greater Boston runs ~30% above national — historic venues and full-service expectations drive it."}
+        {value === "seattle" &&
+          "Seattle runs ~18% above national, with a sharp July–August dry-season peak."}
+        {value === "miami" &&
+          "Miami runs ~18% above national — peak season is November through April, opposite most of the country."}
+        {value === "dallas-fort-worth" &&
+          "DFW sits right at the national baseline — big-city vendor depth without coastal pricing."}
+        {value === "atlanta" &&
+          "Atlanta runs slightly below the national baseline — one of the best-value major metros."}
         {value === "us-average" &&
           "US national average — useful for comparison or if your market is more moderate."}
       </motion.p>

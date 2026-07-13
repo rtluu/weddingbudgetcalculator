@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import React from "react";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
-import { Tier, Location, DayOfWeek, locationLabels, calculateWeddingBudget } from "@/config/costModel";
+import { Tier, Location, DayOfWeek, VenueType, BarStyle, locationLabels, calculateWeddingBudget } from "@/config/costModel";
 import { EstimatePDF } from "./EstimatePDF";
 
 // Lazy-initialize so build doesn't fail without env vars
@@ -80,6 +80,10 @@ export async function POST(req: NextRequest) {
       venueName,
       timingMonth,
       timingDow,
+      venueType,
+      barStyle,
+      excludedCategories,
+      weddingYear,
       calculatedTotal,
     } = body as {
       name: string;
@@ -93,6 +97,10 @@ export async function POST(req: NextRequest) {
       venueName?: string;
       timingMonth?: number;
       timingDow?: DayOfWeek;
+      venueType?: VenueType;
+      barStyle?: BarStyle;
+      excludedCategories?: string[];
+      weddingYear?: number;
       calculatedTotal: number;
     };
 
@@ -108,7 +116,12 @@ export async function POST(req: NextRequest) {
     const locationName = locationLabels[location] ?? location;
 
     // Generate PDF
-    const budgetResult = calculateWeddingBudget(guestCount, location, tier, timingMonth, timingDow);
+    const budgetResult = calculateWeddingBudget(guestCount, location, tier, timingMonth, timingDow, {
+      venueType,
+      barStyle,
+      excludedCategories,
+      weddingYear,
+    });
     const pdfBuffer = await renderToBuffer(
       React.createElement(EstimatePDF, { name, result: budgetResult, venueName }) as React.ReactElement<DocumentProps>
     );

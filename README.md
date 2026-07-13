@@ -109,17 +109,28 @@ market data — re-run yearly). To adjust:
    hidden-cost average) and `RANGE_LOW_FACTOR`/`RANGE_HIGH_FACTOR`
    (0.92/1.22 — asymmetric because ~78% of couples end up over budget).
 
-**Estimates are "full-boat"**: all 17 line items at the tier's typical market
-price. Published market averages include category-skippers and sit ~8–12%
-below full-boat totals at the same guest count.
+**Estimates are "full-boat"**: every included line item at the tier's typical
+market price. Published market averages include category-skippers and sit
+~8–12% below full-boat totals at the same guest count — users can exclude
+optional lines on the results screen (`excludedCategories`).
+
+8. **Options** — `calculateWeddingBudget(guests, location, tier, month?,
+   dayOfWeek?, opts?)` also takes `weddingYear` (inflation from
+   `MODEL_VINTAGE` at ~3.5%/yr, 3-yr cap), `venueType`
+   (all-inclusive/standard/raw-space line adjustments), `barStyle`
+   (none/beer-wine/standard/premium per-guest rates), and
+   `excludedCategories`. Micro-weddings (≤40 guests) taper fixed costs;
+   200+ guests get volume pricing on per-guest F&B/rentals.
 
 **After any change, run `npm test` — the validation anchors include:**
 - 100 guests / moderate / los-angeles: $50,000–$55,000
+- 150 guests / moderate / new-york-city: $88,000–$100,000
 - 100 guests / moderate / us-average: $40,000–$45,000
 - 150 guests / luxury / santa-barbara: $130,000–$160,000
-- 75 guests / budget / socal-suburbs: $18,000–$23,000
-- plus per-metro anchors (SD, OC, Palm Springs, DC, NYC/SF) and guest-scaling
-  slope checks — see `__tests__/costModel.test.ts`
+- 20 guests / moderate / los-angeles: $18,000–$22,500 (micro taper)
+- plus anchors for every named metro (SF, Chicago, Boston, Seattle, Miami,
+  DFW, Atlanta, DC…) and scaling/inflation/venue-type/bar behaviors —
+  see `__tests__/costModel.test.ts`
 
 ---
 

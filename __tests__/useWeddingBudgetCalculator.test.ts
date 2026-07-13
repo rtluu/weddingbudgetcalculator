@@ -4,6 +4,13 @@ import { useWeddingBudgetCalculator } from "@/app/calculator/useWeddingBudgetCal
 // Locks in the calculator's core behavior so future refactors (extracting
 // per-step components, etc.) can't silently change the flow.
 describe("useWeddingBudgetCalculator", () => {
+  // The hook hydrates from URL params on mount and writes them back on the
+  // results step; jsdom shares window.location across tests in this file, so
+  // reset it to keep tests independent.
+  beforeEach(() => {
+    window.history.replaceState({}, "", "/");
+  });
+
   it("starts on the landing step with defaults and a derived estimate", () => {
     const { result } = renderHook(() => useWeddingBudgetCalculator());
     expect(result.current.step).toBe(0);
@@ -42,5 +49,34 @@ describe("useWeddingBudgetCalculator", () => {
     expect(result.current.result.total).toBeGreaterThan(before);
     act(() => result.current.setTier("luxury"));
     expect(result.current.result.total).toBeGreaterThan(before);
+  });
+
+  it("bar style and venue type flow into the estimate", () => {
+    const { result } = renderHook(() => useWeddingBudgetCalculator());
+    const before = result.current.result.total;
+    act(() => result.current.setBarStyle("premium"));
+    expect(result.current.result.total).toBeGreaterThan(before);
+    act(() => result.current.setBarStyle("none"));
+    expect(result.current.result.total).toBeLessThan(before);
+    act(() => result.current.setVenueType("all-inclusive"));
+    const rentals = result.current.result.categories.find((c) => c.name === "Rentals")!;
+    expect(rentals.subtotal).toBeLessThan(1000);
+  });
+
+  it("toggleCategory excludes and re-includes an optional line", () => {
+    const { result } = renderHook(() => useWeddingBudgetCalculator());
+    const before = result.current.result.total;
+    act(() => result.current.toggleCategory("Videography"));
+    expect(result.current.excludedCategories).toContain("Videography");
+    expect(result.current.result.total).toBeLessThan(before);
+    act(() => result.current.toggleCategory("Videography"));
+    expect(result.current.excludedCategories).toHaveLength(0);
+    expect(result.current.result.total).toBeCloseTo(before, 6);
+  });
+
+  it("toggleCategory ignores non-optional categories like Venue", () => {
+    const { result } = renderHook(() => useWeddingBudgetCalculator());
+    act(() => result.current.toggleCategory("Venue"));
+    expect(result.current.excludedCategories).toHaveLength(0);
   });
 });
