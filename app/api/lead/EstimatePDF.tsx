@@ -258,7 +258,7 @@ export function EstimatePDF({ name, result, venueName }: Props) {
         </View>
 
         <View style={s.row}>
-          <Text style={s.rowLabel}>Contingency (8%)</Text>
+          <Text style={s.rowLabel}>Contingency ({Math.round(result.contingencyRate * 100)}%)</Text>
           <Text style={s.rowValue}>{fmt(result.contingencyAmount)}</Text>
         </View>
 
@@ -266,11 +266,12 @@ export function EstimatePDF({ name, result, venueName }: Props) {
           <View style={s.row}>
             <Text style={[s.rowLabel, { color: result.seasonalMult > 1 ? C.terracotta : C.olive }]}>
               {monthName} seasonal {result.seasonalMult > 1 ? "premium" : "discount"}
-              {"  "}{result.seasonalMult > 1 ? `+${Math.round((result.seasonalMult - 1) * 100)}%` : `${Math.round((result.seasonalMult - 1) * 100)}%`}
+              {"  "}{result.seasonalMult > 1 ? "+" : ""}
+              {Math.round((result.seasonalAdjustmentAmount / (result.total - result.seasonalAdjustmentAmount)) * 100)}%
             </Text>
             <Text style={[s.rowValueAccent, { color: result.seasonalMult > 1 ? C.terracotta : C.olive }]}>
               {result.seasonalMult > 1 ? "+" : ""}
-              {fmt((result.seasonalMult - 1) * (result.subtotalBeforeContingency + result.contingencyAmount) / result.seasonalMult)}
+              {fmt(result.seasonalAdjustmentAmount)}
             </Text>
           </View>
         )}

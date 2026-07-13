@@ -40,8 +40,8 @@ export default function DateStatusPicker({
   const dowOptions: { dow: DayOfWeek; label: string; note: string }[] = [
     { dow: 6, label: "Saturday",  note: "Peak pricing" },
     { dow: 5, label: "Friday",    note: "~15% savings" },
-    { dow: 0, label: "Sunday",    note: "~22% savings" },
-    { dow: 3, label: "Weekday",   note: "~38% savings" },
+    { dow: 0, label: "Sunday",    note: "~20% savings" },
+    { dow: 3, label: "Weekday",   note: "~35% savings" },
   ];
 
   const dateOptions: { id: DateStatus; label: string; sub: string }[] = [
