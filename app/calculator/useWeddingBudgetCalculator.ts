@@ -9,6 +9,7 @@ import {
   type VenueType,
   type BarStyle,
 } from "@/config/costModel";
+import { findVenueById, type KnownVenue } from "@/config/venues";
 import { track, trackLead } from "@/lib/analytics";
 
 export type DateStatus = "yes" | "season" | "not-sure";
@@ -45,7 +46,8 @@ export function useWeddingBudgetCalculator() {
   const [weddingSeason, setWeddingSeason] = useState<"spring" | "summer" | "fall" | "winter" | null>(null);
   const [weddingDayOfWeek, setWeddingDayOfWeek] = useState<DayOfWeek | null>(null);
   const [venueStatus, setVenueStatus] = useState<"touring" | "booked" | "none">("none");
-  const [venueName, setVenueName] = useState("");
+  const [venueName, setVenueNameState] = useState("");
+  const [venueId, setVenueId] = useState<string | null>(null);
   const [venueType, setVenueType] = useState<VenueType>("standard");
   const [barStyle, setBarStyle] = useState<BarStyle>("standard");
   const [excludedCategories, setExcludedCategories] = useState<string[]>([]);
@@ -87,6 +89,20 @@ export function useWeddingBudgetCalculator() {
     );
   }, []);
 
+  // Free-typing a venue name detaches any previously selected known venue;
+  // selecting from the autocomplete attaches its real pricing.
+  const setVenueName = useCallback((name: string) => {
+    setVenueNameState(name);
+    setVenueId(null);
+  }, []);
+
+  const selectKnownVenue = useCallback((venue: KnownVenue) => {
+    setVenueNameState(venue.name);
+    setVenueId(venue.id);
+  }, []);
+
+  const knownVenue = venueId ? findVenueById(venueId) : undefined;
+
   // Estimate is derived — recomputes automatically as inputs change.
   const result: BudgetResult = useMemo(
     () =>
@@ -95,8 +111,9 @@ export function useWeddingBudgetCalculator() {
         venueType,
         barStyle,
         excludedCategories,
+        venue: knownVenue,
       }),
-    [guests, location, tier, timingMonth, timingDow, weddingYear, venueType, barStyle, excludedCategories]
+    [guests, location, tier, timingMonth, timingDow, weddingYear, venueType, barStyle, excludedCategories, knownVenue]
   );
 
   // GA funnel: fire calculator_step once per step first reached (forward only),
@@ -139,6 +156,14 @@ export function useWeddingBudgetCalculator() {
     if (vt && VALID_VENUE_TYPES.includes(vt)) setVenueType(vt);
     if (b && VALID_BAR_STYLES.includes(b)) setBarStyle(b);
     if (x) setExcludedCategories(x.split("|").filter((n) => OPTIONAL_CATEGORIES.includes(n)));
+    const vn = params.get("vn");
+    if (vn) {
+      const venue = findVenueById(vn);
+      if (venue) {
+        setVenueId(venue.id);
+        setVenueNameState(venue.name);
+      }
+    }
     setStep(6);
   }, []);
 
@@ -154,8 +179,9 @@ export function useWeddingBudgetCalculator() {
     if (venueType !== "standard") params.set("vt", venueType);
     if (barStyle !== "standard") params.set("b", barStyle);
     if (excludedCategories.length > 0) params.set("x", excludedCategories.join("|"));
+    if (venueId) params.set("vn", venueId);
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [step, guests, location, tier, timingMonth, timingDow, venueType, barStyle, excludedCategories]);
+  }, [step, guests, location, tier, timingMonth, timingDow, venueType, barStyle, excludedCategories, venueId]);
 
   const handleLeadCapture = useCallback(
     async (data: { name: string; email: string; phone?: string }) => {
@@ -170,6 +196,7 @@ export function useWeddingBudgetCalculator() {
           dateStatus,
           venueStatus,
           venueName: venueName || undefined,
+          venueId: venueId || undefined,
           timingMonth,
           timingDow,
           venueType,
@@ -181,7 +208,7 @@ export function useWeddingBudgetCalculator() {
       });
       trackLead("calculator", { guest_count: guests, location, tier, estimate: result.total });
     },
-    [guests, location, tier, dateStatus, venueStatus, venueName, timingMonth, timingDow, venueType, barStyle, excludedCategories, weddingYear, result]
+    [guests, location, tier, dateStatus, venueStatus, venueName, venueId, timingMonth, timingDow, venueType, barStyle, excludedCategories, weddingYear, result]
   );
 
   const scrollTop = () => {
@@ -231,6 +258,7 @@ export function useWeddingBudgetCalculator() {
     weddingDayOfWeek, setWeddingDayOfWeek,
     venueStatus, setVenueStatus,
     venueName, setVenueName,
+    venueId, selectKnownVenue, knownVenue,
     venueType, setVenueType,
     barStyle, setBarStyle,
     excludedCategories, toggleCategory,

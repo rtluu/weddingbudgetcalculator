@@ -3,6 +3,8 @@ import { Resend } from "resend";
 import React from "react";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import { Tier, Location, DayOfWeek, VenueType, BarStyle, locationLabels, calculateWeddingBudget } from "@/config/costModel";
+import { findVenueById } from "@/config/venues";
+import { scoreLead, type LeadScore } from "./scoreLead";
 import { EstimatePDF } from "./EstimatePDF";
 
 // Lazy-initialize so build doesn't fail without env vars
@@ -10,28 +12,6 @@ function getResend() {
   const key = process.env.RESEND_API_KEY;
   if (!key) console.error("[email] RESEND_API_KEY is not set - notification emails will NOT be delivered.");
   return new Resend(key ?? "placeholder");
-}
-
-type LeadScore = "A" | "B" | "C";
-
-function scoreLead(
-  guests: number,
-  tier: Tier,
-  venueStatus: string
-): LeadScore {
-  // A: guests >= 120 AND tier = luxury, OR (guests >= 100 AND venueStatus = "touring")
-  if (
-    (guests >= 120 && tier === "luxury") ||
-    (guests >= 100 && venueStatus === "touring")
-  ) {
-    return "A";
-  }
-  // B: guests >= 80 OR tier = luxury
-  if (guests >= 80 || tier === "luxury") {
-    return "B";
-  }
-  // C: everyone else
-  return "C";
 }
 
 const fmt = (n: number) =>
@@ -78,6 +58,7 @@ export async function POST(req: NextRequest) {
       dateStatus,
       venueStatus,
       venueName,
+      venueId,
       timingMonth,
       timingDow,
       venueType,
@@ -95,6 +76,7 @@ export async function POST(req: NextRequest) {
       dateStatus: string;
       venueStatus: string;
       venueName?: string;
+      venueId?: string;
       timingMonth?: number;
       timingDow?: DayOfWeek;
       venueType?: VenueType;
@@ -111,7 +93,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const score = scoreLead(guestCount, tier, venueStatus);
+    const knownVenue = venueId ? findVenueById(venueId) : undefined;
+    const { score, signals } = scoreLead({
+      guests: guestCount,
+      tier,
+      venueStatus,
+      dateStatus,
+      location,
+      estimate: calculatedTotal,
+      barStyle,
+      weddingYear,
+      venueId: knownVenue?.id,
+    });
     const recipientEmail = process.env.RECIPIENT_EMAIL || "kristina@bymosaic.com";
     const locationName = locationLabels[location] ?? location;
 
@@ -121,6 +114,7 @@ export async function POST(req: NextRequest) {
       barStyle,
       excludedCategories,
       weddingYear,
+      venue: knownVenue,
     });
     const pdfBuffer = await renderToBuffer(
       React.createElement(EstimatePDF, { name, result: budgetResult, venueName }) as React.ReactElement<DocumentProps>
@@ -157,6 +151,9 @@ export async function POST(req: NextRequest) {
     </div>
 
     <div class="score score-${score.toLowerCase()}">${scoreLabel[score]}</div>
+    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #6E7253; margin: 0 0 16px 0;">
+      Signals: ${signals.join(" · ") || "none"}
+    </p>
 
     <div class="field">
       <div class="field-label">Name</div>
@@ -194,7 +191,8 @@ export async function POST(req: NextRequest) {
       <div class="field-label">Venue status</div>
       <div class="field-value">${venueLabel[venueStatus] ?? venueStatus}</div>
     </div>
-    ${venueName ? `<div class="field"><div class="field-label">Venue name</div><div class="field-value" style="font-weight:500;">${venueName}</div></div>` : ""}
+    ${venueName ? `<div class="field"><div class="field-label">Venue name</div><div class="field-value" style="font-weight:500;">${venueName}${knownVenue ? " — estimate uses this venue's published pricing" : ""}</div></div>` : ""}
+    ${budgetResult.fnbMinimumApplied ? `<div class="field"><div class="field-label">Note</div><div class="field-value" style="font-size:13px;">Estimate reflects the venue's F&amp;B minimum (guest count below it).</div></div>` : ""}
 
     <a href="mailto:${email}?subject=Your By Mosaic wedding estimate&body=Hi ${name}," class="cta">Reply to ${name} →</a>
 

@@ -302,6 +302,12 @@ export function BudgetPDF({ result, coupleNames, generatedDate }: BudgetPDFProps
           </Text>
         </View>
 
+        {result.venueNote && (
+          <Text style={{ fontSize: 8.5, color: "#9C5A3C", marginBottom: 10, lineHeight: 1.5 }}>
+            {result.venueNote}
+          </Text>
+        )}
+
         {/* ─── Line Items ──────────────────────────────────────────────────────── */}
         <Text style={styles.sectionLabel}>Category Breakdown</Text>
 

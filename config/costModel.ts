@@ -45,11 +45,25 @@ export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0=Sun, 6=Sat
 export type VenueType = "standard" | "all-inclusive" | "raw-space";
 export type BarStyle = "none" | "beer-wine" | "standard" | "premium";
 
+// Real pricing for a known venue (see config/venues.ts). When supplied, the
+// Venue line uses the published site fee, the venue's bundling style applies,
+// and its F&B minimum is enforced.
+export interface VenuePricing {
+  id: string;
+  name: string;
+  venueType: VenueType;
+  siteFee: number;           // Saturday site fee, already local pricing
+  fnbMinimum: number | null; // Saturday F&B minimum, pre-tax/service
+  cateringPerGuest?: number; // in-house per-plate (food only), already local
+  capacity?: number;
+}
+
 export interface CalcOptions {
   weddingYear?: number;          // calendar year; prices escalate from data vintage
-  venueType?: VenueType;         // default "standard"
+  venueType?: VenueType;         // default "standard"; overridden by venue
   barStyle?: BarStyle;           // default "standard"
   excludedCategories?: string[]; // names from OPTIONAL_CATEGORIES to leave out
+  venue?: VenuePricing;          // known-venue real pricing
 }
 
 export interface CategoryResult {
@@ -79,6 +93,10 @@ export interface BudgetResult {
   dowAdjustmentAmount: number;      // negative = savings vs Saturday baseline
   seasonNote: string | null;
   dowNote: string | null;
+  // Known-venue pricing
+  venueId: string | null;
+  fnbMinimumApplied: boolean; // catering+bar were raised to the venue's minimum
+  venueNote: string | null;
 }
 
 // ─── Category cost tables ─────────────────────────────────────────────────────
@@ -453,6 +471,7 @@ interface PricedLines {
   lines: Array<{ amount: number; included: boolean }>;
   subtotal: number;
   fnbServiceAmount: number;
+  fnbMinimumApplied: boolean;
 }
 
 function computeSubtotals(
@@ -464,6 +483,7 @@ function computeSubtotals(
   opts: Required<Pick<CalcOptions, "venueType" | "barStyle">> & {
     excluded: Set<string>;
     inflation: number;
+    venue?: VenuePricing;
   }
 ): PricedLines {
   const locMult = locationMultipliers[location];
@@ -472,31 +492,14 @@ function computeSubtotals(
   const taper = microTaper(guests);
   const volume = volumeFactor(guests);
   const typeAdj = venueTypeAdjustments[opts.venueType];
+  const venue = opts.venue;
 
-  const lines: Array<{ amount: number; included: boolean }> = [];
+  const lines: Array<{ amount: number; included: boolean; factor: number }> = [];
   let subtotal = 0;
   let fnbServiceAmount = 0;
 
-  for (const cat of categories) {
-    const adj = typeAdj[cat.name] ?? {};
-    const guestCount = cat.isHouseholdStationery ? guests * 0.5 : guests;
-
-    const fixed = cat.fixed[tier] * taper * (adj.fixedMult ?? 1);
-    let rate = cat.name === "Bar" ? barRates[opts.barStyle][tier] : cat.perGuest[tier];
-    if (cat.volumeTaper) rate *= volume;
-
-    let amount = fixed + rate * guestCount;
-    if (adj.allMult !== undefined) amount *= adj.allMult;
-    if (cat.name === "Bar" && opts.barStyle === "none") amount = 0;
-
-    const factor = cat.isFnB ? (cat.fnbTaxOnly ? fnbTax : fnb) : 1;
-    amount *= factor;
-
-    let locSens = cat.locationSensitivity;
-    if (cat.luxuryServiceBump && tier === "luxury") locSens = Math.max(locSens, 0.7);
-    amount *= 1 + (locMult - 1) * locSens;
-
-    const timing = Math.min(
+  const timingFor = (cat: CategoryDef) =>
+    Math.min(
       Math.max(
         (1 + (seasonMult - 1) * cat.seasonalSensitivity) *
           (1 + (dowBase - 1) * cat.dowSensitivity),
@@ -504,16 +507,69 @@ function computeSubtotals(
       ),
       TIMING_CEIL
     );
-    amount *= timing * opts.inflation;
 
-    const included = !opts.excluded.has(cat.name);
-    if (included) {
-      subtotal += amount;
-      if (cat.isFnB && amount > 0) fnbServiceAmount += amount * (1 - 1 / factor);
+  for (const cat of categories) {
+    const adj = typeAdj[cat.name] ?? {};
+    const guestCount = cat.isHouseholdStationery ? guests * 0.5 : guests;
+    const factor = cat.isFnB ? (cat.fnbTaxOnly ? fnbTax : fnb) : 1;
+
+    let amount: number;
+    if (cat.name === "Venue" && venue) {
+      // Real published site fee: already local pricing, no taper/multiplier —
+      // only day/season demand and inflation still move it.
+      amount = venue.siteFee * timingFor(cat) * opts.inflation;
+    } else if (cat.name === "Catering" && venue?.cateringPerGuest !== undefined) {
+      // In-house per-plate: already local; staffing built into the rate.
+      amount =
+        venue.cateringPerGuest * guestCount * factor * timingFor(cat) * opts.inflation;
+    } else {
+      const fixed = cat.fixed[tier] * taper * (adj.fixedMult ?? 1);
+      let rate = cat.name === "Bar" ? barRates[opts.barStyle][tier] : cat.perGuest[tier];
+      if (cat.volumeTaper) rate *= volume;
+
+      amount = fixed + rate * guestCount;
+      if (adj.allMult !== undefined) amount *= adj.allMult;
+      if (cat.name === "Bar" && opts.barStyle === "none") amount = 0;
+
+      amount *= factor;
+
+      let locSens = cat.locationSensitivity;
+      if (cat.luxuryServiceBump && tier === "luxury") locSens = Math.max(locSens, 0.7);
+      amount *= 1 + (locMult - 1) * locSens;
+      amount *= timingFor(cat) * opts.inflation;
     }
-    lines.push({ amount, included });
+
+    lines.push({ amount, included: !opts.excluded.has(cat.name), factor });
   }
-  return { lines, subtotal, fnbServiceAmount };
+
+  // Enforce the venue's published F&B minimum: if the pre-tax/service food +
+  // bar spend falls below it, scale both lines up to meet it. Minimums are
+  // quoted for Saturdays; off-peak days commonly discount them (dowBase), and
+  // they escalate with inflation like everything else.
+  let fnbMinimumApplied = false;
+  if (venue?.fnbMinimum) {
+    const cateringIdx = categories.findIndex((c) => c.name === "Catering");
+    const barIdx = categories.findIndex((c) => c.name === "Bar");
+    const preFactorSpend =
+      lines[cateringIdx].amount / lines[cateringIdx].factor +
+      lines[barIdx].amount / lines[barIdx].factor;
+    const minimumTarget = venue.fnbMinimum * dowBase * opts.inflation;
+    if (preFactorSpend > 0 && preFactorSpend < minimumTarget) {
+      const scale = minimumTarget / preFactorSpend;
+      lines[cateringIdx].amount *= scale;
+      lines[barIdx].amount *= scale;
+      fnbMinimumApplied = true;
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].included) continue;
+    subtotal += lines[i].amount;
+    if (categories[i].isFnB && lines[i].amount > 0) {
+      fnbServiceAmount += lines[i].amount * (1 - 1 / lines[i].factor);
+    }
+  }
+  return { lines, subtotal, fnbServiceAmount, fnbMinimumApplied };
 }
 
 // ─── Main calculation ─────────────────────────────────────────────────────────
@@ -532,11 +588,14 @@ export function calculateWeddingBudget(
     Math.max((options?.weddingYear ?? MODEL_VINTAGE) - MODEL_VINTAGE, 0),
     3
   );
+  const venue = options?.venue;
   const computeOpts = {
-    venueType: options?.venueType ?? ("standard" as VenueType),
+    // A known venue's bundling style wins over the manually picked one.
+    venueType: venue?.venueType ?? options?.venueType ?? ("standard" as VenueType),
     barStyle: options?.barStyle ?? ("standard" as BarStyle),
     excluded: new Set(options?.excludedCategories ?? []),
     inflation: Math.pow(1 + ANNUAL_ESCALATION, years),
+    venue,
   };
 
   const priced = computeSubtotals(guests, location, tier, seasonMult, dowBase, computeOpts);
@@ -572,6 +631,22 @@ export function calculateWeddingBudget(
 
   const range = FALLBACK_LOCATIONS.has(location) ? FALLBACK_RANGE : DEFAULT_RANGE;
 
+  let venueNote: string | null = null;
+  if (venue) {
+    const parts = [`Using ${venue.name}'s published pricing in place of market averages.`];
+    if (priced.fnbMinimumApplied && venue.fnbMinimum) {
+      parts.push(
+        `${venue.name} carries a ~$${Math.round(venue.fnbMinimum / 1000)}K Saturday food & beverage minimum — your guest count sits below it, so the catering and bar lines reflect the minimum.`
+      );
+    }
+    if (venue.capacity !== undefined && guests > venue.capacity) {
+      parts.push(
+        `Heads up: ${venue.name} lists capacity around ${venue.capacity} guests — your ${guests} exceeds it.`
+      );
+    }
+    venueNote = parts.join(" ");
+  }
+
   return {
     categories: categoryResults,
     fnbServiceAmount: priced.fnbServiceAmount,
@@ -591,5 +666,8 @@ export function calculateWeddingBudget(
     dowAdjustmentAmount,
     seasonNote: month     !== undefined ? seasonNoteFor(location, month) : null,
     dowNote:    dayOfWeek !== undefined ? dowNoteFor(dayOfWeek)          : null,
+    venueId: venue?.id ?? null,
+    fnbMinimumApplied: priced.fnbMinimumApplied,
+    venueNote,
   };
 }
