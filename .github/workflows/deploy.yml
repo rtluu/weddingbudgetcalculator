@@ -1,0 +1,41 @@
+name: Deploy to Netlify
+
+# Manual production deploys from CI (the container/dev environments can't
+# reach api.netlify.com). Requires two repository secrets:
+#   NETLIFY_AUTH_TOKEN — a Netlify personal access token
+#   NETLIFY_SITE_ID    — the site's API ID (Site settings → General)
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+    steps:
+      - name: Fail loud if Netlify secrets are missing
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ] || [ -z "$NETLIFY_SITE_ID" ]; then
+            echo "::error::NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID repository secrets must be set (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20 # match the Netlify build image
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and deploy to production
+        run: npx --yes netlify-cli@17 deploy --build --prod --message "Deploy ${{ github.sha }} via GitHub Actions"
