@@ -319,7 +319,7 @@ export function BudgetPDF({ result, coupleNames, generatedDate }: BudgetPDFProps
 
         {/* F&B service fee */}
         <View style={styles.fnbLine}>
-          <Text style={styles.fnbLabel}>F&B service + tax (est. 30%)</Text>
+          <Text style={styles.fnbLabel}>F&B service charge + tax</Text>
           <Text style={[styles.lineItemValue, { fontSize: 10, color: "#8C8275" }]}>
             {fmt(result.fnbServiceAmount)}
           </Text>
@@ -328,7 +328,7 @@ export function BudgetPDF({ result, coupleNames, generatedDate }: BudgetPDFProps
         {/* Contingency */}
         <View style={styles.lineItem}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.lineItemLabel}>Contingency (8%)</Text>
+            <Text style={styles.lineItemLabel}>Contingency ({Math.round(result.contingencyRate * 100)}%)</Text>
             <Text style={styles.contingencyNote}>Budget buffer for unexpected costs</Text>
           </View>
           <Text style={styles.lineItemValue}>{fmt(result.contingencyAmount)}</Text>

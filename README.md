@@ -64,38 +64,62 @@ components/
 
 config/
   costModel.ts          — All cost coefficients + calculateWeddingBudget() function
+  costModel.sources.md  — Research sources behind every coefficient (2026-07)
 
 lib/
   generatePDF.tsx       — @react-pdf/renderer branded PDF document
 
 __tests__/
-  costModel.test.ts     — Jest unit tests validating all 3 cost targets
+  costModel.test.ts     — Jest unit tests validating the market anchors
 ```
 
 ---
 
 ## Recalibrating the Cost Model
 
-All coefficients live in `config/costModel.ts`. To adjust:
+All coefficients live in `config/costModel.ts`; every value is sourced and
+explained in `config/costModel.sources.md` (recalibrated 2026-07 from 2025–2026
+market data — re-run yearly). To adjust:
 
-1. **Per-guest rates** — Edit `perGuestByTier` for Catering, Bar, Rentals, Cake/Desserts, Stationery, or Favors. These have tier-specific rates (budget/moderate/luxury).
+1. **Category cost tables** — Each entry in `categories` has a `fixed` and
+   `perGuest` cost per tier (budget/moderate/luxury), at the national (US
+   average) baseline. These replace the old global tier multiplier: tier gaps
+   are set per category from real market pricing.
 
-2. **Fixed base costs** — Edit the `fixedBase` on each entry in the `categories` array. These are national baselines before tier and location multipliers.
+2. **Sensitivity weights** — Each category has `locationSensitivity`,
+   `seasonalSensitivity`, and `dowSensitivity` (0–1): how fully the metro
+   premium, seasonal demand curve, and day-of-week discount apply. Venue = 1.0
+   on all three; service vendors (photography, attire) are much less sensitive.
 
-3. **Tier multipliers** — Edit `tierMultipliers` (currently budget=0.70, moderate=1.00, luxury=1.75). These apply to all non-override categories.
+3. **Location multipliers** — `locationMultipliers` is the venue/F&B-axis metro
+   premium, calibrated to metro-level average-spend data. Services feel it
+   scaled by their `locationSensitivity`.
 
-4. **Location multipliers** — Edit `locationMultipliers`. Based on CWPI (Cost of Wedding Price Index) relative to national average.
+4. **F&B factors** — `fnbFactors` is per-market (service charge 18–24% ×
+   prepared-food sales tax: DC 10%, MD 6%, CA 7.75–9.5%…). Applied to
+   Catering + Bar + Cake/Desserts.
 
-5. **F&B factor** — Edit `FNB_FACTOR` (currently 1.30). Applied to Catering + Bar + Cake/Desserts to account for service charges and tax.
+5. **Seasonal curves** — `seasonalMultipliers` are venue-axis monthly demand
+   curves per location (Palm Springs is inverted; DC has twin peaks).
 
-6. **Contingency** — Edit `contingencyRate` inside `calculateWeddingBudget()` (currently 0.08).
+6. **Day-of-week** — `dowBaseMultipliers` (Fri −15%, Sun −20%, midweek −35% on
+   the venue axis, per venue pricing surveys).
 
-7. **Range spread** — Edit `rangeLow = total * 0.9` and `rangeHigh = total * 1.15`.
+7. **Contingency & range** — `CONTINGENCY_RATE` (0.09, from Zola's measured
+   hidden-cost average) and `RANGE_LOW_FACTOR`/`RANGE_HIGH_FACTOR`
+   (0.92/1.22 — asymmetric because ~78% of couples end up over budget).
 
-**After any change, run `npm test` to verify the three validation targets still pass:**
-- 100 guests / moderate / los-angeles: $44,000–$47,000
-- 150 guests / luxury / santa-barbara: $90,000–$115,000
-- 75 guests / budget / socal-suburbs: $22,000–$27,000
+**Estimates are "full-boat"**: all 17 line items at the tier's typical market
+price. Published market averages include category-skippers and sit ~8–12%
+below full-boat totals at the same guest count.
+
+**After any change, run `npm test` — the validation anchors include:**
+- 100 guests / moderate / los-angeles: $50,000–$55,000
+- 100 guests / moderate / us-average: $40,000–$45,000
+- 150 guests / luxury / santa-barbara: $130,000–$160,000
+- 75 guests / budget / socal-suburbs: $18,000–$23,000
+- plus per-metro anchors (SD, OC, Palm Springs, DC, NYC/SF) and guest-scaling
+  slope checks — see `__tests__/costModel.test.ts`
 
 ---
 

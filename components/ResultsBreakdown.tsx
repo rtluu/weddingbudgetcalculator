@@ -105,7 +105,7 @@ export default function ResultsBreakdown({
     };
   });
   const diySubtotal = diyCategories.reduce((s, c) => s + c.diySubtotal, 0);
-  const diyContingency = diySubtotal * 0.08;
+  const diyContingency = diySubtotal * result.contingencyRate;
   const diyTotal = diySubtotal + diyContingency;
   const diyTotalSavings = result.total - diyTotal;
 
@@ -348,7 +348,7 @@ export default function ResultsBreakdown({
           {/* F&B service fee line */}
           <motion.div variants={itemVariants} className="invoice-line">
             <span className="invoice-label" style={{ color: "var(--muted)", opacity: 0.7 }}>
-              F&B service + tax (est. 30%)
+              F&B service charge + tax
             </span>
             <span className="invoice-value" style={{ fontSize: "0.9rem", color: "var(--muted)" }}>
               {fmt(result.fnbServiceAmount)}
@@ -358,7 +358,7 @@ export default function ResultsBreakdown({
           {/* Contingency */}
           <motion.div variants={itemVariants} className="invoice-line">
             <div>
-              <span className="invoice-label">Contingency (8%)</span>
+              <span className="invoice-label">Contingency ({Math.round(result.contingencyRate * 100)}%)</span>
               <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)", opacity: 0.7 }}>
                 Things happen. This is the line most people skip, then regret.
               </p>
@@ -389,12 +389,12 @@ export default function ResultsBreakdown({
                 </span>
                 <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)", opacity: 0.8 }}>
                   {result.seasonalMult > 1
-                    ? `+${Math.round((result.seasonalMult - 1) * 100)}% peak season premium`
-                    : `${Math.round((result.seasonalMult - 1) * 100)}% off-peak discount`}
+                    ? `+${Math.round((result.seasonalAdjustmentAmount / (result.total - result.seasonalAdjustmentAmount)) * 100)}% peak season premium`
+                    : `${Math.round((result.seasonalAdjustmentAmount / (result.total - result.seasonalAdjustmentAmount)) * 100)}% off-peak discount`}
                 </p>
               </div>
               <span className="invoice-value" style={{ color: result.seasonalMult > 1 ? "var(--terracotta)" : "var(--olive)", fontSize: "0.9rem" }}>
-                {result.seasonalMult > 1 ? "+" : ""}{fmt((result.seasonalMult - 1) * (result.subtotalBeforeContingency + result.contingencyAmount) / result.seasonalMult)}
+                {result.seasonalMult > 1 ? "+" : ""}{fmt(result.seasonalAdjustmentAmount)}
               </span>
             </motion.div>
           )}
