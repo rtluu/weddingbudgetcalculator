@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import WeddingDatePicker from "@/components/WeddingDatePicker";
 import { type DayOfWeek, type VenueType, venueTypeLabels } from "@/config/costModel";
+import { searchVenues, type KnownVenue } from "@/config/venues";
 import { type DateStatus } from "./useWeddingBudgetCalculator";
 
 // ─── Date Status Picker ────────────────────────────────────────────────────────
@@ -14,6 +16,7 @@ export default function DateStatusPicker({
   venueStatus, onVenueChange,
   venueName, onVenueNameChange,
   venueType, onVenueTypeChange,
+  venueId, onSelectVenue,
 }: {
   dateStatus: DateStatus;
   onDateChange: (v: DateStatus) => void;
@@ -29,7 +32,11 @@ export default function DateStatusPicker({
   onVenueNameChange: (v: string) => void;
   venueType: VenueType;
   onVenueTypeChange: (v: VenueType) => void;
+  venueId: string | null;
+  onSelectVenue: (v: KnownVenue) => void;
 }) {
+  const [venueFocused, setVenueFocused] = useState(false);
+  const venueSuggestions = venueId === null && venueFocused ? searchVenues(venueName) : [];
   const EASE_REF = [0.22, 1, 0.36, 1] as const;
 
   const seasonOptions: { id: "spring" | "summer" | "fall" | "winter"; label: string; months: string }[] = [
@@ -416,30 +423,66 @@ export default function DateStatusPicker({
             </button>
           ))}
         </div>
-        {venueStatus === "booked" && (
+        {(venueStatus === "booked" || venueStatus === "touring") && (
           <motion.div
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: EASE_REF }}
+            style={{ position: "relative" }}
           >
             <input
               type="text"
-              placeholder="Venue name (e.g. Vibiana, Greystone Mansion)"
+              placeholder={venueStatus === "booked" ? "Venue name (e.g. Vibiana, Greystone Mansion)" : "Venue you're eyeing (e.g. Calamigos Ranch)"}
               value={venueName}
               onChange={(e) => onVenueNameChange(e.target.value)}
               className="w-full px-4 py-3 rounded-md font-body text-sm outline-none transition-all"
               style={{
                 background: "var(--alabaster)",
-                border: "1px solid var(--sand)",
+                border: `1px solid ${venueId ? "var(--olive)" : "var(--sand)"}`,
                 color: "var(--ink)",
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--clay)")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--sand)")}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--clay)"; setVenueFocused(true); }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = venueId ? "var(--olive)" : "var(--sand)"; setTimeout(() => setVenueFocused(false), 150); }}
               aria-label="Venue name"
+              role="combobox"
+              aria-expanded={venueSuggestions.length > 0}
+              aria-controls="venue-suggestions"
             />
-            <p className="font-body text-xs mt-1.5" style={{ color: "var(--muted)" }}>
-              Helps Kristina give you a more accurate estimate based on the venue&apos;s specific requirements.
-            </p>
+            {venueSuggestions.length > 0 && (
+              <div
+                id="venue-suggestions"
+                role="listbox"
+                aria-label="Known venues"
+                className="absolute left-0 right-0 mt-1 rounded-md overflow-hidden z-10"
+                style={{ background: "var(--bone)", border: "1px solid var(--sand)", boxShadow: "0 8px 24px rgba(43,38,34,0.12)" }}
+              >
+                {venueSuggestions.map((v) => (
+                  <button
+                    key={v.id}
+                    role="option"
+                    aria-selected={false}
+                    onMouseDown={(e) => { e.preventDefault(); onSelectVenue(v); setVenueFocused(false); }}
+                    className="w-full text-left px-4 py-2.5 font-body text-sm transition-colors hover:opacity-80"
+                    style={{ color: "var(--ink)", background: "transparent", cursor: "pointer", borderBottom: "1px solid var(--sand)" }}
+                  >
+                    {v.name}
+                    <span className="text-xs ml-2" style={{ color: "var(--olive)" }}>
+                      real pricing available
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {venueId ? (
+              <p className="font-body text-xs mt-1.5" style={{ color: "var(--olive)" }}>
+                ✓ Using {venueName}&apos;s published site fee and minimums in your estimate.
+              </p>
+            ) : (
+              <p className="font-body text-xs mt-1.5" style={{ color: "var(--muted)" }}>
+                Helps Kristina give you a more accurate estimate — and if we know the venue&apos;s
+                published pricing, your numbers update automatically.
+              </p>
+            )}
           </motion.div>
         )}
         {/* Venue type — shapes the rentals/catering split in the estimate */}
@@ -447,6 +490,11 @@ export default function DateStatusPicker({
           <p className="font-body text-sm font-medium" style={{ color: "var(--ink)" }}>
             What kind of venue are you picturing?
           </p>
+          {venueId && (
+            <p className="font-body text-xs" style={{ color: "var(--olive)" }}>
+              Set automatically from {venueName}&apos;s published setup.
+            </p>
+          )}
           <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }} role="radiogroup" aria-label="Venue type">
             {venueTypeOptions.map((opt) => {
               const selected = venueType === opt.id;
@@ -455,13 +503,15 @@ export default function DateStatusPicker({
                   key={opt.id}
                   role="radio"
                   aria-checked={selected}
-                  onClick={() => onVenueTypeChange(opt.id)}
+                  aria-disabled={!!venueId}
+                  onClick={() => { if (!venueId) onVenueTypeChange(opt.id); }}
                   className="text-left px-4 py-3 rounded-lg transition-all duration-200"
                   style={{
                     background: selected ? "var(--clay)" : "var(--bone)",
                     color: selected ? "var(--bone)" : "var(--ink)",
                     border: `1px solid ${selected ? "var(--clay)" : "var(--sand)"}`,
-                    cursor: "pointer",
+                    cursor: venueId ? "default" : "pointer",
+                    opacity: venueId && !selected ? 0.45 : 1,
                   }}
                 >
                   <p className="font-body text-sm font-medium">{venueTypeLabels[opt.id]}</p>

@@ -65,6 +65,7 @@ components/
 config/
   costModel.ts          — All cost coefficients + calculateWeddingBudget() function
   costModel.sources.md  — Research sources behind every coefficient (2026-07)
+  venues.ts             — Known-venue pricing table (real site fees + F&B minimums)
 
 lib/
   generatePDF.tsx       — @react-pdf/renderer branded PDF document

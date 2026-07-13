@@ -44,6 +44,7 @@ export default function HomePage() {
     weddingDayOfWeek, setWeddingDayOfWeek,
     venueStatus, setVenueStatus,
     venueName, setVenueName,
+    venueId, selectKnownVenue, knownVenue,
     venueType, setVenueType,
     barStyle, setBarStyle,
     toggleCategory,
@@ -269,8 +270,10 @@ export default function HomePage() {
                               onVenueChange={setVenueStatus}
                               venueName={venueName}
                               onVenueNameChange={setVenueName}
-                              venueType={venueType}
+                              venueType={knownVenue?.venueType ?? venueType}
                               onVenueTypeChange={setVenueType}
+                              venueId={venueId}
+                              onSelectVenue={selectKnownVenue}
                             />
                           )}
                           {step === 4 && (

@@ -137,3 +137,32 @@ spring + fall twin peaks with hot-summer dips.
   run 1.6–2.5× other metros, far above the dampened moderate premium).
 - Dead `perGuestRate`/`fixedBase` fields removed from `CategoryResult`;
   replaced by `included` (line-exclusion support).
+
+---
+
+# v3 addendum (2026-07): known-venue pricing
+
+`config/venues.ts` carries real published pricing for ~23 popular SoCal venues
+(site fees, Saturday F&B minimums, in-house per-plate rates, capacity), each
+with a per-venue `sourceNote` citing where the figure came from. Sources:
+venue pricing pages and PDFs, Wedding Spot, Here Comes The Guide, The Knot/
+Zola listings, Breezit, and planner/photographer pricing guides (2025–26).
+
+How venue pricing enters the estimate (`CalcOptions.venue`):
+- The Venue line becomes the venue's published site fee (already local — no
+  location multiplier or micro-taper; day/season demand and inflation still
+  apply).
+- The venue's bundling style (`venueType`) overrides the manual pick.
+- Published in-house per-plate rates replace the tier catering rate.
+- **F&B minimums are enforced**: if pre-tax/service catering+bar spend falls
+  below the venue's minimum (× day-of-week discount × inflation), both lines
+  scale up to meet it and the estimate explains why (`venueNote`,
+  `fnbMinimumApplied`).
+- Guest counts above the venue's listed capacity add a caution to the note.
+
+Anchor sanity: 60 guests at Vibiana ($43,750 Sat minimum) forces the F&B
+lines to the minimum; 150 guests at Greystone Mansion uses the ~$9K city
+rental with outside catering modeled normally.
+
+Reverify venue rows yearly alongside the model recalibration — venues
+reprice often; each row's `sourceNote` carries its vintage.
