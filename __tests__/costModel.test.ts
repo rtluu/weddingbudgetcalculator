@@ -1,39 +1,43 @@
 import {
   calculateWeddingBudget,
   fnbFactors,
+  musicRates,
+  planningPackages,
   MODEL_VINTAGE,
   OPTIONAL_CATEGORIES,
   type Location,
 } from "@/config/costModel";
 
 describe("calculateWeddingBudget", () => {
-  // Research-derived validation anchors (v2, 2026-07). Windows come from
-  // 2025–2026 market data adjusted for full-boat semantics — see
-  // config/costModel.sources.md for the source-by-source mapping.
-  describe("Validation anchors (moderate tier)", () => {
+  // Research-derived validation anchors (2026-07). Windows come from 2025–2026
+  // market data adjusted for full-boat semantics — see config/costModel.sources.md.
+  // Moderate anchors use the app defaults (DJ + Partial planning per Kristina's
+  // By Mosaic pricing), which sit ~$5K above bare-survey averages because the
+  // default now includes Partial planning and a corrected entertainment floor.
+  describe("Validation anchors (moderate tier, default DJ + Partial planning)", () => {
     const anchors: Array<[string, number, Location, number, number]> = [
-      ["US average, 100 guests",        100, "us-average",        40000, 45000],
-      ["Los Angeles, 100 guests",       100, "los-angeles",       50000, 55000],
-      ["Los Angeles, 50 guests",         50, "los-angeles",       33000, 38000],
-      ["Los Angeles, 150 guests",       150, "los-angeles",       65000, 72000],
-      ["Los Angeles, 200 guests",       200, "los-angeles",       82000, 92000],
-      ["San Diego, 120 guests",         120, "san-diego",         48000, 56000],
-      ["Palm Springs, 120 guests",      120, "palm-springs",      47000, 57000],
-      ["Orange County, 120 guests",     120, "orange-county",     50000, 60000],
-      ["Santa Barbara, 125 guests",     125, "santa-barbara",     60000, 70000],
-      ["Washington DC, 125 guests",     125, "washington-dc",     58000, 68000],
-      ["SoCal suburbs, 150 guests",     150, "socal-suburbs",     50000, 60000],
+      ["US average, 100 guests",        100, "us-average",        45000, 52000],
+      ["Los Angeles, 100 guests",       100, "los-angeles",       55000, 63000],
+      ["Los Angeles, 50 guests",         50, "los-angeles",       38000, 46000],
+      ["Los Angeles, 150 guests",       150, "los-angeles",       71000, 81000],
+      ["Los Angeles, 200 guests",       200, "los-angeles",       87000, 99000],
+      ["San Diego, 120 guests",         120, "san-diego",         54000, 64000],
+      ["Palm Springs, 120 guests",      120, "palm-springs",      54000, 65000],
+      ["Orange County, 120 guests",     120, "orange-county",     57000, 68000],
+      ["Santa Barbara, 125 guests",     125, "santa-barbara",     67000, 78000],
+      ["Washington DC, 125 guests",     125, "washington-dc",     63000, 74000],
+      ["SoCal suburbs, 150 guests",     150, "socal-suburbs",     56000, 67000],
       // v2 metros
-      ["New York City, 150 guests",     150, "new-york-city",     88000, 100000],
-      ["New York City, 100 guests",     100, "new-york-city",     63000, 74000],
-      ["SF Bay Area, 150 guests",       150, "sf-bay-area",       85000, 95000],
-      ["Chicago, 150 guests",           150, "chicago",           62000, 76000],
-      ["Boston, 125 guests",            125, "boston",            52000, 62000],
-      ["Seattle, 120 guests",           120, "seattle",           48000, 58000],
-      ["Miami, 125 guests",             125, "miami",             48000, 58000],
-      ["Dallas–Fort Worth, 120 guests", 120, "dallas-fort-worth", 42000, 50000],
-      ["Atlanta, 120 guests",           120, "atlanta",           41000, 49000],
-      ["Other US Metro, 120 guests",    120, "other-major-metro", 52000, 62000],
+      ["New York City, 150 guests",     150, "new-york-city",     89000, 102000],
+      ["New York City, 100 guests",     100, "new-york-city",     68000, 80000],
+      ["SF Bay Area, 150 guests",       150, "sf-bay-area",       86000, 98000],
+      ["Chicago, 150 guests",           150, "chicago",           70000, 81000],
+      ["Boston, 125 guests",            125, "boston",            61000, 72000],
+      ["Seattle, 120 guests",           120, "seattle",           56000, 67000],
+      ["Miami, 125 guests",             125, "miami",             57000, 68000],
+      ["Dallas–Fort Worth, 120 guests", 120, "dallas-fort-worth", 49000, 58000],
+      ["Atlanta, 120 guests",           120, "atlanta",           48000, 57000],
+      ["Other US Metro, 120 guests",    120, "other-major-metro", 58000, 69000],
     ];
 
     test.each(anchors)("%s ≈ $%i–$%i (moderate)", (_desc, guests, location, low, high) => {
@@ -42,28 +46,38 @@ describe("calculateWeddingBudget", () => {
       expect(result.total).toBeLessThanOrEqual(high);
     });
 
-    test("budget tier: 100 guests / us-average ≈ $22,000–$27,000", () => {
-      const result = calculateWeddingBudget(100, "us-average", "budget");
-      expect(result.total).toBeGreaterThanOrEqual(22000);
+    // Budget anchors use Month-of coordination (realistic for a budget wedding).
+    test("budget tier: 100 guests / us-average / month-of ≈ $25,000–$31,000", () => {
+      const result = calculateWeddingBudget(100, "us-average", "budget", undefined, undefined, {
+        planningPackage: "month-of",
+      });
+      expect(result.total).toBeGreaterThanOrEqual(25000);
+      expect(result.total).toBeLessThanOrEqual(31000);
+    });
+
+    test("budget tier: 75 guests / socal-suburbs / month-of ≈ $21,000–$27,000", () => {
+      const result = calculateWeddingBudget(75, "socal-suburbs", "budget", undefined, undefined, {
+        planningPackage: "month-of",
+      });
+      expect(result.total).toBeGreaterThanOrEqual(21000);
       expect(result.total).toBeLessThanOrEqual(27000);
     });
 
-    test("budget tier: 75 guests / socal-suburbs ≈ $18,000–$23,000", () => {
-      const result = calculateWeddingBudget(75, "socal-suburbs", "budget");
-      expect(result.total).toBeGreaterThanOrEqual(18000);
-      expect(result.total).toBeLessThanOrEqual(23000);
+    // Luxury anchors use Full-service planning.
+    test("luxury tier: 100 guests / los-angeles / full ≈ $104,000–$117,000", () => {
+      const result = calculateWeddingBudget(100, "los-angeles", "luxury", undefined, undefined, {
+        planningPackage: "full",
+      });
+      expect(result.total).toBeGreaterThanOrEqual(104000);
+      expect(result.total).toBeLessThanOrEqual(117000);
     });
 
-    test("luxury tier: 100 guests / los-angeles ≈ $95,000–$115,000", () => {
-      const result = calculateWeddingBudget(100, "los-angeles", "luxury");
-      expect(result.total).toBeGreaterThanOrEqual(95000);
-      expect(result.total).toBeLessThanOrEqual(115000);
-    });
-
-    test("luxury tier: 150 guests / santa-barbara ≈ $130,000–$160,000", () => {
-      const result = calculateWeddingBudget(150, "santa-barbara", "luxury");
-      expect(result.total).toBeGreaterThanOrEqual(130000);
-      expect(result.total).toBeLessThanOrEqual(160000);
+    test("luxury tier: 150 guests / santa-barbara / full ≈ $145,000–$163,000", () => {
+      const result = calculateWeddingBudget(150, "santa-barbara", "luxury", undefined, undefined, {
+        planningPackage: "full",
+      });
+      expect(result.total).toBeGreaterThanOrEqual(145000);
+      expect(result.total).toBeLessThanOrEqual(163000);
     });
 
     test("NYC luxury services carry a bigger metro premium than moderate", () => {
@@ -78,16 +92,20 @@ describe("calculateWeddingBudget", () => {
   });
 
   describe("Guest-count scaling", () => {
-    test("micro-wedding taper: LA 20-guest moderate lands ≈ $18,000–$22,500", () => {
-      const result = calculateWeddingBudget(20, "los-angeles", "moderate");
-      expect(result.total).toBeGreaterThanOrEqual(18000);
-      expect(result.total).toBeLessThanOrEqual(22500);
+    // Flat-fee vendors (DJ floor, planner starting price) keep micro-weddings
+    // above a pure per-guest model — a DJ costs ~$2,500 for 20 or 200 guests.
+    test("micro-wedding: LA 20-guest budget / month-of lands ≈ $14,000–$19,000", () => {
+      const result = calculateWeddingBudget(20, "los-angeles", "budget", undefined, undefined, {
+        planningPackage: "month-of",
+      });
+      expect(result.total).toBeGreaterThanOrEqual(14000);
+      expect(result.total).toBeLessThanOrEqual(19000);
     });
 
-    test("volume pricing: LA 300-guest moderate lands ≈ $105,000–$118,000", () => {
+    test("volume pricing: LA 300-guest moderate lands ≈ $113,000–$127,000", () => {
       const result = calculateWeddingBudget(300, "los-angeles", "moderate");
-      expect(result.total).toBeGreaterThanOrEqual(105000);
-      expect(result.total).toBeLessThanOrEqual(118000);
+      expect(result.total).toBeGreaterThanOrEqual(113000);
+      expect(result.total).toBeLessThanOrEqual(127000);
     });
 
     test("total is strictly monotonic in guest count from 20 to 300", () => {
@@ -192,6 +210,72 @@ describe("calculateWeddingBudget", () => {
     });
   });
 
+  describe("Music (DJ vs live band)", () => {
+    const music = (r: ReturnType<typeof calculateWeddingBudget>) =>
+      r.categories.find((c) => c.name === "Music (DJ/band)")!.subtotal;
+
+    test("defaults to DJ", () => {
+      const dj = calculateWeddingBudget(100, "us-average", "moderate");
+      const explicit = calculateWeddingBudget(100, "us-average", "moderate", undefined, undefined, {
+        musicType: "dj",
+      });
+      expect(music(dj)).toBeCloseTo(music(explicit), 6);
+    });
+
+    test("live band costs meaningfully more than a DJ", () => {
+      const dj = calculateWeddingBudget(100, "los-angeles", "moderate", undefined, undefined, { musicType: "dj" });
+      const band = calculateWeddingBudget(100, "los-angeles", "moderate", undefined, undefined, { musicType: "band" });
+      expect(music(band)).toBeGreaterThan(music(dj) * 2);
+    });
+
+    test("DJ low-end (Budget) reflects the ~$2,500 floor and does not scale with guests", () => {
+      const at50 = music(calculateWeddingBudget(50, "us-average", "budget"));
+      const at250 = music(calculateWeddingBudget(250, "us-average", "budget"));
+      expect(at50).toBeCloseTo(at250, 6); // flat, no guest scaling
+      expect(at50).toBeCloseTo(musicRates.dj.budget, 6);
+    });
+
+    test("higher tiers add an entertainment premium", () => {
+      expect(musicRates.dj.budget).toBeLessThan(musicRates.dj.moderate);
+      expect(musicRates.dj.moderate).toBeLessThan(musicRates.dj.luxury);
+      expect(musicRates.band.budget).toBe(8000);
+    });
+  });
+
+  describe("Planning packages", () => {
+    const plan = (r: ReturnType<typeof calculateWeddingBudget>) =>
+      r.categories.find((c) => c.name === "Planning/Coordination")!.subtotal;
+
+    test("defaults to Partial planning", () => {
+      const def = calculateWeddingBudget(120, "us-average", "moderate");
+      const partial = calculateWeddingBudget(120, "us-average", "moderate", undefined, undefined, {
+        planningPackage: "partial",
+      });
+      expect(plan(def)).toBeCloseTo(plan(partial), 6);
+    });
+
+    test("full > partial > month-of at the same guest count", () => {
+      const p = (pkg: "month-of" | "partial" | "full") =>
+        plan(calculateWeddingBudget(120, "los-angeles", "moderate", undefined, undefined, { planningPackage: pkg }));
+      expect(p("month-of")).toBeLessThan(p("partial"));
+      expect(p("partial")).toBeLessThan(p("full"));
+    });
+
+    test("is tier-independent (same package costs the same across tiers)", () => {
+      const p = (t: "budget" | "moderate" | "luxury") =>
+        plan(calculateWeddingBudget(120, "us-average", t, undefined, undefined, { planningPackage: "partial" }));
+      expect(p("budget")).toBeCloseTo(p("moderate"), 6);
+      expect(p("moderate")).toBeCloseTo(p("luxury"), 6);
+    });
+
+    test("scales up with guest count and starts near the package floor", () => {
+      const small = plan(calculateWeddingBudget(30, "us-average", "moderate", undefined, undefined, { planningPackage: "full" }));
+      const large = plan(calculateWeddingBudget(250, "us-average", "moderate", undefined, undefined, { planningPackage: "full" }));
+      expect(large).toBeGreaterThan(small);
+      expect(small).toBeGreaterThanOrEqual(planningPackages.full.base); // never below the floor
+    });
+  });
+
   describe("Excluded categories", () => {
     test("excluding lines lowers the total by exactly those lines (+contingency)", () => {
       const excluded = ["Videography", "Favors"];
@@ -247,9 +331,13 @@ describe("calculateWeddingBudget", () => {
       }
     });
 
-    test("luxury is at least 2x budget for same guests/location", () => {
-      const luxury = calculateWeddingBudget(100, "los-angeles", "luxury");
-      const budget = calculateWeddingBudget(100, "los-angeles", "budget");
+    test("luxury (full planning) is well above budget (month-of) same guests/location", () => {
+      const luxury = calculateWeddingBudget(100, "los-angeles", "luxury", undefined, undefined, {
+        planningPackage: "full",
+      });
+      const budget = calculateWeddingBudget(100, "los-angeles", "budget", undefined, undefined, {
+        planningPackage: "month-of",
+      });
       expect(luxury.total).toBeGreaterThan(budget.total * 2);
     });
 
