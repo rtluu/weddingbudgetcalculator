@@ -243,7 +243,7 @@ export const SERVICES_FAQ = [
 // Portfolio header (verbatim from /portfolio)
 export const PORTFOLIO_HEADER = {
   eyebrow: "Featured Moments & Celebrations",
-  intro: "Where every event is carefully curated and flawlessly executed. Explore our featured events.",
+  intro: "Explore our events.",
 } as const;
 
 // Featured portfolio events — couple, location, type, verbatim caption, full gallery,
