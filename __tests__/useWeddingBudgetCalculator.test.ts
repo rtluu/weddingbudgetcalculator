@@ -80,19 +80,19 @@ describe("useWeddingBudgetCalculator", () => {
     expect(result.current.excludedCategories).toHaveLength(0);
   });
 
-  it("defaults to DJ + Partial planning and flows changes into the estimate", () => {
+  it("defaults to DJ + Full-service planning and flows changes into the estimate", () => {
     const { result } = renderHook(() => useWeddingBudgetCalculator());
     expect(result.current.musicType).toBe("dj");
-    expect(result.current.planningPackage).toBe("partial");
+    expect(result.current.planningPackage).toBe("full");
     const music = () => result.current.result.categories.find((c) => c.name === "Music (DJ/band)")!.subtotal;
     const plan = () => result.current.result.categories.find((c) => c.name === "Planning/Coordination")!.subtotal;
     const djCost = music();
-    const partialCost = plan();
+    const fullCost = plan();
     act(() => result.current.setMusicType("band"));
     expect(music()).toBeGreaterThan(djCost);
-    act(() => result.current.setPlanningPackage("full"));
-    expect(plan()).toBeGreaterThan(partialCost);
+    act(() => result.current.setPlanningPackage("partial"));
+    expect(plan()).toBeLessThan(fullCost);
     act(() => result.current.setPlanningPackage("month-of"));
-    expect(plan()).toBeLessThan(partialCost);
+    expect(plan()).toBeLessThan(fullCost);
   });
 });

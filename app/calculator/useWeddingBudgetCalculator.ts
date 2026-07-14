@@ -55,7 +55,9 @@ export function useWeddingBudgetCalculator() {
   const [venueType, setVenueType] = useState<VenueType>("standard");
   const [barStyle, setBarStyle] = useState<BarStyle>("standard");
   const [musicType, setMusicType] = useState<MusicType>("dj");
-  const [planningPackage, setPlanningPackage] = useState<PlanningPackage>("partial");
+  // Lead with Full-service planning (Kristina's flagship package); the results
+  // screen lets couples step down to Partial or Month-of.
+  const [planningPackage, setPlanningPackage] = useState<PlanningPackage>("full");
   const [excludedCategories, setExcludedCategories] = useState<string[]>([]);
   const [leadCaptured, setLeadCaptured] = useState(false);
   const [softGateName, setSoftGateName] = useState("");
@@ -191,7 +193,7 @@ export function useWeddingBudgetCalculator() {
     if (venueType !== "standard") params.set("vt", venueType);
     if (barStyle !== "standard") params.set("b", barStyle);
     if (musicType !== "dj") params.set("mu", musicType);
-    if (planningPackage !== "partial") params.set("pp", planningPackage);
+    if (planningPackage !== "full") params.set("pp", planningPackage);
     if (excludedCategories.length > 0) params.set("x", excludedCategories.join("|"));
     if (venueId) params.set("vn", venueId);
     window.history.replaceState({}, "", `?${params.toString()}`);
