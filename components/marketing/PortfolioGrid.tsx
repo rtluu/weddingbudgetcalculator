@@ -25,7 +25,7 @@ export default function PortfolioGrid({
     >
       {items.map((item, i) => (
         <Reveal as="div" key={item.slug} delay={(i % 3) * 0.08}>
-          <Link href={`/portfolio#${item.slug}`} style={{ textDecoration: "none", display: "block" }}>
+          <Link href={`/portfolio/${item.slug}`} style={{ textDecoration: "none", display: "block" }}>
             <figure style={{ margin: 0 }}>
               <div
                 style={{
@@ -65,10 +65,21 @@ export default function PortfolioGrid({
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     color: "var(--sage-deep)",
+                    marginBottom: 8,
                   }}
                 >
                   {item.type} · {item.location}
                 </p>
+                <span
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: 13,
+                    letterSpacing: "0.04em",
+                    color: "var(--muted)",
+                  }}
+                >
+                  View gallery →
+                </span>
               </figcaption>
             </figure>
           </Link>

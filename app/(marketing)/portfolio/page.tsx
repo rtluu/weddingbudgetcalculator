@@ -3,7 +3,6 @@ import Link from "next/link";
 import Reveal from "@/components/marketing/Reveal";
 import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import PortfolioGrid from "@/components/marketing/PortfolioGrid";
-import PortfolioGallery from "@/components/marketing/PortfolioGallery";
 import { PORTFOLIO, PORTFOLIO_HEADER } from "@/config/copy";
 
 export const metadata: Metadata = {
@@ -26,109 +25,12 @@ export default function PortfolioPage() {
         subtitle={PORTFOLIO_HEADER.intro}
       />
 
-      {/* Featured grid */}
+      {/* Featured grid — each card opens its own event page */}
       <section style={{ background: "var(--bone)", padding: "56px 24px 80px", borderTop: "1px solid var(--sand)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <PortfolioGrid items={PORTFOLIO} />
         </div>
       </section>
-
-      {/* Per-event galleries */}
-      {PORTFOLIO.map((event, i) => (
-        <section
-          key={event.slug}
-          id={event.slug}
-          style={{
-            scrollMarginTop: 80,
-            background: i % 2 === 0 ? "var(--alabaster)" : "var(--bone)",
-            padding: "80px 24px",
-            borderTop: "1px solid var(--sand)",
-          }}
-        >
-          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-            <Reveal>
-              <div style={{ maxWidth: 760, marginBottom: 36 }}>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 12,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--sage-deep)",
-                    marginBottom: 12,
-                  }}
-                >
-                  {event.type} · {event.location}
-                </p>
-                <h2 className="display-lg" style={{ marginBottom: 20 }}>
-                  {event.couple}
-                </h2>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 17,
-                    lineHeight: 1.8,
-                    color: "var(--ink)",
-                    opacity: 0.85,
-                  }}
-                >
-                  {event.caption}
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.05}>
-              <PortfolioGallery images={event.gallery} couple={event.couple} />
-            </Reveal>
-
-            {/* Vendor team */}
-            <Reveal delay={0.1}>
-              <div style={{ marginTop: 36 }}>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 12,
-                    fontWeight: 600,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--sage-deep)",
-                    marginBottom: 14,
-                  }}
-                >
-                  Vendor Team
-                </p>
-                <ul
-                  style={{
-                    listStyle: "none",
-                    padding: 0,
-                    margin: 0,
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "8px 0",
-                    columnGap: 0,
-                  }}
-                >
-                  {event.vendors.map((v, vi) => (
-                    <li
-                      key={v}
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: 15,
-                        color: "var(--muted)",
-                        paddingRight: 16,
-                        marginRight: 16,
-                        borderRight: vi < event.vendors.length - 1 ? "1px solid var(--sand)" : "none",
-                      }}
-                    >
-                      {v}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      ))}
 
       {/* CTA */}
       <section style={{ background: "var(--ink)", color: "var(--bone)", padding: "90px 24px", textAlign: "center" }}>
