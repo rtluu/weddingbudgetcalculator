@@ -79,4 +79,20 @@ describe("useWeddingBudgetCalculator", () => {
     act(() => result.current.toggleCategory("Venue"));
     expect(result.current.excludedCategories).toHaveLength(0);
   });
+
+  it("defaults to DJ + Partial planning and flows changes into the estimate", () => {
+    const { result } = renderHook(() => useWeddingBudgetCalculator());
+    expect(result.current.musicType).toBe("dj");
+    expect(result.current.planningPackage).toBe("partial");
+    const music = () => result.current.result.categories.find((c) => c.name === "Music (DJ/band)")!.subtotal;
+    const plan = () => result.current.result.categories.find((c) => c.name === "Planning/Coordination")!.subtotal;
+    const djCost = music();
+    const partialCost = plan();
+    act(() => result.current.setMusicType("band"));
+    expect(music()).toBeGreaterThan(djCost);
+    act(() => result.current.setPlanningPackage("full"));
+    expect(plan()).toBeGreaterThan(partialCost);
+    act(() => result.current.setPlanningPackage("month-of"));
+    expect(plan()).toBeLessThan(partialCost);
+  });
 });

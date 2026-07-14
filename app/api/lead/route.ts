@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import React from "react";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
-import { Tier, Location, DayOfWeek, VenueType, BarStyle, locationLabels, calculateWeddingBudget } from "@/config/costModel";
+import { Tier, Location, DayOfWeek, VenueType, BarStyle, MusicType, PlanningPackage, musicTypeLabels, planningPackages, locationLabels, calculateWeddingBudget } from "@/config/costModel";
 import { findVenueById } from "@/config/venues";
 import { scoreLead, type LeadScore } from "./scoreLead";
 import { EstimatePDF } from "./EstimatePDF";
@@ -63,6 +63,8 @@ export async function POST(req: NextRequest) {
       timingDow,
       venueType,
       barStyle,
+      musicType,
+      planningPackage,
       excludedCategories,
       weddingYear,
       calculatedTotal,
@@ -81,6 +83,8 @@ export async function POST(req: NextRequest) {
       timingDow?: DayOfWeek;
       venueType?: VenueType;
       barStyle?: BarStyle;
+      musicType?: MusicType;
+      planningPackage?: PlanningPackage;
       excludedCategories?: string[];
       weddingYear?: number;
       calculatedTotal: number;
@@ -112,6 +116,8 @@ export async function POST(req: NextRequest) {
     const budgetResult = calculateWeddingBudget(guestCount, location, tier, timingMonth, timingDow, {
       venueType,
       barStyle,
+      musicType,
+      planningPackage,
       excludedCategories,
       weddingYear,
       venue: knownVenue,
@@ -182,6 +188,10 @@ export async function POST(req: NextRequest) {
     <div class="field">
       <div class="field-label">Style tier</div>
       <div class="field-value">${tierLabel[tier]}</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Entertainment · Planning</div>
+      <div class="field-value">${musicTypeLabels[musicType ?? "dj"]} · ${planningPackages[planningPackage ?? "partial"].label}</div>
     </div>
     <div class="field">
       <div class="field-label">Date status</div>

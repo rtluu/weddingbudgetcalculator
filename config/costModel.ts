@@ -44,6 +44,8 @@ export type Location =
 export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0=Sun, 6=Sat
 export type VenueType = "standard" | "all-inclusive" | "raw-space";
 export type BarStyle = "none" | "beer-wine" | "standard" | "premium";
+export type MusicType = "dj" | "band";
+export type PlanningPackage = "month-of" | "partial" | "full";
 
 // Real pricing for a known venue (see config/venues.ts). When supplied, the
 // Venue line uses the published site fee, the venue's bundling style applies,
@@ -62,6 +64,8 @@ export interface CalcOptions {
   weddingYear?: number;          // calendar year; prices escalate from data vintage
   venueType?: VenueType;         // default "standard"; overridden by venue
   barStyle?: BarStyle;           // default "standard"
+  musicType?: MusicType;         // default "dj"; results-screen toggle
+  planningPackage?: PlanningPackage; // default "partial"; results-screen selector
   excludedCategories?: string[]; // names from OPTIONAL_CATEGORIES to leave out
   venue?: VenuePricing;          // known-venue real pricing
 }
@@ -149,15 +153,16 @@ export const categories: CategoryDef[] = [
     luxuryServiceBump: true },
   { name: "Florals",               fixed: T(500, 800, 2200),   perGuest: T(7, 16, 42),
     isFnB: false, locationSensitivity: 0.6,  seasonalSensitivity: 0.5,  dowSensitivity: 0.1 },
-  // Budget = day-of; moderate = month-of; luxury = full-service.
-  { name: "Planning/Coordination", fixed: T(1000, 1800, 6000), perGuest: T(0, 3, 8),
-    isFnB: false, locationSensitivity: 0.6,  seasonalSensitivity: 0.15, dowSensitivity: 0,
-    luxuryServiceBump: true },
+  // Base + per-guest set by the chosen planning package (see planningPackages);
+  // tier-independent. Default package is Partial.
+  { name: "Planning/Coordination", fixed: T(0, 0, 0),          perGuest: T(0, 0, 0),
+    isFnB: false, locationSensitivity: 0.6,  seasonalSensitivity: 0.15, dowSensitivity: 0 },
   { name: "Attire (both)",         fixed: T(1200, 2700, 5500), perGuest: T(0, 0, 0),
     isFnB: false, locationSensitivity: 0.25, seasonalSensitivity: 0,    dowSensitivity: 0 },
-  // DJ at budget/moderate; live band assumed at luxury.
-  { name: "Music (DJ/band)",       fixed: T(900, 1400, 3600),  perGuest: T(0, 3, 6),
-    isFnB: false, locationSensitivity: 0.5,  seasonalSensitivity: 0.5,  dowSensitivity: 0.8 },
+  // Flat vendor fee set by DJ vs live band (see musicRates); no guest scaling.
+  // Default is DJ. Music is portable, so its metro premium is modest.
+  { name: "Music (DJ/band)",       fixed: T(0, 0, 0),          perGuest: T(0, 0, 0),
+    isFnB: false, locationSensitivity: 0.25, seasonalSensitivity: 0.35, dowSensitivity: 0.5 },
   { name: "Rentals",               fixed: T(100, 180, 400),    perGuest: T(5, 13, 32),
     isFnB: false, locationSensitivity: 0.7,  seasonalSensitivity: 0.35, dowSensitivity: 0.4,
     volumeTaper: true },
@@ -208,6 +213,37 @@ export const barStyleLabels: Record<BarStyle, string> = {
   "beer-wine": "Beer & wine",
   "standard":  "Full open bar",
   "premium":   "Top-shelf bar",
+};
+
+// ─── Music (DJ vs live band) ──────────────────────────────────────────────────
+// Flat vendor fee — real entertainment doesn't scale with guest count. Low-end
+// anchors per Kristina (By Mosaic): DJ ~$2,500, live band ~$8,000. Higher tiers
+// reflect added production, lighting, and hours. Default is DJ.
+export const musicRates: Record<MusicType, TierValues> = {
+  "dj":   T(2500, 3000, 4200),
+  "band": T(8000, 9500, 12500),
+};
+
+export const musicTypeLabels: Record<MusicType, string> = {
+  "dj":   "DJ",
+  "band": "Live band",
+};
+
+// ─── Planning packages (By Mosaic) ────────────────────────────────────────────
+// Published starting prices from the Services page (config/copy.ts) are the
+// SoCal anchor; a per-guest coordination component scales the fee up with the
+// event's logistical load (larger guest lists → more staff, hours, complexity).
+// Tier-independent: the package IS the planning choice. Default is Partial.
+export interface PlanningPackageDef {
+  base: number;      // starting price (small event floor)
+  perGuest: number;  // coordination scaling per guest
+  label: string;
+}
+
+export const planningPackages: Record<PlanningPackage, PlanningPackageDef> = {
+  "month-of": { base: 2500, perGuest: 8,  label: "Month-of coordination" },
+  "partial":  { base: 4000, perGuest: 12, label: "Partial planning" },
+  "full":     { base: 6000, perGuest: 22, label: "Full-service planning" },
 };
 
 // ─── Venue types ──────────────────────────────────────────────────────────────
@@ -480,7 +516,7 @@ function computeSubtotals(
   tier: Tier,
   seasonMult: number,
   dowBase: number,
-  opts: Required<Pick<CalcOptions, "venueType" | "barStyle">> & {
+  opts: Required<Pick<CalcOptions, "venueType" | "barStyle" | "musicType" | "planningPackage">> & {
     excluded: Set<string>;
     inflation: number;
     venue?: VenuePricing;
@@ -522,6 +558,18 @@ function computeSubtotals(
       // In-house per-plate: already local; staffing built into the rate.
       amount =
         venue.cateringPerGuest * guestCount * factor * timingFor(cat) * opts.inflation;
+    } else if (cat.name === "Music (DJ/band)") {
+      // Flat DJ or live-band fee — no guest scaling, no micro-taper.
+      amount = musicRates[opts.musicType][tier];
+      amount *= 1 + (locMult - 1) * cat.locationSensitivity;
+      amount *= timingFor(cat) * opts.inflation;
+    } else if (cat.name === "Planning/Coordination") {
+      // By Mosaic package: starting price (a floor, so no micro-taper) plus
+      // per-guest coordination scaling; tier-independent.
+      const pkg = planningPackages[opts.planningPackage];
+      amount = pkg.base + pkg.perGuest * guestCount;
+      amount *= 1 + (locMult - 1) * cat.locationSensitivity;
+      amount *= timingFor(cat) * opts.inflation;
     } else {
       const fixed = cat.fixed[tier] * taper * (adj.fixedMult ?? 1);
       let rate = cat.name === "Bar" ? barRates[opts.barStyle][tier] : cat.perGuest[tier];
@@ -593,6 +641,8 @@ export function calculateWeddingBudget(
     // A known venue's bundling style wins over the manually picked one.
     venueType: venue?.venueType ?? options?.venueType ?? ("standard" as VenueType),
     barStyle: options?.barStyle ?? ("standard" as BarStyle),
+    musicType: options?.musicType ?? ("dj" as MusicType),
+    planningPackage: options?.planningPackage ?? ("partial" as PlanningPackage),
     excluded: new Set(options?.excludedCategories ?? []),
     inflation: Math.pow(1 + ANNUAL_ESCALATION, years),
     venue,

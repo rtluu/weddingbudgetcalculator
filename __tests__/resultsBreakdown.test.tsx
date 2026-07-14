@@ -35,4 +35,33 @@ describe("ResultsBreakdown line-item toggles", () => {
     render(<ResultsBreakdown result={result} onLeadCapture={noop} />);
     expect(screen.queryByRole("button", { name: /remove videography/i })).toBeNull();
   });
+
+  it("uses the word 'remove' (not 'skip') on optional line controls", () => {
+    const result = calculateWeddingBudget(100, "los-angeles", "moderate");
+    render(<ResultsBreakdown result={result} onLeadCapture={noop} onToggleCategory={noop} />);
+    expect(screen.queryByText("skip")).toBeNull();
+    expect(screen.getAllByText("remove").length).toBeGreaterThan(0);
+  });
+
+  it("offers a DJ / Live band toggle on the Music line and fires the change", () => {
+    const onMusic = jest.fn();
+    const result = calculateWeddingBudget(100, "los-angeles", "moderate");
+    render(
+      <ResultsBreakdown result={result} onLeadCapture={noop} musicType="dj" onMusicTypeChange={onMusic} />
+    );
+    fireEvent.click(screen.getByRole("radio", { name: "Live band" }));
+    expect(onMusic).toHaveBeenCalledWith("band");
+  });
+
+  it("offers the three planning packages and fires the change", () => {
+    const onPlan = jest.fn();
+    const result = calculateWeddingBudget(100, "los-angeles", "moderate");
+    render(
+      <ResultsBreakdown result={result} onLeadCapture={noop} planningPackage="partial" onPlanningPackageChange={onPlan} />
+    );
+    fireEvent.click(screen.getByRole("radio", { name: "Full-service planning" }));
+    expect(onPlan).toHaveBeenCalledWith("full");
+    // default selection is reflected
+    expect(screen.getByRole("radio", { name: "Partial planning" })).toHaveAttribute("aria-checked", "true");
+  });
 });

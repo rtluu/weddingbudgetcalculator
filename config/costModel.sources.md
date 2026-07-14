@@ -166,3 +166,53 @@ rental with outside catering modeled normally.
 
 Reverify venue rows yearly alongside the model recalibration — venues
 reprice often; each row's `sourceNote` carries its vintage.
+
+---
+
+# v4 addendum (2026-07): entertainment + planning packages (Kristina feedback)
+
+By Mosaic's Kristina reviewed the estimates and corrected two lines:
+
+## Music (DJ vs live band)
+
+Entertainment is a **flat vendor fee** — it does not scale with guest count.
+Low-end anchors per Kristina: **DJ ~$2,500, live band ~$8,000**. Higher style
+tiers add production/lighting/hours. Default is DJ; the results screen lets a
+couple flip to a live band. `musicRates` (config/costModel.ts):
+
+| | Budget | Moderate | Luxury |
+|---|---|---|---|
+| DJ | $2,500 | $3,000 | $4,200 |
+| Band | $8,000 | $9,500 | $12,500 |
+
+Music location sensitivity dropped to 0.25 (bands/DJs are portable and vary
+far less by metro than venue/F&B), so LA figures stay close to Kristina's
+stated low end. The old model priced music at ~$1,900 (moderate) with a
+per-guest component — both wrong per her feedback.
+
+## Planning packages (By Mosaic Services page)
+
+The planning line now maps to By Mosaic's three published packages (starting
+prices from config/copy.ts), **tier-independent**, defaulting to **Partial**:
+
+| Package | Starting price | Per-guest scaling |
+|---|---|---|
+| Month-of coordination | $2,500 | $8 |
+| Partial planning (default) | $4,000 | $12 |
+| Full-service planning | $6,000 | $22 |
+
+The starting price is a floor (no micro-taper); a per-guest component scales
+the fee with the event's logistical load (larger guest lists → more staff,
+hours, complexity — consistent with planner-pricing guides). Location scaling
+still applies (locSens 0.6), so non-SoCal markets adjust off Kristina's SoCal
+anchor. Couples pick their package on the results screen.
+
+## Anchor impact
+
+Because the moderate **default is now Partial planning** (a real By Mosaic
+anchor) plus the corrected DJ floor, moderate estimates run ~$5K above the
+bare-survey averages the v1–v2 anchors targeted. The validation anchors were
+re-tuned accordingly: moderate uses the DJ + Partial default; budget anchors
+use Month-of; luxury anchors use Full. Flat-fee vendors (DJ, planner floor)
+also legitimately keep micro-weddings higher than a pure per-guest model
+(a DJ costs ~$2,500 for 20 guests or 200).

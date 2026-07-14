@@ -8,6 +8,8 @@ import {
   type DayOfWeek,
   type VenueType,
   type BarStyle,
+  type MusicType,
+  type PlanningPackage,
 } from "@/config/costModel";
 import { findVenueById, type KnownVenue } from "@/config/venues";
 import { track, trackLead } from "@/lib/analytics";
@@ -23,6 +25,8 @@ const VALID_LOCATIONS: Location[] = [
 const VALID_TIERS: Tier[] = ["budget", "moderate", "luxury"];
 const VALID_VENUE_TYPES: VenueType[] = ["standard", "all-inclusive", "raw-space"];
 const VALID_BAR_STYLES: BarStyle[] = ["none", "beer-wine", "standard", "premium"];
+const VALID_MUSIC_TYPES: MusicType[] = ["dj", "band"];
+const VALID_PLANNING_PACKAGES: PlanningPackage[] = ["month-of", "partial", "full"];
 
 // Names for the GA funnel (step 0 = landing is covered by the /calculator page_view).
 const STEP_NAMES: Record<number, string> = {
@@ -50,6 +54,8 @@ export function useWeddingBudgetCalculator() {
   const [venueId, setVenueId] = useState<string | null>(null);
   const [venueType, setVenueType] = useState<VenueType>("standard");
   const [barStyle, setBarStyle] = useState<BarStyle>("standard");
+  const [musicType, setMusicType] = useState<MusicType>("dj");
+  const [planningPackage, setPlanningPackage] = useState<PlanningPackage>("partial");
   const [excludedCategories, setExcludedCategories] = useState<string[]>([]);
   const [leadCaptured, setLeadCaptured] = useState(false);
   const [softGateName, setSoftGateName] = useState("");
@@ -110,10 +116,12 @@ export function useWeddingBudgetCalculator() {
         weddingYear,
         venueType,
         barStyle,
+        musicType,
+        planningPackage,
         excludedCategories,
         venue: knownVenue,
       }),
-    [guests, location, tier, timingMonth, timingDow, weddingYear, venueType, barStyle, excludedCategories, knownVenue]
+    [guests, location, tier, timingMonth, timingDow, weddingYear, venueType, barStyle, musicType, planningPackage, excludedCategories, knownVenue]
   );
 
   // GA funnel: fire calculator_step once per step first reached (forward only),
@@ -155,6 +163,10 @@ export function useWeddingBudgetCalculator() {
     if (dNum !== undefined) setWeddingDayOfWeek(dNum);
     if (vt && VALID_VENUE_TYPES.includes(vt)) setVenueType(vt);
     if (b && VALID_BAR_STYLES.includes(b)) setBarStyle(b);
+    const mu = params.get("mu") as MusicType | null;
+    const pp = params.get("pp") as PlanningPackage | null;
+    if (mu && VALID_MUSIC_TYPES.includes(mu)) setMusicType(mu);
+    if (pp && VALID_PLANNING_PACKAGES.includes(pp)) setPlanningPackage(pp);
     if (x) setExcludedCategories(x.split("|").filter((n) => OPTIONAL_CATEGORIES.includes(n)));
     const vn = params.get("vn");
     if (vn) {
@@ -178,10 +190,12 @@ export function useWeddingBudgetCalculator() {
     if (timingDow !== undefined) params.set("d", String(timingDow));
     if (venueType !== "standard") params.set("vt", venueType);
     if (barStyle !== "standard") params.set("b", barStyle);
+    if (musicType !== "dj") params.set("mu", musicType);
+    if (planningPackage !== "partial") params.set("pp", planningPackage);
     if (excludedCategories.length > 0) params.set("x", excludedCategories.join("|"));
     if (venueId) params.set("vn", venueId);
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [step, guests, location, tier, timingMonth, timingDow, venueType, barStyle, excludedCategories, venueId]);
+  }, [step, guests, location, tier, timingMonth, timingDow, venueType, barStyle, musicType, planningPackage, excludedCategories, venueId]);
 
   const handleLeadCapture = useCallback(
     async (data: { name: string; email: string; phone?: string }) => {
@@ -201,6 +215,8 @@ export function useWeddingBudgetCalculator() {
           timingDow,
           venueType,
           barStyle,
+          musicType,
+          planningPackage,
           excludedCategories,
           weddingYear,
           calculatedTotal: result.total,
@@ -208,7 +224,7 @@ export function useWeddingBudgetCalculator() {
       });
       trackLead("calculator", { guest_count: guests, location, tier, estimate: result.total });
     },
-    [guests, location, tier, dateStatus, venueStatus, venueName, venueId, timingMonth, timingDow, venueType, barStyle, excludedCategories, weddingYear, result]
+    [guests, location, tier, dateStatus, venueStatus, venueName, venueId, timingMonth, timingDow, venueType, barStyle, musicType, planningPackage, excludedCategories, weddingYear, result]
   );
 
   const scrollTop = () => {
@@ -261,6 +277,8 @@ export function useWeddingBudgetCalculator() {
     venueId, selectKnownVenue, knownVenue,
     venueType, setVenueType,
     barStyle, setBarStyle,
+    musicType, setMusicType,
+    planningPackage, setPlanningPackage,
     excludedCategories, toggleCategory,
     leadCaptured,
     softGateName, setSoftGateName,

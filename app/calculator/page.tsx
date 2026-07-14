@@ -47,6 +47,8 @@ export default function HomePage() {
     venueId, selectKnownVenue, knownVenue,
     venueType, setVenueType,
     barStyle, setBarStyle,
+    musicType, setMusicType,
+    planningPackage, setPlanningPackage,
     toggleCategory,
     leadCaptured,
     softGateName, setSoftGateName,
@@ -518,6 +520,10 @@ export default function HomePage() {
                 onLeadCapture={handleLeadCapture}
                 alreadyCaptured={leadCaptured}
                 onToggleCategory={toggleCategory}
+                musicType={musicType}
+                onMusicTypeChange={setMusicType}
+                planningPackage={planningPackage}
+                onPlanningPackageChange={setPlanningPackage}
               />
             </div>
           </div>

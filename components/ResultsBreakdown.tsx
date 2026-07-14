@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { BudgetResult, Tier, locationLabels, OPTIONAL_CATEGORIES } from "@/config/costModel";
+import {
+  BudgetResult,
+  Tier,
+  MusicType,
+  PlanningPackage,
+  locationLabels,
+  musicTypeLabels,
+  planningPackages,
+  OPTIONAL_CATEGORIES,
+} from "@/config/costModel";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -75,6 +84,10 @@ interface ResultsBreakdownProps {
   onLeadCapture: (data: { name: string; email: string; phone?: string }) => void;
   alreadyCaptured?: boolean;
   onToggleCategory?: (name: string) => void;
+  musicType?: MusicType;
+  onMusicTypeChange?: (m: MusicType) => void;
+  planningPackage?: PlanningPackage;
+  onPlanningPackageChange?: (p: PlanningPackage) => void;
 }
 
 export default function ResultsBreakdown({
@@ -82,6 +95,10 @@ export default function ResultsBreakdown({
   onLeadCapture,
   alreadyCaptured = false,
   onToggleCategory,
+  musicType = "dj",
+  onMusicTypeChange,
+  planningPackage = "partial",
+  onPlanningPackageChange,
 }: ResultsBreakdownProps) {
   const shouldReduceMotion = useReducedMotion();
   const [diyMode, setDiyMode] = useState(false);
@@ -310,17 +327,66 @@ export default function ResultsBreakdown({
                       aria-pressed={isExcluded}
                       aria-label={isExcluded ? `Add ${cat.name} back to the estimate` : `Remove ${cat.name} from the estimate`}
                     >
-                      {isExcluded ? "add back" : "skip"}
+                      {isExcluded ? "add back" : "remove"}
                     </button>
                   )}
-                  {/* Planner mode: planning CTA */}
-                  {!diyMode && cat.name === "Planning/Coordination" && (
-                    <p className="font-body text-xs mt-0.5" style={{ color: "var(--clay)", opacity: 0.8 }}>
-                      Most LA couples underestimate this line.{" "}
-                      <a href={process.env.NEXT_PUBLIC_BOOKING_URL || "#lead"} className="underline hover:opacity-80 transition-opacity" style={{ color: "var(--clay)" }}>
-                        Free 20-min call →
-                      </a>
-                    </p>
+                  {/* Music: DJ vs live band */}
+                  {!diyMode && !isExcluded && cat.name === "Music (DJ/band)" && onMusicTypeChange && (
+                    <div className="mt-1.5" role="radiogroup" aria-label="Entertainment type">
+                      {(["dj", "band"] as MusicType[]).map((m) => {
+                        const active = musicType === m;
+                        return (
+                          <button
+                            key={m}
+                            role="radio"
+                            aria-checked={active}
+                            onClick={() => onMusicTypeChange(m)}
+                            className="font-body text-xs mr-1.5 px-2.5 py-1 rounded-full transition-colors"
+                            style={{
+                              background: active ? "var(--clay)" : "transparent",
+                              color: active ? "var(--bone)" : "var(--muted)",
+                              border: `1px solid ${active ? "var(--clay)" : "var(--sand)"}`,
+                              cursor: "pointer",
+                            }}
+                          >
+                            {musicTypeLabels[m]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {/* Planning: package selector + CTA */}
+                  {!diyMode && !isExcluded && cat.name === "Planning/Coordination" && onPlanningPackageChange && (
+                    <>
+                      <div className="mt-1.5" role="radiogroup" aria-label="Planning package">
+                        {(["month-of", "partial", "full"] as PlanningPackage[]).map((p) => {
+                          const active = planningPackage === p;
+                          return (
+                            <button
+                              key={p}
+                              role="radio"
+                              aria-checked={active}
+                              onClick={() => onPlanningPackageChange(p)}
+                              className="font-body text-xs mr-1.5 mb-1 px-2.5 py-1 rounded-full transition-colors"
+                              style={{
+                                background: active ? "var(--clay)" : "transparent",
+                                color: active ? "var(--bone)" : "var(--muted)",
+                                border: `1px solid ${active ? "var(--clay)" : "var(--sand)"}`,
+                                cursor: "pointer",
+                              }}
+                            >
+                              {planningPackages[p].label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p className="font-body text-xs mt-1" style={{ color: "var(--clay)", opacity: 0.8 }}>
+                        Not sure which package fits?{" "}
+                        <a href={process.env.NEXT_PUBLIC_BOOKING_URL || "#lead"} className="underline hover:opacity-80 transition-opacity" style={{ color: "var(--clay)" }}>
+                          Free 20-min call →
+                        </a>
+                      </p>
+                    </>
                   )}
                   {/* DIY mode: swap note */}
                   {hasSavings && cat.note && (
@@ -382,7 +448,7 @@ export default function ResultsBreakdown({
             <div>
               <span className="invoice-label">Contingency ({Math.round(result.contingencyRate * 100)}%)</span>
               <p className="font-body text-xs mt-0.5" style={{ color: "var(--muted)", opacity: 0.7 }}>
-                Things happen. This is the line most people skip, then regret.
+                Things happen. This is the line most people cut, then regret.
               </p>
             </div>
             {diyMode ? (
@@ -486,7 +552,7 @@ export default function ResultsBreakdown({
           >
             This estimate prices every line item at typical market rates — published
             &ldquo;average wedding cost&rdquo; figures skip several of them. Not booking
-            something? Hit &ldquo;skip&rdquo; on that line to make the number yours.
+            something? Hit &ldquo;remove&rdquo; on that line to make the number yours.
           </motion.p>
 
           {/* Venue pricing note */}
