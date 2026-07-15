@@ -231,6 +231,14 @@ export const SERVICES_FAQ = [
     a: "It's simple — planners take the stress out of the entire planning process. By working with a planner, you not only save time and money but also gain an expert to navigate the complexities of vendor coordination, logistics, and design. Let me handle the details, so you can focus on what matters most.",
   },
   {
+    q: "What is your event planning process?",
+    a: "Our process begins with an initial consultation where we'll discuss your vision, priorities, and planning needs. From there, I'll create a customized proposal outlining the services and support that best fit your event. Once you're ready to move forward, we'll secure your date with a signed contract and 25% deposit. From there, we'll begin bringing your vision to life and creating a seamless planning experience from start to finish.",
+  },
+  {
+    q: "How do I know which service is right for me?",
+    a: "Every celebration is different, which is why our services are tailored to meet you where you are in the planning process. Whether you're looking for guidance from the very beginning, support refining your vision, or assistance with final details, our initial consultation will help determine the level of support that best fits your needs so you can feel confident and enjoy the experience.",
+  },
+  {
     q: "Do you travel outside the California area?",
     a: "While most of our events are in Southern California, we have had the pleasure of planning events across the country and abroad in Rome, Texas, and the DC/Maryland area. We got you covered no matter where it may be.",
   },
