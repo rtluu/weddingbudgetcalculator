@@ -251,18 +251,18 @@ export const SERVICES_FAQ = [
 // Portfolio header (verbatim from /portfolio)
 export const PORTFOLIO_HEADER = {
   eyebrow: "Featured Moments & Celebrations",
-  intro: "Explore our events.",
+  intro: "Every event tells a story—here are a few of our favorites.",
 } as const;
 
-// Featured portfolio events — couple, location, type, verbatim caption, full gallery,
-// and vendor team, all taken directly from bymosaic.com/portfolio.
+// Featured portfolio events — location, type, verbatim caption, full gallery,
+// and vendor team, all taken directly from bymosaic.com/portfolio. Clients are
+// shown by initials only (`couple`) to protect their privacy.
 export const PORTFOLIO = [
   {
     slug: "samantha-luis-rome",
-    couple: "Samantha & Luis",
+    couple: "S+L",
     location: "Rome, Italy",
     type: "Wedding",
-    initials: "S+L",
     caption:
       "A dream destination wedding brought to life. S + L chose to say “Ti amo” where the sky meets the city, with the eternal beauty of Rome—and their beloved dog—by their side. From the stunning views to the thoughtfully curated details, their celebration was elegant, heartfelt, and truly unforgettable. This was my first destination wedding, and I can only hope it’s the first of many!",
     cover: "/photos/samantha_and_luis-386.jpg",
@@ -293,10 +293,9 @@ export const PORTFOLIO = [
   },
   {
     slug: "lauren-brendan-arcadia",
-    couple: "Lauren & Brendan",
+    couple: "L+B",
     location: "Arcadia, California",
     type: "Wedding",
-    initials: "L+B",
     caption:
       "Santa Anita Park holds a special place in Lauren’s heart. As a child, she spent countless days at the racetrack with her grandpa, sharing in his love for the sport. Her favorite part? Picking horses for him based on the “most important” stats—like the coolest names or the prettiest saddle towel colors—all while savoring the iconic hand-carved turkey sandwiches (still available today). And in a place filled with so much nostalgia and cherished memories, she married her best friend.",
     cover: "/photos/l_and_b-377.jpg",
@@ -323,10 +322,9 @@ export const PORTFOLIO = [
   },
   {
     slug: "abigail-caio-dallas",
-    couple: "Abigail & Caio",
+    couple: "A+C",
     location: "Dallas, Texas",
     type: "Wedding",
-    initials: "A+C",
     caption:
       "Getting to travel back to my home state to manage this wedding was a full-circle moment for me. This summer wedding was vibrant and full of love, with every detail thoughtfully curated to reflect the couple’s joyful spirit. From the colorful florals to the heartfelt vows, the entire day felt like pure magic. It was an honor to bring their vision to life and celebrate in a place that holds so much meaning for me!",
     cover: "/photos/280064311.jpg",
@@ -342,10 +340,9 @@ export const PORTFOLIO = [
   },
   {
     slug: "olivia-tj-alexandria",
-    couple: "Olivia & TJ",
+    couple: "O+T",
     location: "Alexandria, Virginia",
     type: "Wedding",
-    initials: "O+T",
     caption:
       "This multicultural wedding was an unforgettable celebration of love, traditions, and joy. O + T had the time of their lives, dancing the night away, surrounded by their closest family and friends. Every moment was filled with high energy, laughter, and memories they’ll cherish forever!",
     cover: "/photos/10.jpg",
@@ -372,10 +369,9 @@ export const PORTFOLIO = [
   },
   {
     slug: "julie-jorge-malibu",
-    couple: "Julie & Jorge",
+    couple: "J+J",
     location: "Malibu, California",
     type: "Proposal",
-    initials: "J+J",
     caption:
       "This proposal holds a special place in my heart because Julie is a dear friend I met years ago while working together at a catering company in DC. Having the honor of helping plan this moment for her was so special. When her fiancé reached out to me, I couldn’t have been more excited—and truly grateful—to be part of their journey!",
     cover: "/photos/ldphotography75.jpg",
@@ -392,10 +388,9 @@ export const PORTFOLIO = [
   },
   {
     slug: "rhiannon-maddie-la",
-    couple: "Rhiannon & Maddie",
+    couple: "R+M",
     location: "Los Angeles, California",
     type: "Quinceañera",
-    initials: "R+M",
     caption:
       "This event was originally set for 2020, but as we all know, plans had to change—so 2022 it was! A lot can happen in two years, and what was once meant to be a joint quinceañera for these sisters evolved into a graduation/ quinceañera celebration. It was a beautiful day filled with so much love, proving that no matter the timing, milestones are always worth celebrating!",
     cover: "/photos/nnn_5412.jpg",

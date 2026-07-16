@@ -19,7 +19,7 @@ export default function PortfolioPage() {
         eyebrow={PORTFOLIO_HEADER.eyebrow}
         title={
           <>
-            Carefully curated, flawlessly <Accent>executed</Accent>
+            Thoughtfully designed. <Accent>Beautifully celebrated.</Accent>
           </>
         }
         subtitle={PORTFOLIO_HEADER.intro}
@@ -33,7 +33,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ background: "var(--ink)", color: "var(--bone)", padding: "90px 24px", textAlign: "center" }}>
+      <section style={{ background: "var(--forest)", color: "var(--bone)", padding: "90px 24px", textAlign: "center" }}>
         <Reveal>
           <h2 className="display-lg" style={{ color: "var(--bone)", marginBottom: 18 }}>
             Your celebration, next
