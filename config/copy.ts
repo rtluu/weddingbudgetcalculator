@@ -297,7 +297,7 @@ export const PORTFOLIO = [
     location: "Arcadia, California",
     type: "Wedding",
     caption:
-      "Santa Anita Park holds a special place in Lauren’s heart. As a child, she spent countless days at the racetrack with her grandpa, sharing in his love for the sport. Her favorite part? Picking horses for him based on the “most important” stats—like the coolest names or the prettiest saddle towel colors—all while savoring the iconic hand-carved turkey sandwiches (still available today). And in a place filled with so much nostalgia and cherished memories, she married her best friend.",
+      "Santa Anita Park holds a special place in L’s heart. As a child, she spent countless days at the racetrack with her grandpa, sharing in his love for the sport. Her favorite part? Picking horses for him based on the “most important” stats—like the coolest names or the prettiest saddle towel colors—all while savoring the iconic hand-carved turkey sandwiches (still available today). And in a place filled with so much nostalgia and cherished memories, she married her best friend.",
     cover: "/photos/l_and_b-377.jpg",
     gallery: [
       "/photos/l_and_b-377.jpg",
@@ -373,7 +373,7 @@ export const PORTFOLIO = [
     location: "Malibu, California",
     type: "Proposal",
     caption:
-      "This proposal holds a special place in my heart because Julie is a dear friend I met years ago while working together at a catering company in DC. Having the honor of helping plan this moment for her was so special. When her fiancé reached out to me, I couldn’t have been more excited—and truly grateful—to be part of their journey!",
+      "This proposal holds a special place in my heart because J is a dear friend I met years ago while working together at a catering company in DC. Having the honor of helping plan this moment for her was so special. When her fiancé reached out to me, I couldn’t have been more excited—and truly grateful—to be part of their journey!",
     cover: "/photos/ldphotography75.jpg",
     gallery: [
       "/photos/ldphotography75.jpg",
