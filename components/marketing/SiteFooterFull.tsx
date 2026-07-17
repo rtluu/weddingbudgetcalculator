@@ -20,7 +20,7 @@ function SocialIcon({ name }: { name: string }) {
 
 export default function SiteFooterFull() {
   const year = new Date().getFullYear();
-  const nav = NAV_LINKS.filter((l) => l.href !== "/contact"); // Inquire covers contact
+  const nav = NAV_LINKS;
 
   return (
     <footer style={{ marginTop: "auto", background: "var(--alabaster)", borderTop: "1px solid var(--sand)" }}>
