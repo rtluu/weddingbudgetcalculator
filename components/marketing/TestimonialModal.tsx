@@ -8,7 +8,9 @@ import { createPortal } from "react-dom";
 // resumed on close). The iframe is only mounted while open, so playback starts
 // on open and stops on close.
 const VIMEO_SRC =
-  "https://player.vimeo.com/video/1023160171?h=5328fd80d7&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1";
+  "https://player.vimeo.com/video/1023160171?h=5328fd80d7&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=0";
+
+const VIMEO_ORIGIN = "https://player.vimeo.com";
 
 // Height of the sticky SiteNav — the overlay sits below it so the nav stays
 // visible and the video centers in the remaining space.
@@ -23,10 +25,23 @@ function setHeroVideoPaused(paused: boolean) {
 
 export default function TestimonialModal() {
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const close = useCallback(() => setOpen(false), []);
+
+  // Track the mobile breakpoint so the video can go full-bleed edge-to-edge on
+  // phones (matches the site's other responsive components, which read widths
+  // at runtime rather than via CSS media queries on these inline-styled nodes).
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -46,6 +61,35 @@ export default function TestimonialModal() {
       trigger?.focus();
     };
   }, [open, close]);
+
+  // Start the testimonial with sound. The Vimeo embed autoplays; once the player
+  // signals "ready" over postMessage we set full volume and (re)issue play so it
+  // begins unmuted wherever the browser's autoplay policy permits it. iOS Safari
+  // still forces a tap to unmute embedded cross-origin video — that's an Apple
+  // platform restriction we can't override from here.
+  useEffect(() => {
+    if (!open) return;
+    const post = (method: string, value?: unknown) =>
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify(value === undefined ? { method } : { method, value }),
+        VIMEO_ORIGIN
+      );
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin !== VIMEO_ORIGIN) return;
+      let data: { event?: string } | undefined;
+      try {
+        data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+      } catch {
+        return;
+      }
+      if (data?.event === "ready") {
+        post("setVolume", 1);
+        post("play");
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [open]);
 
   return (
     <>
@@ -103,7 +147,7 @@ export default function TestimonialModal() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 24,
+            padding: isMobile ? 0 : 24,
           }}
         >
           <button
@@ -133,10 +177,11 @@ export default function TestimonialModal() {
 
           <div
             onClick={(e) => e.stopPropagation()}
-            style={{ width: "min(1000px, 100%)" }}
+            style={{ width: isMobile ? "100%" : "min(1000px, 100%)" }}
           >
-            <div style={{ padding: "56.25% 0 0 0", position: "relative", borderRadius: 10, overflow: "hidden", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
+            <div style={{ padding: "56.25% 0 0 0", position: "relative", borderRadius: isMobile ? 0 : 10, overflow: "hidden", boxShadow: isMobile ? "none" : "0 24px 80px rgba(0,0,0,0.5)" }}>
               <iframe
+                ref={iframeRef}
                 src={VIMEO_SRC}
                 allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
@@ -152,6 +197,7 @@ export default function TestimonialModal() {
                 fontSize: 13,
                 letterSpacing: "0.02em",
                 color: "rgba(251,248,243,0.55)",
+                paddingInline: isMobile ? 16 : 0,
               }}
             >
               Video Credit:{" "}
