@@ -167,12 +167,6 @@ export default function ContactForm() {
         >
           {status === "submitting" ? "Sending…" : "Send message"}
         </button>
-        <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--muted)", display: "flex", alignItems: "center", gap: 7 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-            <path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5l8-3z" stroke="var(--sage-deep)" strokeWidth="1.6" strokeLinejoin="round" />
-          </svg>
-          Your details only reach Kristina — no spam, ever. She replies within 2 business days.
-        </p>
       </div>
     </form>
   );
