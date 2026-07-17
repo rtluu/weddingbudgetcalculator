@@ -80,7 +80,7 @@ export default function ContactPage() {
       <section style={{ background: "var(--alabaster)", padding: "80px 24px" }}>
         <div style={{ maxWidth: 880, margin: "0 auto" }}>
           <Reveal>
-            <Eyebrow align="center">Prefer to book directly?</Eyebrow>
+            <Eyebrow align="center">Prefer to chat with Kristina?</Eyebrow>
             <h2 className="display-lg" style={{ textAlign: "center", marginBottom: 36 }}>
               Schedule your consultation
             </h2>
