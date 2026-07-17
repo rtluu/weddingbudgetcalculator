@@ -33,8 +33,12 @@ export default async function PortfolioEventPage({
   params: Promise<EventParams>;
 }) {
   const { slug } = await params;
-  const event = getEvent(slug);
-  if (!event) notFound();
+  const idx = PORTFOLIO.findIndex((e) => e.slug === slug);
+  if (idx === -1) notFound();
+  const event = PORTFOLIO[idx];
+  // Wrap around so every album always has a previous and next to browse.
+  const prev = PORTFOLIO[(idx - 1 + PORTFOLIO.length) % PORTFOLIO.length];
+  const next = PORTFOLIO[(idx + 1) % PORTFOLIO.length];
 
   return (
     <>
@@ -148,8 +152,35 @@ export default async function PortfolioEventPage({
         </div>
       </section>
 
+      {/* Previous / Next album */}
+      <nav
+        aria-label="More events"
+        style={{ background: "var(--bone)", padding: "0 24px 72px" }}
+      >
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 16,
+            borderTop: "1px solid var(--sand)",
+            paddingTop: 28,
+          }}
+        >
+          <Link href={`/portfolio/${prev.slug}`} style={{ ...navLink, alignItems: "flex-start", textAlign: "left" }}>
+            <span style={navEyebrow}>← Previous</span>
+            <span style={navName}>{prev.type} · {prev.location}</span>
+          </Link>
+          <Link href={`/portfolio/${next.slug}`} style={{ ...navLink, alignItems: "flex-end", textAlign: "right" }}>
+            <span style={navEyebrow}>Next →</span>
+            <span style={navName}>{next.type} · {next.location}</span>
+          </Link>
+        </div>
+      </nav>
+
       {/* CTA */}
-      <section style={{ background: "var(--ink)", color: "var(--bone)", padding: "90px 24px", textAlign: "center" }}>
+      <section style={{ background: "var(--forest)", color: "var(--bone)", padding: "90px 24px", textAlign: "center" }}>
         <Reveal>
           <h2 className="display-lg" style={{ color: "var(--bone)", marginBottom: 18 }}>
             Your celebration, next
@@ -174,3 +205,25 @@ export default async function PortfolioEventPage({
     </>
   );
 }
+
+const navLink: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+  textDecoration: "none",
+  maxWidth: "48%",
+};
+
+const navEyebrow: React.CSSProperties = {
+  fontFamily: "var(--font-body)",
+  fontSize: 12,
+  letterSpacing: "0.14em",
+  textTransform: "uppercase",
+  color: "var(--sage-deep)",
+};
+
+const navName: React.CSSProperties = {
+  fontFamily: "var(--font-display)",
+  fontSize: 18,
+  color: "var(--ink)",
+};

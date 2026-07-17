@@ -18,6 +18,7 @@
   --sage:        #8ABD91;  /* logo green */
   --sage-deep:   #4F6F57;  /* AA-contrast text/buttons on light */
   --sage-mist:   #E8F8E9;  /* faint tint / wash */
+  --forest:      #35493B;  /* deep green section bg (lighter sage-deep buttons read on it) */
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, serif;
