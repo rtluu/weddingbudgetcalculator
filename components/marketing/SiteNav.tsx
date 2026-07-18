@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_LINKS } from "@/config/site";
+import { NAV_LINKS, SOCIAL_LINKS } from "@/config/site";
+import SocialIcon from "./SocialIcon";
 
 export default function SiteNav() {
   const pathname = usePathname();
@@ -169,7 +170,8 @@ export default function SiteNav() {
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: 16,
-                letterSpacing: "0.04em",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
                 color: isActive(link.href) ? "var(--sage-deep)" : "var(--ink)",
                 textDecoration: "none",
                 fontWeight: isActive(link.href) ? 600 : 500,
@@ -180,6 +182,22 @@ export default function SiteNav() {
               {link.label}
             </Link>
           ))}
+
+          {/* Social — always reachable from the menu */}
+          <div style={{ display: "flex", gap: 18, paddingTop: 18 }}>
+            {SOCIAL_LINKS.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                style={{ color: "var(--muted)" }}
+              >
+                <SocialIcon name={s.label} />
+              </a>
+            ))}
+          </div>
         </div>
       )}
     </header>
