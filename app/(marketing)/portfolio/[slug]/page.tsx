@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Reveal from "@/components/marketing/Reveal";
 import PortfolioGallery from "@/components/marketing/PortfolioGallery";
+import JsonLd from "@/components/JsonLd";
 import { PORTFOLIO } from "@/config/copy";
+import { siteUrl } from "@/config/site";
 
 type EventParams = { slug: string };
 
@@ -40,8 +42,24 @@ export default async function PortfolioEventPage({
   const prev = PORTFOLIO[(idx - 1 + PORTFOLIO.length) % PORTFOLIO.length];
   const next = PORTFOLIO[(idx + 1) % PORTFOLIO.length];
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Portfolio", item: `${siteUrl}/portfolio` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `${event.couple} — ${event.location}`,
+        item: `${siteUrl}/portfolio/${event.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
+      <JsonLd data={breadcrumbJsonLd} />
       {/* Event header */}
       <section
         style={{

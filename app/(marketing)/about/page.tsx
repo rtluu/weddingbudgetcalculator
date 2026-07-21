@@ -5,7 +5,7 @@ import Reveal from "@/components/marketing/Reveal";
 import { ABOUT, ABOUT_EXPLORE } from "@/config/copy";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "Meet Kristina — LA Wedding Planner",
   description:
     "Meet Kristina, owner and lead planner at By Mosaic — a Los Angeles wedding & social event planner who turns events into living mosaics.",
 };
@@ -30,9 +30,9 @@ export default function AboutPage() {
           {/* Heading */}
           <div className="ak-heading">
             <Reveal>
-              <h2 className="display-caps" style={{ fontSize: "clamp(1.9rem, 3.6vw, 2.7rem)", margin: 0 }}>
+              <h1 className="display-caps" style={{ fontSize: "clamp(1.9rem, 3.6vw, 2.7rem)", margin: 0 }}>
                 {ABOUT.greeting}
-              </h2>
+              </h1>
             </Reveal>
           </div>
 

@@ -5,6 +5,7 @@ import Reveal from "@/components/marketing/Reveal";
 import PageHeader, { Accent } from "@/components/marketing/PageHeader";
 import JsonLd from "@/components/JsonLd";
 import { SERVICES, SERVICES_PAGE, SERVICES_FAQ } from "@/config/copy";
+import { siteUrl } from "@/config/site";
 
 // FAQ rich-result structured data, generated from the same FAQ content.
 const faqJsonLd = {
@@ -17,10 +18,44 @@ const faqJsonLd = {
   })),
 };
 
+// The starting dollar figure from an "investment" string ("Starting at $6,000"
+// → 6000); null when the package is a custom quote.
+const startingPrice = (investment: string): number | null => {
+  const m = investment.match(/\$([\d,]+)/);
+  return m ? Number(m[1].replace(/,/g, "")) : null;
+};
+
+// Service + Offer structured data (one Service node per package) so search
+// engines understand the offerings and their real starting prices.
+const servicesJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": SERVICES.map((s) => {
+    const min = startingPrice(s.investment);
+    const service: Record<string, unknown> = {
+      "@type": "Service",
+      name: s.name,
+      serviceType: s.name,
+      description: s.summary,
+      url: `${siteUrl}/services#${s.slug}`,
+      provider: { "@id": `${siteUrl}/#business` },
+      areaServed: { "@type": "AdministrativeArea", name: "Los Angeles, CA" },
+    };
+    if (min !== null) {
+      service.offers = {
+        "@type": "Offer",
+        priceCurrency: "USD",
+        priceSpecification: { "@type": "PriceSpecification", minPrice: min, priceCurrency: "USD" },
+        url: `${siteUrl}/services#${s.slug}`,
+      };
+    }
+    return service;
+  }),
+};
+
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Wedding Planning Packages & Pricing in Los Angeles",
   description:
-    "Full-Service Wedding Planning, Event Management (Month-of Coordination), and Social Event Planning with By Mosaic — thoughtful planning for a stress-free celebration.",
+    "Full-Service Wedding Planning (from $6,000), Partial Planning (from $4,000), and Month-of Coordination (from $2,500) with By Mosaic — thoughtful planning for a stress-free Los Angeles celebration.",
 };
 
 const bodyStyle: React.CSSProperties = {
@@ -35,6 +70,7 @@ export default function ServicesPage() {
   return (
     <div className="services-page">
       <JsonLd data={faqJsonLd} />
+      <JsonLd data={servicesJsonLd} />
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <PageHeader
         eyebrow="Weddings & Social Events"
