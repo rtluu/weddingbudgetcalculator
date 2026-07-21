@@ -7,7 +7,7 @@ import CalendlyEmbed from "@/components/marketing/CalendlyEmbed";
 import { SITE, SOCIAL_LINKS } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact a Los Angeles Wedding Planner",
   description:
     "Interested in working with By Mosaic? Reach out using our contact form or schedule a free consultation with Kristina.",
 };
